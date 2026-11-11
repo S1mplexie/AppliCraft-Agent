@@ -43,8 +43,7 @@ echo ===================================================
 "%VPY%" -m uvicorn app.main:app --host 0.0.0.0 --port 8000
 
 echo.
-echo Server stopped. To restart, double-click this file again.
-pause
+echo Server stopped.
 goto :eof
 
 :nopython

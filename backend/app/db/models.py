@@ -145,17 +145,3 @@ class KnowledgeChunk(Base):
         JSON().with_variant(JSONB(), "postgresql"), default=dict
     )
     created_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow)
-
-class Feedback(Base):
-    """用户反馈建议：任何登录用户可提交，仅管理员可查看。
-
-    独立于业务数据（不进 FileStore、不参与生成），只是意见收集通道；
-    用户删除（CASCADE）时其反馈一并清理，避免残留无主意见。
-    """
-
-    __tablename__ = "feedback"
-
-    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    user_id: Mapped[str] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
-    content: Mapped[str] = mapped_column(Text)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow, index=True)

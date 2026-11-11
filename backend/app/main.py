@@ -14,7 +14,6 @@ from app import __version__
 from app.api import (
     routes_auth,
     routes_documents,
-    routes_feedback,
     routes_generate,
     routes_library,
     routes_llm,
@@ -125,7 +124,6 @@ app.include_router(routes_documents.router, prefix="/api")
 app.include_router(routes_library.router, prefix="/api")
 app.include_router(routes_llm.router, prefix="/api")
 app.include_router(routes_skills.router, prefix="/api")
-app.include_router(routes_feedback.router, prefix="/api")
 app.include_router(routes_match.router, prefix="/api")
 
 

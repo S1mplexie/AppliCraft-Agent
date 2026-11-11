@@ -1,6 +1,6 @@
 import type {
   ApplicantProfile, AppConfig, AuthResponse, DocumentDetail, DocumentMeta,
-  FeedbackItem, GeneratePayload, LLMTestResult, LocalLLMConfig, LocalLLMPayload, MatchResult, ProfileSummary, RegenPayload, ReferenceDoc,
+  GeneratePayload, LLMTestResult, LocalLLMConfig, LocalLLMPayload, MatchResult, ProfileSummary, RegenPayload, ReferenceDoc,
   ResumeParseResult, SkillDetail, SkillInfo, StreamEnvelope, SystemProgram,
   UserLLMConfig, UserLLMPayload,
 } from '../types'
@@ -155,11 +155,6 @@ export const api = {
   logout: () => request<{ logged_out: boolean }>('/auth/logout', { method: 'POST' }),
   me: () => request<AuthResponse>('/auth/me'),
 
-  submitFeedback: (content: string) =>
-    request<{ id: number; created_at: string }>('/feedback', {
-      method: 'POST', body: JSON.stringify({ content }),
-    }),
-  listFeedback: () => request<{ items: FeedbackItem[] }>('/feedback'),
   matchProfile: (profileId: string) =>
     // 评估是显式扣费动作（系统 Key 用户扣 1 次免费额度），必须 POST 由用户触发。
     request<MatchResult>(`/match/${profileId}`, { method: 'POST' }),

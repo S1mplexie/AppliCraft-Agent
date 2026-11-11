@@ -6,7 +6,6 @@ import DocumentLibrary from './components/DocumentLibrary.vue'
 import LibraryPanel from './components/LibraryPanel.vue'
 import SkillMarketPanel from './components/SkillMarketPanel.vue'
 import SettingsView from './components/SettingsView.vue'
-import FeedbackBubble from './components/FeedbackBubble.vue'
 import MatchPanel from './components/MatchPanel.vue'
 import AuthView from './components/AuthView.vue'
 import ProfileSwitcher from './components/ProfileSwitcher.vue'
@@ -792,8 +791,6 @@ onUnmounted(() => window.removeEventListener('hashchange', onHashChange))
         </div>
       </main>
     </div>
-
-    <FeedbackBubble v-if="user || standalone" :is-admin="standalone ? false : isAdmin" />
 
 
     <div v-if="toastMsg" class="toast" :class="{ error: toastError }">{{ toastMsg }}</div>

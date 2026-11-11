@@ -28,6 +28,13 @@ chmod +x start.sh && ./start.sh
 
 > 首次启动安装依赖需要联网，之后会走缓存，速度很快。
 
+### 重启服务
+修改配置（例如 `.env` 里的 API Key）或遇到服务卡住时，无需手动关窗口再双击：
+- **Windows**：双击 `restart.bat`；
+- **macOS / Linux**：运行 `bash restart.sh`。
+
+脚本会先结束占用 `8000` 端口的旧进程，再重新启动服务（Windows 在新窗口运行，macOS / Linux 以后台进程运行，日志在 `backend/nohup.out`）。
+
 ---
 
 ## 二、配置你的大模型 API Key
@@ -72,6 +79,7 @@ chmod +x start.sh && ./start.sh
 ```
 AppliCraftLocal/
 ├── start.sh / start.bat     # 一键启动（无 Docker）
+├── restart.sh / restart.bat # 一键重启服务
 ├── .env.example             # 环境变量示例（可选）
 ├── backend/                 # FastAPI 后端（直接 python 启动）
 │   ├── app/

@@ -155,12 +155,7 @@ export interface AuthUser {
   id: string; email: string; display_name: string; daily_quota: number; created_at: string
   is_admin?: boolean
 }
-/** 用户反馈建议：普通用户提交、管理员查看（设置页意见反馈卡片）。 */
-export interface FeedbackItem {
-  id: number; content: string; created_at: string
-  user_email: string; user_name: string
-}
-/** 选校评估：规则引擎对档案硬指标与项目要求的确定性比对结果。 */
+/** 选校评估：模型对档案硬指标与项目要求的适配评估结果。 */
 export interface MatchItem {
   program_id: string; school_name_zh: string; name_en: string; name_zh: string
   region: string; intake: string; deadline: string
