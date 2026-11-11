@@ -47,7 +47,7 @@ set "PVER="
 if errorlevel 1 exit /b 1
 for /f "usebackq delims=" %%P in ("%TMPF%") do set "PEXE=%%P"
 if not defined PEXE exit /b 1
-if not "%PEXE:WindowsApps=%"=="%PEXE%" exit /b 1
+if not "%PEXE:Microsoft\WindowsApps\python=%"=="%PEXE%" exit /b 1
 if not exist "%PEXE%" exit /b 1
 %PYC% -c "import sys;print(sys.version_info[0]*100+sys.version_info[1])" > "%TMPF%" 2>nul
 if errorlevel 1 exit /b 1
@@ -62,7 +62,7 @@ REM ---- Probe an absolute interpreter path ----
 :probepath
 if defined PY exit /b 0
 set "PEXE=%~1"
-if not "%PEXE:WindowsApps=%"=="%PEXE%" exit /b 1
+if not "%PEXE:Microsoft\WindowsApps\python=%"=="%PEXE%" exit /b 1
 if not exist "%PEXE%" exit /b 1
 set "PVER="
 "%PEXE%" -c "import sys;print(sys.version_info[0]*100+sys.version_info[1])" > "%TMPF%" 2>nul
