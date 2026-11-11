@@ -1,0 +1,186 @@
+{
+  "schema_version": "1.0",
+  "note": "选校评估用结构化要求。整理自 knowledge/programs 各卡片「语言要求」行（2026-11-09 快照）；语言分数随入学季更新，评估结果仅供参考，提交申请前以官网实时页面为准。gpa_reference 为 null 表示该项目未公布 GPA/均分硬线。",
+  "programs": {
+    "cuhk-msc-artificial-intelligence": {
+      "ielts_total_min": 6.5, "ielts_subtest_min": null, "toefl_min": 79,
+      "language_note": "CUHK 研究生院通用要求，无单项分要求",
+      "gpa_reference": null, "gpa_reference_scale": null,
+      "preferred_background": ["计算机", "computer", "人工智能", "AI", "机器学习", "machine learning", "数据", "data"]
+    },
+    "cuhk-msc-business-analytics": {
+      "ielts_total_min": 6.5, "ielts_subtest_min": null, "toefl_min": 79,
+      "language_note": "CUHK 商学院通用录取要求，无单项分要求",
+      "gpa_reference": null, "gpa_reference_scale": null,
+      "preferred_background": ["商业分析", "business", "管理", "management", "计算机", "computer", "数据", "data", "统计", "statistic"]
+    },
+    "cuhk-msc-computer-science": {
+      "ielts_total_min": 6.5, "ielts_subtest_min": null, "toefl_min": 79,
+      "language_note": "CUHK 研究生院通用要求，无单项分要求（部门 FAQ 注明分数仅供参考）",
+      "gpa_reference": null, "gpa_reference_scale": null,
+      "preferred_background": ["计算机", "computer", "软件", "software", "信息", "information"]
+    },
+    "cuhk-msc-data-science-and-business-statistics": {
+      "ielts_total_min": 6.5, "ielts_subtest_min": null, "toefl_min": 79,
+      "language_note": "CUHK 项目站与研究生院通用要求，无单项分要求",
+      "gpa_reference": null, "gpa_reference_scale": null,
+      "preferred_background": ["数据", "data", "统计", "statistic", "数学", "math", "计算机", "computer"]
+    },
+    "cuhk-msc-financial-technology": {
+      "ielts_total_min": 6.5, "ielts_subtest_min": null, "toefl_min": 79,
+      "language_note": "CUHK 研究生院通用要求（项目自身最低分官网标「待核实」）",
+      "gpa_reference": null, "gpa_reference_scale": null,
+      "preferred_background": ["金融", "finance", "计算机", "computer", "数学", "math", "数据"]
+    },
+    "cuhk-msc-information-engineering": {
+      "ielts_total_min": 6.5, "ielts_subtest_min": null, "toefl_min": 79,
+      "language_note": "CUHK Admission 页明确要求，无单项分要求",
+      "gpa_reference": null, "gpa_reference_scale": null,
+      "preferred_background": ["信息工程", "information", "计算机", "computer", "电子", "electronic"]
+    },
+    "hku-master-data-science": {
+      "ielts_total_min": 6.0, "ielts_subtest_min": 5.5, "toefl_min": 80,
+      "language_note": "HKU 全校 General Regulation G2(b)（项目页援引校级要求）",
+      "gpa_reference": null, "gpa_reference_scale": null,
+      "preferred_background": ["数据", "data", "统计", "statistic", "数学", "math", "计算机", "computer"]
+    },
+    "hku-master-statistics": {
+      "ielts_total_min": 6.0, "ielts_subtest_min": 5.5, "toefl_min": 80,
+      "language_note": "HKU 全校 General Regulation G2(b)（项目页援引校级要求）",
+      "gpa_reference": null, "gpa_reference_scale": null,
+      "preferred_background": ["统计", "statistic", "数学", "math", "数据", "data"]
+    },
+    "hku-msc-artificial-intelligence": {
+      "ielts_total_min": 6.0, "ielts_subtest_min": 5.5, "toefl_min": 80,
+      "language_note": "HKU 全校 General Regulation G2(b)（项目页援引校级要求）",
+      "gpa_reference": null, "gpa_reference_scale": null,
+      "preferred_background": ["人工智能", "AI", "计算机", "computer", "机器学习", "machine learning", "数据"]
+    },
+    "hku-msc-business-analytics": {
+      "ielts_total_min": 6.0, "ielts_subtest_min": 5.5, "toefl_min": 80,
+      "language_note": "HKU 项目页明列（非英语教学大学背景者须提交）",
+      "gpa_reference": null, "gpa_reference_scale": null,
+      "preferred_background": ["商业分析", "business", "管理", "management", "计算机", "computer", "数据"]
+    },
+    "hku-msc-computer-science": {
+      "ielts_total_min": 6.0, "ielts_subtest_min": 5.5, "toefl_min": 80,
+      "language_note": "HKU 全校 General Regulation G2(b)（项目页援引校级要求）",
+      "gpa_reference": null, "gpa_reference_scale": null,
+      "preferred_background": ["计算机", "computer", "软件", "software", "信息"]
+    },
+    "hku-msc-fintech-data-analytics": {
+      "ielts_total_min": 6.0, "ielts_subtest_min": 5.5, "toefl_min": 80,
+      "language_note": "HKU 全校 General Regulation G2(b)（项目页援引校级要求）",
+      "gpa_reference": null, "gpa_reference_scale": null,
+      "preferred_background": ["金融", "finance", "计算机", "computer", "数据", "data", "数学"]
+    },
+    "hkust-msc-ai": {
+      "ielts_total_min": 6.5, "ielts_subtest_min": 5.5, "toefl_min": 80,
+      "language_note": "HKUST FYTGS 校级要求（2027/28 目录，单次考试成绩）",
+      "gpa_reference": null, "gpa_reference_scale": null,
+      "preferred_background": ["人工智能", "AI", "计算机", "computer", "机器学习", "machine learning"]
+    },
+    "hkust-msc-ba": {
+      "ielts_total_min": 6.5, "ielts_subtest_min": 5.5, "toefl_min": 80,
+      "language_note": "HKUST FYTGS 校级要求（2027/28 目录）",
+      "gpa_reference": null, "gpa_reference_scale": null,
+      "preferred_background": ["商业分析", "business", "管理", "management", "数据", "data"]
+    },
+    "hkust-msc-bdt": {
+      "ielts_total_min": 6.5, "ielts_subtest_min": 5.5, "toefl_min": 80,
+      "language_note": "HKUST FYTGS 校级要求（2027/28 目录）",
+      "gpa_reference": null, "gpa_reference_scale": null,
+      "preferred_background": ["大数据", "big data", "数据", "data", "计算机", "computer"]
+    },
+    "hkust-msc-ddm": {
+      "ielts_total_min": 6.5, "ielts_subtest_min": 5.5, "toefl_min": 80,
+      "language_note": "HKUST FYTGS 校级要求（2027/28 目录）",
+      "gpa_reference": null, "gpa_reference_scale": null,
+      "preferred_background": ["数据", "data", "建模", "modeling", "数学", "math", "统计"]
+    },
+    "hkust-msc-it": {
+      "ielts_total_min": 6.5, "ielts_subtest_min": 5.5, "toefl_min": 80,
+      "language_note": "HKUST FYTGS 校级要求（2027/28 目录）",
+      "gpa_reference": null, "gpa_reference_scale": null,
+      "preferred_background": ["信息技术", "IT", "计算机", "computer", "软件", "software"]
+    },
+    "hkust-msc-mafm": {
+      "ielts_total_min": 6.5, "ielts_subtest_min": 5.5, "toefl_min": 80,
+      "language_note": "HKUST FYTGS 校级要求（2027/28 目录；项目页 2026/27 与目录存在口径差异，以 2027/28 目录为准）",
+      "gpa_reference": null, "gpa_reference_scale": null,
+      "preferred_background": ["金融", "finance", "数学", "math", "会计", "accounting", "计算机"]
+    },
+    "ntu-mfe": {
+      "ielts_total_min": 6.5, "ielts_subtest_min": null, "toefl_min": 100,
+      "language_note": "NTU 官网原文 TOEFL ≥ 100 iBT 或 IELTS ≥ 6.5（仅本科非英语授课者需提交）",
+      "gpa_reference": null, "gpa_reference_scale": null,
+      "preferred_background": ["金融工程", "quantitative", "金融", "finance", "数学", "math", "统计", "计算机"]
+    },
+    "ntu-msai": {
+      "ielts_total_min": 6.5, "ielts_subtest_min": null, "toefl_min": 100,
+      "language_note": "NTU 官网原文 TOEFL iBT ≥ 100 或 IELTS ≥ 6.5（或 MOI 英语授课证明）",
+      "gpa_reference": null, "gpa_reference_scale": null,
+      "preferred_background": ["人工智能", "AI", "计算机", "computer", "机器学习", "machine learning"]
+    },
+    "ntu-msba": {
+      "ielts_total_min": 6.5, "ielts_subtest_min": null, "toefl_min": 100,
+      "language_note": "NTU 官网原文 TOEFL ≥ 100 iBT 或 IELTS ≥ 6.5（仅本科非英语授课者需提交）",
+      "gpa_reference": null, "gpa_reference_scale": null,
+      "preferred_background": ["商业分析", "business", "管理", "management", "数据", "data"]
+    },
+    "ntu-msc-cybersecurity-applied": {
+      "ielts_total_min": 6.5, "ielts_subtest_min": null, "toefl_min": 100,
+      "language_note": "NTU 官网原文 TOEFL iBT ≥ 100 或 IELTS ≥ 6.5（或 MOI 英语授课证明）",
+      "gpa_reference": null, "gpa_reference_scale": null,
+      "preferred_background": ["网络安全", "security", "计算机", "computer", "信息", "information"]
+    },
+    "ntu-msds": {
+      "ielts_total_min": 6.5, "ielts_subtest_min": null, "toefl_min": 100,
+      "language_note": "NTU 官网原文 TOEFL iBT ≥ 100 或 IELTS ≥ 6.5（或 MOI 英语授课证明）",
+      "gpa_reference": null, "gpa_reference_scale": null,
+      "preferred_background": ["数据", "data", "统计", "statistic", "计算机", "computer", "数学"]
+    },
+    "ntu-msis": {
+      "ielts_total_min": 6.5, "ielts_subtest_min": 6.0, "toefl_min": 100,
+      "language_note": "NTU 官网原文 IELTS (Academic) 6.5 且 The IELTS sub-scores should not be less than 6.0；TOEFL iBT 100",
+      "gpa_reference": null, "gpa_reference_scale": null,
+      "preferred_background": ["信息", "information", "系统", "system", "计算机", "computer", "管理"]
+    },
+    "nus-mcomp-ai": {
+      "ielts_total_min": 6.0, "ielts_subtest_min": null, "toefl_min": 90,
+      "language_note": "NUS 官网原文 TOEFL iBT 90 或 IELTS 6.0（仅非英语授课背景者需提交）",
+      "gpa_reference": null, "gpa_reference_scale": null,
+      "preferred_background": ["人工智能", "AI", "计算机", "computer", "机器学习", "machine learning"]
+    },
+    "nus-mcomp-general-track": {
+      "ielts_total_min": 6.0, "ielts_subtest_min": null, "toefl_min": 90,
+      "language_note": "NUS 官网原文 TOEFL iBT 90 或 IELTS 6.0（仅非英语授课背景者需提交）",
+      "gpa_reference": null, "gpa_reference_scale": null,
+      "preferred_background": ["计算机", "computer", "软件", "software", "信息"]
+    },
+    "nus-mcomp-specialisations": {
+      "ielts_total_min": 6.0, "ielts_subtest_min": null, "toefl_min": 90,
+      "language_note": "NUS 官网原文 TOEFL iBT 90 或 IELTS 6.0（仅非英语授课背景者需提交）",
+      "gpa_reference": null, "gpa_reference_scale": null,
+      "preferred_background": ["计算机", "computer", "软件", "software", "数据", "data"]
+    },
+    "nus-msba": {
+      "ielts_total_min": null, "ielts_subtest_min": null, "toefl_min": null,
+      "language_note": "NUS 官网明确 AY2027/28 无需提交 IELTS/TOEFL 等语言成绩",
+      "gpa_reference": null, "gpa_reference_scale": null,
+      "preferred_background": ["商业分析", "business", "管理", "management", "数据", "data"]
+    },
+    "nus-msc-dfintech": {
+      "ielts_total_min": 6.0, "ielts_subtest_min": null, "toefl_min": 90,
+      "language_note": "NUS 官网原文 TOEFL iBT 90 或 IELTS 6.0（仅非英语授课背景者需提交）",
+      "gpa_reference": null, "gpa_reference_scale": null,
+      "preferred_background": ["金融", "finance", "计算机", "computer", "数据", "data"]
+    },
+    "nus-msc-dsml": {
+      "ielts_total_min": 6.0, "ielts_subtest_min": null, "toefl_min": 85,
+      "language_note": "NUS 官网原文 TOEFL 最低 85（2026-01-21 前考试口径）或 IELTS 最低 6.0（仅非英语授课背景者需提交）",
+      "gpa_reference": null, "gpa_reference_scale": null,
+      "preferred_background": ["数据", "data", "机器学习", "machine learning", "统计", "statistic", "计算机"]
+    }
+  }
+}
