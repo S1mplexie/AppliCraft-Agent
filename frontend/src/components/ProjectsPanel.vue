@@ -17,8 +17,14 @@ const loading = ref(false)
 const detailId = ref('')
 const modal = ref<'import' | 'create' | null>(null)
 const importSearch = ref('')
+const importRegion = ref<'all' | 'HK' | 'SG'>('all')
 const importChecked = ref<string[]>([])
 const importing = ref(false)
+const regionFilters = [
+  { key: 'all', label: '全部' },
+  { key: 'HK', label: '香港' },
+  { key: 'SG', label: '新加坡' },
+] as const
 const form = ref({ name: '', university: '', program: '', degree_type: '', region: '', intake: '', notes: '' })
 const editingName = ref(false)
 const nameDraft = ref('')
@@ -27,16 +33,77 @@ const detail = computed(() => projects.value.find(p => p.id === detailId.value) 
 const profileDocs = computed(() => props.documents.filter(d => d.profile_id === props.profileId))
 const projectDocs = computed(() => profileDocs.value.filter(d => d.project_id === detailId.value))
 const ungroupedDocs = computed(() => profileDocs.value.filter(d => !d.project_id))
-const groupedSchools = computed(() => {
+const importedIds = computed(() => new Set(
+  projects.value.filter(p => p.source === 'imported' && p.system_program_id).map(p => p.system_program_id),
+))
+const regionCounts = computed(() => ({
+  all: props.systemPrograms.length,
+  HK: props.systemPrograms.filter(p => p.region === 'HK').length,
+  SG: props.systemPrograms.filter(p => p.region === 'SG').length,
+}))
+const matchedPrograms = computed(() => {
   const kw = importSearch.value.trim().toLowerCase()
+  return props.systemPrograms.filter(p => {
+    if (importRegion.value !== 'all' && p.region !== importRegion.value) return false
+    if (!kw) return true
+    return `${p.school_name_zh}${p.school_id}${p.program_name_zh}${p.program_name_en}${p.faculty}`
+      .toLowerCase().includes(kw)
+  })
+})
+const groupedSchools = computed(() => {
   const map = new Map<string, SystemProgram[]>()
-  for (const p of props.systemPrograms) {
-    if (kw && !(`${p.school_name_zh}${p.program_name_zh}${p.program_name_en}`.toLowerCase().includes(kw))) continue
+  for (const p of matchedPrograms.value) {
     const list = map.get(p.school_name_zh) || []
     list.push(p)
     map.set(p.school_name_zh, list)
   }
   return [...map.entries()]
+})
+const selectableVisible = computed(() => matchedPrograms.value.filter(p => !importedIds.value.has(p.program_id)))
+const checkedPrograms = computed(() => importChecked.value
+  .map(id => props.systemPrograms.find(p => p.program_id === id))
+  .filter((p): p is SystemProgram => !!p))
+const allVisibleSelected = computed(() => selectableVisible.value.length > 0
+  && selectableVisible.value.every(p => importChecked.value.includes(p.program_id)))
+
+function cleanProgramName(name: string) {
+  return name.replace(/[（(]非官方译名[）)]/g, '').trim()
+}
+function shortFaculty(s: string) {
+  if (!s) return ''
+  return s.length > 28 ? `${s.slice(0, 28)}…` : s
+}
+function shortIntake(s: string) {
+  if (!s) return '入学季待核实'
+  const first = s.split(/[（(；;，,]/)[0].trim()
+  return first.length > 18 ? `${first.slice(0, 18)}…` : first
+}
+function regionLabel(r: string) {
+  return r === 'HK' ? '香港' : r === 'SG' ? '新加坡' : r || '其他'
+}
+function isChecked(pid: string) { return importChecked.value.includes(pid) }
+function isImported(pid: string) { return importedIds.value.has(pid) }
+function toggleProgram(p: SystemProgram) {
+  if (isImported(p.program_id)) return
+  importChecked.value = isChecked(p.program_id)
+    ? importChecked.value.filter(id => id !== p.program_id)
+    : [...importChecked.value, p.program_id]
+}
+function removeChecked(pid: string) {
+  importChecked.value = importChecked.value.filter(id => id !== pid)
+}
+function toggleAllVisible() {
+  const ids = selectableVisible.value.map(p => p.program_id)
+  importChecked.value = allVisibleSelected.value
+    ? importChecked.value.filter(id => !ids.includes(id))
+    : [...new Set([...importChecked.value, ...ids])]
+}
+// 每次打开导入弹窗都从干净状态开始（搜索词 / 地区筛选 / 勾选）。
+watch(modal, m => {
+  if (m !== 'import') return
+  importSearch.value = ''
+  importRegion.value = 'all'
+  importChecked.value = []
 })
 
 const docTypeShort: Record<string, string> = { cv: 'CV', ps: 'PS', recommendation: '推荐信' }
@@ -81,6 +148,7 @@ async function importCheckedPrograms() {
   importing.value = true
   try {
     for (const pid of importChecked.value) {
+      if (importedIds.value.has(pid)) continue
       const program = props.systemPrograms.find(p => p.program_id === pid)
       if (!program) continue
       await api.createProject(props.profileId, {
@@ -275,29 +343,97 @@ function sourceLabel(p: ApplicationProject) { return p.source === 'imported' ? '
       </template>
     </template>
 
-    <!-- 导入弹窗 -->
+    <!-- 导入弹窗：按学校分组的项目卡片，支持搜索 / 地区筛选 / 批量勾选 -->
     <div v-if="modal === 'import'" class="modal-mask" @click.self="modal = null">
-      <div class="modal proj-modal">
-        <div class="modal-head">
-          <h2>从知识库导入项目</h2>
-          <button class="btn small" @click="modal = null">关闭</button>
+      <div class="modal imp-modal" role="dialog" aria-modal="true" aria-label="从知识库导入项目">
+        <div class="imp-head">
+          <div>
+            <span class="imp-eyebrow">知识库 · 官方项目</span>
+            <h2>从知识库导入项目</h2>
+            <p>按学校与地区浏览已收录的官方项目资料，勾选后批量加入申请清单。</p>
+          </div>
+          <button class="imp-close" aria-label="关闭" @click="modal = null">×</button>
         </div>
-        <input v-model="importSearch" class="proj-search" placeholder="搜索学校或专业…" />
-        <div class="proj-import-list">
-          <p v-if="!groupedSchools.length" class="hint">没有匹配的项目。</p>
-          <div v-for="[school, programs] in groupedSchools" :key="school" class="proj-import-school">
-            <h3>{{ school }}</h3>
-            <label v-for="p in programs" :key="p.program_id" class="proj-import-item">
-              <input
-                type="checkbox" :value="p.program_id"
-                v-model="importChecked"
-              />
-              <span>{{ p.program_name_zh }}（{{ p.program_name_en }}）</span>
-            </label>
+
+        <div class="imp-toolbar">
+          <div class="imp-search">
+            <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5" /><path d="M12.6 12.6 17 17" /></svg>
+            <input v-model="importSearch" placeholder="搜索学校 / 专业中英文名…" aria-label="搜索项目" />
+            <button v-if="importSearch" class="imp-search-clear" aria-label="清空搜索" @click="importSearch = ''">×</button>
+          </div>
+          <div class="imp-filters">
+            <button
+              v-for="f in regionFilters" :key="f.key"
+              class="imp-filter" :class="{ on: importRegion === f.key }"
+              @click="importRegion = f.key"
+            >{{ f.label }} <em>{{ regionCounts[f.key] }}</em></button>
           </div>
         </div>
-        <div class="modal-foot">
-          <span class="hint">已选 {{ importChecked.length }} 个项目</span>
+
+        <div class="imp-status">
+          <span>
+            共 {{ matchedPrograms.length }} 个项目 · {{ groupedSchools.length }} 所学校<span v-if="importedIds.size"> · 已导入 {{ importedIds.size }} 个</span>
+          </span>
+          <span class="imp-status-actions">
+            <button class="link" :disabled="!selectableVisible.length" @click="toggleAllVisible">
+              {{ allVisibleSelected ? '取消全选' : '全选当前结果' }}
+            </button>
+            <button class="link" :disabled="!importChecked.length" @click="importChecked = []">清空</button>
+          </span>
+        </div>
+
+        <div class="imp-body">
+          <div v-if="!groupedSchools.length" class="imp-empty">
+            <span class="imp-empty-mark">⌕</span>
+            <strong>没有匹配的项目</strong>
+            <span class="hint">换个关键词，或切换地区筛选试试。</span>
+          </div>
+          <div v-for="[school, programs] in groupedSchools" :key="school" class="imp-school">
+            <div class="imp-school-head">
+              <h3>{{ school }}</h3>
+              <span class="imp-school-count">{{ programs.length }} 个项目</span>
+              <span class="imp-school-line"></span>
+            </div>
+            <div class="imp-grid">
+              <label
+                v-for="p in programs" :key="p.program_id" class="imp-card"
+                :class="{ on: isChecked(p.program_id), done: isImported(p.program_id) }"
+              >
+                <input
+                  class="imp-native" type="checkbox" :checked="isChecked(p.program_id)"
+                  :disabled="isImported(p.program_id)" @change="toggleProgram(p)"
+                />
+                <span class="imp-check" aria-hidden="true"></span>
+                <span class="imp-card-zh">{{ cleanProgramName(p.program_name_zh) || p.program_name_en }}</span>
+                <span class="imp-card-en">{{ p.program_name_en }}</span>
+                <span class="imp-card-meta">
+                  <span v-if="p.faculty">{{ shortFaculty(p.faculty) }}</span>
+                  <span>{{ shortIntake(p.intake) }}</span>
+                </span>
+                <span class="imp-card-foot">
+                  <span class="imp-region" :class="p.region === 'HK' ? 'hk' : 'sg'">{{ regionLabel(p.region) }}</span>
+                  <span class="imp-fields">{{ p.fields?.length ? `${p.fields.length} 个资料板块` : '官方资料' }}</span>
+                  <span v-if="isImported(p.program_id)" class="imp-done-tag">已导入</span>
+                </span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="imp-foot">
+          <div class="imp-foot-left">
+            <template v-if="checkedPrograms.length">
+              <span class="imp-foot-label">已选 {{ checkedPrograms.length }} 个项目</span>
+              <div class="imp-chips">
+                <span v-for="p in checkedPrograms.slice(0, 3)" :key="p.program_id" class="imp-chip">
+                  <span class="imp-chip-text">{{ cleanProgramName(p.program_name_zh) }}</span>
+                  <button aria-label="移除该项目" @click="removeChecked(p.program_id)">×</button>
+                </span>
+                <span v-if="checkedPrograms.length > 3" class="imp-chip more">+{{ checkedPrograms.length - 3 }}</span>
+              </div>
+            </template>
+            <span v-else class="hint">勾选项目后可批量导入申请清单</span>
+          </div>
           <button class="btn primary" :disabled="!importChecked.length || importing" @click="importCheckedPrograms">
             {{ importing ? '导入中…' : '导入选中项目' }}
           </button>
