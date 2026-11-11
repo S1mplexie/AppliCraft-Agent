@@ -155,6 +155,9 @@ h1, h2, h3, .serif { font-family: var(--serif); }
 .btn.primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); color: #fff; }
 .btn.primary:disabled { background: #a9b6c8; border-color: #a9b6c8; color: #fff; cursor: not-allowed; }
 .btn:disabled { cursor: not-allowed; opacity: .6; }
+/* 鼠标点击不画焦点框（浏览器默认淡蓝色矩形很突兀），键盘 Tab 导航仍保留可见焦点环。 */
+button:focus { outline: none; }
+button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .btn.ghost { background: transparent; border-style: dashed; color: var(--muted); }
 .btn.ghost:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
 .btn.small { padding: 5px 11px; font-size: 11.5px; }
@@ -937,6 +940,8 @@ select { appearance: auto; cursor: pointer; }
   .match-summary, .match-snapshot { grid-template-columns: 1fr 1fr; }
 }
 /* ---- 项目管理（ProjectsPanel）---- */
+/* 详情页标题一行大字 vs 按钮一行：垂直居中，覆盖全局 page-head 底部对齐的错位观感。 */
+.projects-page .page-head { align-items: center; }
 .proj-toolbar { margin-top: 12px; }
 .proj-actions { display: flex; align-items: center; gap: 8px; margin: 10px 0 14px; flex-wrap: wrap; }
 .proj-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; margin-top: 14px; }
