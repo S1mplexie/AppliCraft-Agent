@@ -881,6 +881,16 @@ select { appearance: auto; cursor: pointer; }
 .ms-v { font-size: 15px; font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; }
 .match-snapshot-card .watermark { line-height: 1.6; }
 
+/* ---- 选校评估偏好表单（MatchPanel）---- */
+.pref-block {
+  display: flex; flex-direction: column; gap: 12px;
+  margin: 14px 0 12px; padding: 12px 14px 10px;
+  border: 1px dashed var(--line-strong); border-radius: 9px; background: var(--surface-2);
+}
+.pref-checks { display: flex; gap: 18px; }
+.pref-check { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; cursor: pointer; }
+.pref-check input { accent-color: var(--accent); width: 15px; height: 15px; }
+
 /* 各档分区：配色头部 + 淡色背景，强区隔 */
 .tier-section { margin-top: 16px; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--surface); }
 .tier-section-head { display: flex; align-items: center; gap: 10px; padding: 9px 14px; border-bottom: 1px solid var(--line); }
