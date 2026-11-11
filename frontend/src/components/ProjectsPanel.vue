@@ -133,6 +133,19 @@ function docStatusClass(doc: DocumentMeta) {
   if (doc.issue_count > 0) return 'bad'
   return 'idle'
 }
+const detailSubtitle = computed(() => {
+  const d = detail.value
+  if (!d) return ''
+  return [d.university, d.program, d.intake].filter(Boolean).join(' · ') || '尚未填写学校、专业与入学季'
+})
+const verifiedCount = computed(() => projectDocs.value.filter(d => d.passed_verification).length)
+const issueDocCount = computed(() => projectDocs.value.filter(d => !d.passed_verification && d.issue_count > 0).length)
+const verifyProgress = computed(() => projectDocs.value.length
+  ? Math.round(verifiedCount.value / projectDocs.value.length * 100) : 0)
+const officialLinks = computed(() => (detail.value?.official_urls || []).map(u => {
+  try { return { href: u, label: new URL(u).hostname.replace(/^www\./, '') } }
+  catch { return { href: u, label: u } }
+}))
 
 async function loadProjects() {
   if (!props.profileId) { projects.value = []; return }
@@ -210,68 +223,119 @@ function sourceLabel(p: ApplicationProject) { return p.source === 'imported' ? '
   <div class="page projects-page">
     <!-- 项目详情 -->
     <template v-if="detail">
-      <div class="page-head">
-        <div>
+      <div class="pd-crumb">
+        <button class="link" @click="detailId = ''">← 返回项目列表</button>
+        <span class="pd-crumb-sep">/</span>
+        <span class="pd-crumb-cur">{{ detail.name }}</span>
+      </div>
+
+      <div class="pd-head">
+        <div class="pd-head-main">
+          <span class="pd-eyebrow">申请项目 · {{ sourceLabel(detail) }}</span>
           <template v-if="editingName">
-            <input v-model="nameDraft" class="proj-name-input" @keyup.enter="renameProject" />
+            <div class="pd-rename">
+              <input v-model="nameDraft" class="proj-name-input" @keyup.enter="renameProject" />
+              <button class="btn small primary" @click="renameProject">保存</button>
+              <button class="btn small" @click="editingName = false">取消</button>
+            </div>
           </template>
-          <h1 v-else>
-            {{ detail.name }}
-            <span class="proj-badge" :class="detail.source">{{ sourceLabel(detail) }}</span>
-          </h1>
+          <h1 v-else>{{ detail.name }}</h1>
+          <p class="pd-sub">{{ detailSubtitle }}</p>
         </div>
-        <div class="head-actions">
-          <button class="btn" @click="detailId = ''">← 返回列表</button>
-          <template v-if="editingName">
-            <button class="btn primary" @click="renameProject">保存</button>
-            <button class="btn" @click="editingName = false">取消</button>
-          </template>
-          <template v-else>
-            <button class="btn" @click="emit('go', 'generate')">生成新文书</button>
-            <button class="btn" @click="startRename">改名</button>
-            <button class="btn" @click="removeProject">删除项目</button>
-          </template>
+        <div v-if="!editingName" class="head-actions">
+          <button class="btn primary" @click="emit('go', 'generate')">生成新文书</button>
+          <button class="btn" @click="startRename">改名</button>
+          <button class="btn btn-ghost danger-ghost" @click="removeProject">删除项目</button>
         </div>
       </div>
 
-      <div class="proj-info">
-        <div class="proj-info-grid">
-          <div class="ms-item"><span class="ms-k">学校</span><span class="ms-v">{{ detail.university || '—' }}</span></div>
-          <div class="ms-item"><span class="ms-k">专业</span><span class="ms-v">{{ detail.program || '—' }}</span></div>
-          <div class="ms-item"><span class="ms-k">学位</span><span class="ms-v">{{ detail.degree_type || '—' }}</span></div>
-          <div class="ms-item"><span class="ms-k">地区</span><span class="ms-v">{{ detail.region || '—' }}</span></div>
-          <div class="ms-item"><span class="ms-k">入学季</span><span class="ms-v">{{ detail.intake || '—' }}</span></div>
-          <div class="ms-item"><span class="ms-k">文书数</span><span class="ms-v">{{ projectDocs.length }}</span></div>
+      <!-- 准备概览：已归入 / 已校验 / 待核 + 核验通过率 -->
+      <div class="pd-stats">
+        <div class="pd-stat"><span class="pd-stat-num">{{ projectDocs.length }}</span><span class="pd-stat-lab">已归入文书</span></div>
+        <div class="pd-stat"><span class="pd-stat-num ok">{{ verifiedCount }}</span><span class="pd-stat-lab">事实校验通过</span></div>
+        <div class="pd-stat" :class="{ warn: issueDocCount > 0 }">
+          <span class="pd-stat-num">{{ issueDocCount }}</span><span class="pd-stat-lab">存在待核问题</span>
         </div>
-        <p v-if="detail.notes" class="hint">{{ detail.notes }}</p>
-        <p v-if="detail.official_urls?.length" class="hint">
-          官方页面：<a v-for="u in detail.official_urls" :key="u" :href="u" target="_blank" rel="noopener" class="proj-link">{{ u }}</a>
-        </p>
+        <div class="pd-progress">
+          <div class="pd-progress-top"><span>核验通过率</span><b>{{ verifyProgress }}%</b></div>
+          <div class="progress-track"><div class="progress-fill" :class="{ done: verifyProgress === 100 }" :style="{ width: `${verifyProgress}%` }"></div></div>
+          <span class="hint">按已归入文书的校验结果计算</span>
+        </div>
       </div>
 
-      <section class="proj-docs">
-        <h2>本项目文书</h2>
-        <p v-if="!projectDocs.length" class="hint">还没有归入该项目的文书。点击「生成新文书」，或从下方未分组文书中归组。</p>
-        <ul v-else class="proj-doc-list">
-          <li v-for="doc in projectDocs" :key="doc.id" class="proj-doc-row">
+      <!-- 项目档案卡 -->
+      <div class="pd-info">
+        <div class="pd-info-head">
+          <span class="pd-eyebrow">项目档案</span>
+          <span class="proj-badge" :class="detail.source">{{ sourceLabel(detail) }}</span>
+        </div>
+        <div class="pd-facts">
+          <div class="pd-fact"><span>学校</span><b>{{ detail.university || '未填写' }}</b></div>
+          <div class="pd-fact"><span>专业</span><b>{{ detail.program || '未填写' }}</b></div>
+          <div class="pd-fact"><span>学位</span><b>{{ detail.degree_type || '未填写' }}</b></div>
+          <div class="pd-fact"><span>地区</span><b>{{ detail.region || '未填写' }}</b></div>
+          <div class="pd-fact"><span>入学季</span><b>{{ detail.intake || '未填写' }}</b></div>
+          <div class="pd-fact"><span>文书数</span><b>{{ projectDocs.length }} 篇</b></div>
+        </div>
+        <div v-if="detail.notes" class="pd-note">
+          <span class="pd-note-label">备注</span>
+          <p>{{ detail.notes }}</p>
+        </div>
+        <div v-if="officialLinks.length" class="pd-links">
+          <span class="pd-note-label">官方页面</span>
+          <a v-for="l in officialLinks" :key="l.href" :href="l.href" :title="l.href" target="_blank" rel="noopener" class="pd-link">
+            {{ l.label }} <span aria-hidden="true">↗</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- 已归入文书 -->
+      <section class="pd-section">
+        <div class="pd-section-head">
+          <span class="pd-section-bar"></span>
+          <div class="pd-section-text">
+            <h2>本项目文书 <span class="pd-count">{{ projectDocs.length }}</span></h2>
+            <p>已归入该申请项目的 CV、PS 与推荐信。</p>
+          </div>
+          <button class="btn small" @click="emit('go', 'generate')">生成新文书</button>
+        </div>
+        <div v-if="!projectDocs.length" class="pd-empty">
+          <strong>还没有归入该项目的文书</strong>
+          <span class="hint">生成新文书，或从下方未分组文书中归组。</span>
+        </div>
+        <ul v-else class="pd-doc-list">
+          <li v-for="doc in projectDocs" :key="doc.id" class="pd-doc-row">
             <span class="tag" :class="doc.doc_type">{{ doc.doc_type_label }}</span>
-            <button class="proj-doc-title" @click="emit('go', 'documents')">{{ doc.title }}</button>
+            <div class="pd-doc-main">
+              <button class="pd-doc-title" @click="emit('go', 'documents')">{{ doc.title }}</button>
+              <span class="pd-doc-meta">{{ doc.word_count }} 词 · 更新于 {{ doc.updated_at.slice(0, 10) }}</span>
+            </div>
             <span class="doc-status" :class="docStatusClass(doc)">{{ docStatusText(doc) }}</span>
-            <span class="proj-doc-meta">{{ doc.word_count }} 词 · {{ doc.updated_at.slice(0, 10) }}</span>
             <button class="btn small" @click="unassign(doc.id)">移出</button>
           </li>
         </ul>
       </section>
 
-      <section class="proj-docs">
-        <h2>可归入本项目（未分组）的文书</h2>
-        <p v-if="!ungroupedDocs.length" class="hint">当前档案没有未分组文书。</p>
-        <ul v-else class="proj-doc-list">
-          <li v-for="doc in ungroupedDocs" :key="doc.id" class="proj-doc-row">
+      <!-- 可归入的未分组文书 -->
+      <section class="pd-section candidate">
+        <div class="pd-section-head">
+          <span class="pd-section-bar"></span>
+          <div class="pd-section-text">
+            <h2>可归入本项目 <span class="pd-count">{{ ungroupedDocs.length }}</span></h2>
+            <p>尚未归入任何项目的文书，选合适的归入当前申请。</p>
+          </div>
+        </div>
+        <div v-if="!ungroupedDocs.length" class="pd-empty slim">
+          <span class="hint">当前档案没有未分组文书，所有文书都已归入项目。</span>
+        </div>
+        <ul v-else class="pd-doc-list">
+          <li v-for="doc in ungroupedDocs" :key="doc.id" class="pd-doc-row">
             <span class="tag" :class="doc.doc_type">{{ doc.doc_type_label }}</span>
-            <button class="proj-doc-title" @click="emit('go', 'documents')">{{ doc.title }}</button>
+            <div class="pd-doc-main">
+              <button class="pd-doc-title" @click="emit('go', 'documents')">{{ doc.title }}</button>
+              <span class="pd-doc-meta">{{ doc.word_count }} 词 · 更新于 {{ doc.updated_at.slice(0, 10) }}</span>
+            </div>
             <span class="doc-status" :class="docStatusClass(doc)">{{ docStatusText(doc) }}</span>
-            <span class="proj-doc-meta">{{ doc.word_count }} 词 · {{ doc.updated_at.slice(0, 10) }}</span>
             <button class="btn small primary" @click="assign(doc.id)">归入本项目</button>
           </li>
         </ul>
