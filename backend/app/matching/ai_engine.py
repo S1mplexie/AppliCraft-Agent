@@ -35,10 +35,14 @@ _SYSTEM_PROMPT = """你是一位资深的香港与新加坡授课型 / 研究型
 2. 在满足硬性门槛的前提下，综合 GPA / 均分、专业与课程匹配度、科研 / 实习 / 项目经历、院校背景等给出 reach / match / safety 判断。
 3. reasons 给出 2-3 条简明判断依据；gaps 列出申请人相对该项目的主要短板或需补强项（没有则为空数组）。
 4. 只使用给定信息，不要编造项目未提供的官方数据。若信息不足，宁可保守（偏向 reach / match）。
+5. 若输入包含 "preferences"（申请人的择校与项目偏好，均为可选）：
+   - priority_regions 是优先地区（如 ["SG"] 优先新加坡、"HK" 优先香港）：符合偏好地区的项目，在 reasons 中明确呼应（例如「符合优先新加坡的择校偏好」），并在同级评估中给予倾向；
+   - preferred_fields 是优先的专业方向关键词：与项目名称 / 培养方向吻合时，在 reasons 中呼应（例如「项目方向符合优先计算机相关专业的偏好」）；
+   - 偏好不改变硬性门槛判定（语言未达标仍是 "gap"），只影响 reach / match / safety 之间的倾向与理由侧重。
 
 输出要求：只返回一个 JSON 数组，不要任何解释文字、不要使用代码块。数组每个元素形如：
 {"program_id": "项目id", "tier": "gap|reach|match|safety", "reasons": ["依据1", "依据2"], "gaps": ["短板1"]}
-必须覆盖输入 programs 中的所有 program_id。"""
+reasons 每条不超过 30 字、gaps 尽量精简，紧凑输出；必须覆盖输入 programs 中的全部 program_id（共 30 个），不可遗漏任何一项。"""
 
 
 def _first_number(text: Any) -> float | None:
@@ -133,20 +137,27 @@ async def ai_evaluate_profile(
     requirements: dict[str, Any],
     index_data: dict[str, Any],
     llm: LLMClient,
+    preferences: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """调用 LLM 评估全部候选项目的适配等级，返回与前端契约一致的结构。
 
+    preferences 为可选的择校 / 项目偏好（priority_regions / preferred_fields），
+    非空时会进入提示词，让模型在 reasons 中呼应偏好；为空时行为与既往一致。
     失败时抛出 LLMCallError（模型调用失败 / 未返回合规 JSON），由路由层转成 HTTP 错误。
     """
     summary = _profile_summary(profile)
     programs = _programs_payload(requirements, index_data)
-    user_content = _json_dumps({"profile": summary, "programs": programs})
+    payload_obj: dict[str, Any] = {"profile": summary, "programs": programs}
+    cleaned = {k: v for k, v in (preferences or {}).items() if v}
+    if cleaned:
+        payload_obj["preferences"] = cleaned
+    user_content = _json_dumps(payload_obj)
 
     data = await llm.complete_json(
         task="选校评估",
         system=_SYSTEM_PROMPT,
         user=user_content,
-        max_tokens=4096,
+        max_tokens=8192,
         temperature=0.2,
     )
     if not isinstance(data, list):
@@ -195,6 +206,7 @@ async def ai_evaluate_profile(
         "profile_snapshot": _snapshot(profile),
         "tier_order": _TIER_ORDER,
         "tier_labels": _TIER_LABELS,
+        "preferences_applied": bool(cleaned),
     }
 
 

@@ -7,7 +7,8 @@ doc_type='match'，与生成共用每日配额池）；管理员与自有 Key �
 """
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Body, Depends, HTTPException
+from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
 from app.api.deps import (
@@ -30,6 +31,19 @@ from app.storage.filestore import FileStore
 router = APIRouter(prefix="/match", tags=["match"])
 
 
+class MatchPreferences(BaseModel):
+    """选校评估的可选偏好：优先地区与优先专业方向关键词；留空则对所有项目一视同仁。"""
+
+    priority_regions: list[str] = Field(default_factory=list)
+    preferred_fields: list[str] = Field(default_factory=list)
+
+
+class MatchRequest(BaseModel):
+    """选校评估请求体：preferences 可缺省（留空则对所有项目一视同仁）。"""
+
+    preferences: MatchPreferences | None = None
+
+
 @router.post("/{profile_id}")
 async def match_profile(
     profile_id: str,
@@ -38,6 +52,7 @@ async def match_profile(
     user: User = Depends(get_current_user),
     settings: Settings = Depends(get_settings),
     llm: LLMClient = Depends(get_llm),
+    payload: MatchRequest | None = Body(default=None),
 ):
     profile = store.get_profile(profile_id)
     if not profile:
@@ -49,7 +64,10 @@ async def match_profile(
     # 本地部署版（standalone）：单用户、用自己的 Key，不存在免费额度与计费，直接评估。
     # 未配置 Key 时 get_llm 会抛 LLMNotConfiguredError，由全局异常处理器转成 400。
     if settings.standalone:
-        result = await ai_evaluate_profile(profile, requirements, index_data, llm)
+        result = await ai_evaluate_profile(
+            profile, requirements, index_data, llm,
+            preferences=payload.preferences.model_dump() if payload and payload.preferences else None,
+        )
         return {**result, "billing_source": "personal", "quota": None}
 
     source = billing_source(user, settings, personal_key=has_personal_key(db, user.id, settings))
@@ -66,7 +84,10 @@ async def match_profile(
 
     # 评估失败（模型调用失败 / 返回不合规）不计入配额，转成 502 让前端清晰展示。
     try:
-        result = await ai_evaluate_profile(profile, requirements, index_data, llm)
+        result = await ai_evaluate_profile(
+            profile, requirements, index_data, llm,
+            preferences=payload.preferences.model_dump() if payload and payload.preferences else None,
+        )
     except LLMCallError as exc:
         raise HTTPException(status_code=502, detail=str(exc)) from exc
 

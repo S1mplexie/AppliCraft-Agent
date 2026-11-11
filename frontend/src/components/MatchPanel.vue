@@ -2,7 +2,7 @@
 import { computed, ref, watch } from 'vue'
 import { api } from '../api/client'
 import { uid } from '../types'
-import type { ApplicantProfile, MatchItem, MatchResult } from '../types'
+import type { ApplicantProfile, MatchItem, MatchPreferences, MatchResult } from '../types'
 
 const props = defineProps<{ profileId: string; profile: ApplicantProfile; standalone?: boolean; llmConfigured?: boolean }>()
 const emit = defineEmits<{ toast: [message: string]; quotaChanged: [] }>()
@@ -17,6 +17,26 @@ const loadError = ref('')
 const result = ref<MatchResult | null>(null)
 const addedIds = ref<Set<string>>(new Set())
 
+// 择校 / 项目偏好（可选）：优先地区与优先专业方向；localStorage 记忆，跨会话保持。
+const prefs = ref<MatchPreferences>({ priority_regions: [], preferred_fields: [] })
+const fieldInput = ref('')
+const PREFS_KEY = 'applicraft.match_preferences'
+
+try {
+  const saved = JSON.parse(localStorage.getItem(PREFS_KEY) || 'null') as MatchPreferences | null
+  if (saved?.priority_regions?.length || saved?.preferred_fields?.length) prefs.value = saved
+} catch { /* 损坏忽略 */ }
+watch(prefs, () => localStorage.setItem(PREFS_KEY, JSON.stringify(prefs.value)), { deep: true })
+
+function addField() {
+  const v = fieldInput.value.trim()
+  if (v && !prefs.value.preferred_fields.includes(v)) prefs.value.preferred_fields.push(v)
+  fieldInput.value = ''
+}
+function removeField(v: string) {
+  prefs.value.preferred_fields = prefs.value.preferred_fields.filter(x => x !== v)
+}
+
 watch(() => props.profileId, () => {
   state.value = 'idle'
   result.value = null
@@ -28,7 +48,7 @@ async function runMatch() {
   state.value = 'loading'
   loadError.value = ''
   try {
-    result.value = await api.matchProfile(props.profileId)
+    result.value = await api.matchProfile(props.profileId, prefs.value)
     state.value = 'done'
     addedIds.value = new Set()
     emit('quotaChanged')
@@ -133,6 +153,23 @@ async function addToTargets(item: MatchItem) {
           结果由 AI 结合官方要求给出，仅供参考：语言硬性门槛以官方要求为准，提交申请前请以官网最新信息为准。
         </template>
       </p>
+      <div class="pref-block">
+        <div class="field">
+          <span>择校偏好：优先地区（可选）</span>
+          <div class="pref-checks">
+            <label class="pref-check"><input type="checkbox" value="HK" v-model="prefs.priority_regions" /> 优先香港</label>
+            <label class="pref-check"><input type="checkbox" value="SG" v-model="prefs.priority_regions" /> 优先新加坡</label>
+          </div>
+        </div>
+        <div class="field">
+          <span>项目偏好：优先专业方向（可选，回车添加）</span>
+          <input v-model="fieldInput" placeholder="例如：计算机、人工智能、金融科技" @keydown.enter.prevent="addField" />
+          <div v-if="prefs.preferred_fields.length" class="tag-row">
+            <span v-for="f in prefs.preferred_fields" :key="f" class="tag removable" @click="removeField(f)">{{ f }} ×</span>
+          </div>
+        </div>
+        <p class="hint">偏好会让大模型在评估理由中呼应你的倾向；留空则对所有项目一视同仁。</p>
+      </div>
       <button class="btn primary" :disabled="state === 'loading' || !llmReady" @click="runMatch">开始评估</button>
     </div>
 

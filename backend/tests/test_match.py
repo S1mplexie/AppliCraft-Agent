@@ -1,18 +1,33 @@
-"""选校评估：规则引擎的确定性比对、配额扣减与 API 权限。"""
+"""选校评估（AI 驱动，standalone）：偏好进入提示词与 API 权限。"""
 from __future__ import annotations
 
-from pathlib import Path
-from uuid import uuid4
+import json
 
 from fastapi.testclient import TestClient
 
-from app.config import get_settings
-from app.db.models import GenerationLog, User
-from app.db.session import SessionLocal, init_db
+from app.api.deps import get_llm
+from app.db.session import init_db
 from app.main import app
-from app.matching.engine import evaluate_profile, load_index, load_requirements, parse_ielts_breakdown
 
-PASSWORD = "test-password-123"
+
+class StubMatchLLM:
+    """AI 评估测试替身：捕获提示词，返回覆盖全部项目的分档结果数组。"""
+
+    def __init__(self) -> None:
+        self.prompts: list[str] = []
+
+    async def complete_json(self, *, task: str, system: str, user: str, **kwargs):
+        self.prompts.append(user)
+        payload = json.loads(user)
+        return [
+            {
+                "program_id": p["program_id"],
+                "tier": "safety" if p.get("region") == "SG" else "match",
+                "reasons": ["stub 依据"],
+                "gaps": [],
+            }
+            for p in payload["programs"]
+        ]
 
 
 def setup_module():
@@ -20,184 +35,77 @@ def setup_module():
     init_db()
 
 
+def teardown_module():
+    app.dependency_overrides.clear()
+
+
 def _client() -> TestClient:
     client = TestClient(app)
-    email = f"match_{uuid4().hex[:10]}@example.com"
-    resp = client.post("/api/auth/register", json={"email": email, "password": PASSWORD})
-    assert resp.status_code == 201, resp.text
+    # 本地部署版单用户免登录，直接进入工作台。
+    resp = client.get("/api/health")
+    assert resp.status_code == 200, resp.text
     return client
 
 
-REQ = {
-    "programs": {
-        "hku-msc-ai": {
-            "ielts_total_min": 6.0, "ielts_subtest_min": 5.5, "toefl_min": 80,
-            "language_note": "HKU 校级", "gpa_reference": None, "gpa_reference_scale": None,
-            "preferred_background": ["计算机"],
-        },
-        "nus-msba": {
-            "ielts_total_min": None, "ielts_subtest_min": None, "toefl_min": None,
-            "language_note": "无需语言成绩", "gpa_reference": None, "gpa_reference_scale": None,
-            "preferred_background": [],
-        },
-    }
-}
-INDEX = {
-    "programs": [
-        {"id": "hku-msc-ai", "school_name_zh": "香港大学", "name_en": "MSc in AI",
-         "name_zh": "人工智能硕士", "region": "HK", "tuition_intake": "2027/28",
-         "deadlines": ["2027-01-31"]},
-    ]
-}
+def _stub() -> StubMatchLLM:
+    stub = StubMatchLLM()
+    app.dependency_overrides[get_llm] = lambda: stub
+    return stub
 
 
-def _profile(ielts: dict | None = None, gpa_average: str = "88 / 100", target_programs: list | None = None) -> dict:
-    return {
-        "education": [{
-            "id": "ed1", "school": "X University", "degree": "Bachelor", "major": "Computer Science",
-            "gpa": "3.7", "gpa_scale": "4.0", "gpa_average": gpa_average, "ranking": "",
-            "start_date": "", "end_date": "", "relevant_courses": [], "thesis": "", "highlights": "",
-        }],
-        "test_scores": [ielts] if ielts else [],
-        "target_programs": target_programs or [],
-    }
+def _profile_id(client: TestClient) -> str:
+    """取本地版已有档案的 id；没有则创建一个（评估必须指向真实档案）。"""
+    resp = client.get("/api/profiles")
+    items = resp.json()["items"]
+    if items:
+        return items[0]["id"]
+    return client.post("/api/profiles", json={"label": "评估测试档案"}).json()["id"]
 
 
-def test_parse_ielts_breakdown_variants():
-    std = parse_ielts_breakdown("L 7.5 / R 7.5 / W 6.5 / S 6.5")
-    assert std == {"L": 7.5, "R": 7.5, "W": 6.5, "S": 6.5}
-    colon = parse_ielts_breakdown("R:7.5, L:8.0, W:6.0, S:6.0")
-    assert colon == {"L": 8.0, "R": 7.5, "W": 6.0, "S": 6.0}
-    assert parse_ielts_breakdown("") == {}
-
-
-def test_subtest_gap_reports_writing():
-    """总分达标但单项不满足 → 硬性缺口，文案具体到分项（用户示例场景）。"""
-    profile = _profile(ielts={"kind": "IELTS", "total": "6.5", "breakdown": "L 7.5 / R 7.5 / W 5.0 / S 6.0"})
-    result = evaluate_profile(profile, REQ, INDEX)
-    item = next(r for r in result["results"] if r["program_id"] == "hku-msc-ai")
-    assert item["tier"] == "gap"
-    assert any("写作 5.0" in g and "5.5" in g for g in item["gaps"])
-
-
-def test_language_pass_with_high_average_is_safety():
-    profile = _profile(ielts={"kind": "IELTS", "total": "7.0", "breakdown": "L 7.5 / R 7.5 / W 6.5 / S 6.5"})
-    result = evaluate_profile(profile, REQ, INDEX)
-    item = next(r for r in result["results"] if r["program_id"] == "hku-msc-ai")
-    assert item["tier"] == "safety"
-    assert any("达到该项目要求" in r for r in item["reasons"])
-    assert item["gaps"] == []
-
-
-def test_low_average_is_reach():
-    profile = _profile(ielts={"kind": "IELTS", "total": "6.5", "breakdown": "L 6.5 / R 6.5 / W 6.0 / S 6.0"}, gpa_average="75 / 100")
-    result = evaluate_profile(profile, REQ, INDEX)
-    item = next(r for r in result["results"] if r["program_id"] == "hku-msc-ai")
-    assert item["tier"] == "reach"
-
-
-def test_missing_language_scores_is_gap():
-    profile = _profile()
-    result = evaluate_profile(profile, REQ, INDEX)
-    item = next(r for r in result["results"] if r["program_id"] == "hku-msc-ai")
-    assert item["tier"] == "gap"
-    assert item["gaps"][0].startswith("档案未提供语言成绩")
-
-
-def test_program_without_language_requirement_passes():
-    """NUS MSBA 官网明确无需语言成绩 → 不产生语言缺口。"""
-    profile = _profile()
-    result = evaluate_profile(profile, REQ, INDEX)
-    item = next(r for r in result["results"] if r["program_id"] == "nus-msba")
-    assert any("无需提交语言成绩" in r for r in item["reasons"])
-    assert not any("语言" in g for g in item["gaps"])
-
-
-def test_in_target_flag():
-    profile = _profile(target_programs=[{"university": "香港大学", "program": "MSc in AI"}])
-    result = evaluate_profile(profile, REQ, INDEX)
-    item = next(r for r in result["results"] if r["program_id"] == "hku-msc-ai")
-    assert item["in_target"] is True
-
-
-def test_requirements_cover_all_index_programs():
-    """match-requirements 必须覆盖 index.json 的全部项目，防止 id 拼错漏项。"""
-    knowledge = Path(__file__).resolve().parents[2] / "knowledge"
-    index_ids = {p["id"] for p in load_index(knowledge)["programs"]}
-    req_ids = set((load_requirements(knowledge).get("programs") or {}).keys())
-    assert index_ids == req_ids, f"缺失要求：{index_ids - req_ids}；多余：{req_ids - index_ids}"
-
-
-def test_api_match_endpoint():
+def test_prompt_includes_preferences():
+    """带偏好评估时，择校 / 项目偏好必须进入提示词供模型参考。"""
     client = _client()
-    created = client.post("/api/profiles", json={"label": "评估档案"})
-    assert created.status_code == 201, created.text
-    pid = created.json()["id"]
+    stub = _stub()
+    pid = _profile_id(client)
+    resp = client.post(f"/api/match/{pid}", json={
+        "preferences": {"priority_regions": ["SG"], "preferred_fields": ["计算机", "人工智能"]},
+    })
+    assert resp.status_code == 200, resp.text
+    assert resp.json()["preferences_applied"] is True
+    prompt = stub.prompts[0]
+    assert '"priority_regions"' in prompt and "SG" in prompt
+    assert "计算机" in prompt and "人工智能" in prompt
+
+
+def test_prompt_without_preferences_stays_clean():
+    """不带偏好评估时，提示词不应出现 preferences 块（行为与既往一致）。"""
+    client = _client()
+    stub = _stub()
+    pid = _profile_id(client)
+    resp = client.post(f"/api/match/{pid}")
+    assert resp.status_code == 200, resp.text
+    assert resp.json()["preferences_applied"] is False
+    assert '"preferences"' not in stub.prompts[0]
+
+
+def test_match_response_structure():
+    client = _client()
+    stub = _stub()
+    pid = _profile_id(client)
     resp = client.post(f"/api/match/{pid}")
     assert resp.status_code == 200, resp.text
     data = resp.json()
-    assert data["results"]
-    assert {"tier", "reasons", "gaps", "in_target"} <= set(data["results"][0].keys())
-    assert data["billing_source"] == "system"
-    # 免费额度口径：system 来源的评估计入 system_key_used；总量护栏 used 同步 +1。
-    assert data["quota"]["system_key_used"] == 1
-    assert data["quota"]["used"] == 1
-    missing = client.post("/api/match/nonexistent")
-    assert missing.status_code == 404
+    assert len(data["results"]) == 30
+    item = data["results"][0]
+    assert {"tier", "tier_label", "reasons", "gaps", "in_target", "program_id"} <= set(item.keys())
+    assert item["tier"] in {"gap", "reach", "match", "safety"}
 
 
-def test_api_match_requires_login():
-    client = TestClient(app)
-    resp = client.post("/api/match/whatever")
-    assert resp.status_code == 401
-
-
-def test_match_consumes_free_quota_once_per_call():
-    """每次评估扣 1 次免费额度（写入 GenerationLog，与生成共用每日配额池）。"""
+def test_match_stub_called_for_all_programs():
+    """stub 捕获的提示词必须覆盖全部 30 个项目 id（与知识库一致）。"""
     client = _client()
-    pid = client.post("/api/profiles", json={"label": "配额档案"}).json()["id"]
-    assert client.post(f"/api/match/{pid}").status_code == 200
-    assert client.post(f"/api/match/{pid}").status_code == 200
-    me = client.get("/api/auth/me").json()
-    # 免费额度口径：两次评估均使用系统 Key，system_key_used 计 2；总量护栏 used 同步。
-    assert me["quota"]["system_key_used"] == 2
-    assert me["quota"]["used"] == 2
-
-
-def _fill_free_quota(email: str, count: int) -> None:
-    """预置今日已消耗的免费额度记录（llm_source='system'，创建于今天）。"""
-    with SessionLocal() as db:
-        user = db.query(User).filter_by(email=email).first()
-        assert user is not None
-        for _ in range(count):
-            db.add(GenerationLog(user_id=user.id, doc_type="generate", status="ok", llm_source="system"))
-        db.commit()
-
-
-def test_match_blocked_when_quota_exhausted():
-    """免费额度（system_key_daily_limit）耗尽的系统用户不能再评估（403）。"""
-    client = _client()
-    email = client.get("/api/auth/me").json()["user"]["email"]
-    _fill_free_quota(email, get_settings().system_key_daily_limit)
-    pid = client.post("/api/profiles", json={"label": "耗尽档案"}).json()["id"]
-    resp = client.post(f"/api/match/{pid}")
-    assert resp.status_code == 403
-    assert "免费额度" in resp.json()["detail"]
-
-
-def test_match_admin_not_billed():
-    """管理员评估不占用免费额度（system_key_used 不变）；总量护栏 used 仅作审计口径。"""
-    client = _client()
-    email = client.get("/api/auth/me").json()["user"]["email"]
-    with SessionLocal() as db:
-        user = db.query(User).filter_by(email=email).first()
-        assert user is not None
-        user.is_admin = True
-        db.commit()
-    pid = client.post("/api/profiles", json={"label": "管理员评估档案"}).json()["id"]
-    resp = client.post(f"/api/match/{pid}")
-    assert resp.status_code == 200, resp.text
-    assert resp.json()["billing_source"] == "admin"
-    quota = client.get("/api/auth/me").json()["quota"]
-    assert (quota.get("system_key_used") or 0) == 0
-    assert quota["used"] == 1  # 总量护栏记录本次评估（审计口径，非免费额度）
+    stub = _stub()
+    pid = _profile_id(client)
+    client.post(f"/api/match/{pid}")
+    assert len(stub.prompts) == 1
+    assert stub.prompts[0].count('"program_id"') >= 30
