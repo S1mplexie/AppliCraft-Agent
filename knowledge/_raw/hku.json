@@ -1,0 +1,785 @@
+{
+  "school_id": "HKU",
+  "school_name_zh": "香港大学",
+  "school_name_en": "The University of Hong Kong",
+  "region": "HK",
+  "snapshot_date": "2026-11-09",
+  "intake_target": "2027/28",
+  "general": {
+    "english_requirement": "HKU 全校 General Regulation G2(b) 统一要求（适用于持香港以外非英语授课/考试院校学历者）：IELTS minimum overall band of 6 with no subtest lower than 5.5；TOEFL internet-based test 80 分（2026 年 1 月 21 日前考试）或 4.5 分（2026 年 1 月 21 日起考试）；另接受 GCE / IGCSE / Cambridge Test of Proficiency in English Language Grade C 或以上。成绩须为入学年份 9 月 1 日前两年内，TOEFL iBT Home Edition 与 IELTS One Skill Retake 不接受，HKU TOEFL code 为 9671。仅 MSc(BA) 在项目页直接列出上述分数，其余 5 个项目页只引用校级要求（来源 U31/U32/U33）。",
+    "application_open": "待核实（HKU 无校级统一开放日，各项目自行开放：MDASC 与 MStat 官网写 2026 年 10 月初、MSc(CompSc) 写 2027/28 申请已开放、MSc(FTDA) 官网两页表述不一致、MSc(AI) 与 MSc(BA) 未列明确开放日）",
+    "notes": [
+      "入学季：官网 admissions.hku.hk / portal.hku.hk 已发布 2027/28 学年（Expected Programme Start Date: September 2027）招生信息，本批资料以 2027/28 为主；HKU Business School 的 MSc(BA) 官网口径为 2027 intake。旧站 www.msc-cs.hku.hk 及部分项目旧版页面仍显示 2026/27 数据，引用时须区分入学季。",
+      "学院整合：HKU 新设 School of Computing and Data Science (SCDS)，官方描述为「encompasses the existing Department of Computer Science and the Department of Statistics and Actuarial Science」，通过 cross-faculty integration 结合 computational technology、mathematical modelling 与 statistical reasoning；官网称约 60 名学者、800 名研究生、提供 14 个学术项目。MDASC、MSc(CompSc)、MSc(FTDA)、MStat 现均归 SCDS（据 portal.hku.hk 项目页 School 字段及 www4.hku.hk 2026-2027 学位规章）。",
+      "命名陷阱一：官网无「MSc in Statistics」这一名称，对应项目正式英文名为 Master of Statistics (MStat)，且现属 SCDS 而非 Faculty of Science。",
+      "命名陷阱二：数据科学项目官方名为 Master of Data Science (MDASC)，不是 MSc in Data Science / Master of Science in Data Science。",
+      "归属提示：Master of Science in Artificial Intelligence (MSc(AI)) 未整体并入 SCDS，官网写明由 Faculty of Science 的 Department of Mathematics（host，主办）与 School of Computing and Data Science 联合开设。",
+      "停办/改名核查：用户点名的 MSc in Computer Science、Master of Data Science、MSc in Artificial Intelligence、MSc in Financial Technology and Data Analytics 四个项目均真实存在、未停办。其中 MSc(FTDA) 2027/28 仍招生且未改名，但官网明确为仅 part-time 2 年制（normative，最长注册 3 年），与其他项目不同；其旧版规章曾指向 Faculty of Engineering 的 mscftda.cs.hku.hk，现已迁至 SCDS 的 mscftda.cds.hku.hk。",
+      "MSc(CompSc) 方向名称更新：2026/27 起新增 AI & Decentralized Technologies (AI x Web3) Stream，Information Security 现称 Cyber Security，Multimedia Stream 现称 Multimedia Computing；2027/28 多条申请 pathway 含 Delta X Fellowship（HKU-CDS Shanghai Teaching & Research Site，上海张江）。",
+      "校级语言要求与项目页口径：CDS / Science 项目页只写须满足 University Entrance Requirements / General Regulation G2(b)，未列 IELTS/TOEFL 具体分数；本库在 general.english_requirement 与各项目 english 字段中明确标注「项目页未单列，援引校级要求」，不把校级分数冒充项目页原文。",
+      "官网内部口径冲突已在各项目 verification.conflicts 逐条登记，主要包括：MSc(BA) 学制 1 年 vs 2 年、MSc(BA) 学费 HK$468,000 vs To be updated、MSc(AI) 学费 HK$420,000（2027/28）vs HK$390,000（2026/27）、MDASC 第 4 门必修课代码 DASC7102 vs STAT7102、MSc(FTDA) 申请开放状态两页不一致、MSc(CompSc) 旧站 2026/27 截止日期两处不一致。",
+      "弃用数字：MDASC 与 MStat 官网首页的 QS 排名、Admission Rate 等动态渲染出现 0、5%、8% 等疑似动画占位值，一律未采信、未写入本文件任何字段。",
+      "未纳入项目：Master of Science in Electronic Commerce and Internet Computing (MSc(ECom&IComp)) 同属 SCDS，因本批最多 6 个项目的名额上限未展开。",
+      "第三方来源（高途留学、Masterstudies、GlobalAdmissions、OpenOffer、港澳硕士库等）均单独标注且未采信为数据依据；本文件所有数值、日期、分数、课程名仅来自 hku.hk 官方域名。"
+    ]
+  },
+  "programs": [
+    {
+      "id": "hku-master-data-science",
+      "name_en": "Master of Data Science (MDASC)",
+      "name_zh": "数据科学硕士（非官方译名）",
+      "aliases": [
+        "MSc in Data Science（官网无此名称，官方全称为 Master of Data Science）",
+        "Master of Science in Data Science（官网无此名称）",
+        "MDASC（官网项目缩写，非另一学位名称）"
+      ],
+      "degree_type": "授课型（coursework-based）",
+      "faculty": "School of Computing and Data Science",
+      "department": "School of Computing and Data Science（官网项目页未单列系级开办单位；旧版规章曾写 Department of Statistics and Actuarial Science 与 Department of Computer Science 联合开办）",
+      "official_urls": [
+        "https://admissions.hku.hk/tpg/programme/master-data-science-1",
+        "https://mdasc.cds.hku.hk/",
+        "https://mdasc.cds.hku.hk/?p=5195",
+        "https://admissions.hku.hk/tpg/sites/default/files/R334_REGULATIONSYLLABUS_3.pdf",
+        "https://portal.hku.hk/tpg-admissions/programme-details?programme=master-of-data-science-cds"
+      ],
+      "duration_ft": "1.5 年（one and a half academic years）",
+      "duration_pt": "2.5 年（two and a half academic years）",
+      "credits": "72 credits：Core / Compulsory 24 + Disciplinary Electives 36 + Capstone Requirement 12（U3/U4）；Capstone 可为 DASC7600 Data science project 12 credits，或 DASC8088 Data science practicum 6 credits 加一门 6-credit List A/B 选修",
+      "tuition": {
+        "amount": "HK$339,000（Local）/ HK$369,000（Non-local）",
+        "intake": "2027/28（官网首页标 2027 Entrance Year，招生系统标 September 2027）",
+        "applies_to": "Local 学生 HK$339,000；Non-local 学生 HK$369,000。官网定义 non-local 为持学生签证/入境许可赴港就读者；full-time 与 part-time 学费相同（U1/U2/U5）",
+        "note": "官网注明「Fees are subject to University's approval」（U1/U5）；申请费与分期细则待核实"
+      },
+      "application": {
+        "open": "2026 年 10 月初（官网原文：Application will start in early October，U2）",
+        "deadlines": [
+          "Main Round：2026 年 12 月 1 日 12:00 noon（HK Time / GMT+8），对应 2027/28 入学（U1/U2/U5）",
+          "Clearing Round：2027 年 4 月 30 日 12:00 noon（HK Time / GMT+8），对应 2027/28 入学（U1/U2/U5）"
+        ],
+        "note": "招生系统称 Round 1 (Main) / Round 2 (Clearing)，项目官网称 Main Round / Clearing Round，日期一致；预计毕业 Full Time 为 2029 年 7 月、Part Time 为 2030 年 7 月（U1/U5）"
+      },
+      "english": "项目页未单列，援引校级要求：U1/U5 仅写「Applicants shall fulfill the University Entrance Requirements」；HKU 全校 General Regulation G2(b) 为 IELTS overall 6.0、单项不低于 5.5，TOEFL iBT 80（2026 年 1 月 21 日前考试）或 4.5（2026 年 1 月 21 日起考试）（U31/U32/U33）",
+      "admission": {
+        "background": "A Bachelor's degree or an equivalent qualification（学士学位或同等学历，U1/U5）",
+        "prerequisites": "须在 calculus and algebra、computer programming、introductory statistics 三个领域各修过至少一门大学或大专证书课程（U1/U5 原文：should have taken at least one university or post-secondary certificate course in each of these three subjects or related areas）",
+        "gre_gmat": "官网未提及（不推断为明确不要求）",
+        "work_experience": "待核实"
+      },
+      "curriculum": {
+        "structure": "72 credits：Compulsory Courses 24 + Disciplinary Electives 36（List A 至少 12、List B 至少 12）+ Capstone Requirement 12（U3/U4）",
+        "core": [
+          "COMP7404 Computational intelligence and machine learning",
+          "DASC7011 Statistical inference for data science",
+          "DASC7104 Advanced database systems",
+          "STAT7102 Advanced statistical modelling（招生系统规章 U4 写法；官网课程页 U3 写作 DASC7102 Advanced statistical modelling for data science，见 verification.conflicts）",
+          "DASC7600 Data science project（12 credits Capstone）",
+          "DASC8088 Data science practicum（6 credits Capstone 选项）"
+        ],
+        "electives": [
+          "DASC7606 Deep learning",
+          "COMP7107 Management of complex data types",
+          "COMP7305 Cluster and cloud computing",
+          "STAT7008 Programming for data science",
+          "STAT8308 Blockchain data analytics",
+          "STAT8307 Natural language processing and text analytics",
+          "COMP7409 Machine learning in trading and finance",
+          "STAT8017 Data mining techniques"
+        ],
+        "tracks": []
+      },
+      "highlights": [
+        "「The programme's interdisciplinarity promotes the applications of computer technology, operational research, statistical modelling, and simulation for problem-solving and decision-making in organisations and enterprises within the private and public sectors」（U2）",
+        "「The curriculum of the MDASC programme adopts a well-balanced and comprehensive pedagogy of both statistical and computational concepts and methodologies」（U3）",
+        "「Solid foundation in statistical and computational analyses」与「Hands-on applications of methodologies with software」（U3）",
+        "「Capstone project with real-life applications」及「Electives cover a broad range of contemporary topics about Computer Science and Statistics」（U3）",
+        "「The curriculum is designed to provide graduates with training in the principles and practice of data science」（U1/U5）"
+      ],
+      "career": [
+        "AI Engineer",
+        "Algorithm Engineer",
+        "Data Analyst",
+        "Data Scientist",
+        "Machine Learning Engineer",
+        "Senior Data Science & AI Research Assistant",
+        "Senior Technical Analyst",
+        "Software Engineer (Machine Learning)"
+      ],
+      "writing_hooks": [
+        "呼应官网「Computer Science / IT + Statistics + Domain/Business Knowledge + Machine Learning + Software Development + Research」的跨学科定位（U2），用具体项目说明自己如何打通统计与计算两条线，而非只强调单一技能。",
+        "官网称项目「ideal for those interested in acquiring analytical skills in areas ranging from statistics to computational analytics」，并明确列出 science、engineering、medical sciences、social sciences、information systems、computing and data analytics 等本科背景（U3）；跨专业申请者可据此论证原专业与数据科学的契合点。",
+        "呼应官网「Solid foundation in statistical and computational analyses」与「predictive and prescriptive concepts and methodologies」（U3），PS 宜逐项对应展示 calculus and algebra、computer programming、introductory statistics 三门先修课与量化、编程能力。",
+        "官网强调「training in the principles and practice of data science」（U1）与「Capstone project with real-life applications」（U3），适合写「理论训练 + 真实问题落地」双线动机。"
+      ],
+      "verification": {
+        "status": "partial",
+        "conflicts": [
+          "第 4 门必修课代码不一致：官网课程页 U3 写作 DASC7102 Advanced statistical modelling for data science，招生系统规章 U4 写作 STAT7102 Advanced statistical modelling。",
+          "官网首页 U2 的 QS 排名、Admission Rate 等动态渲染出现 0、5% 等疑似占位值，未采信。"
+        ],
+        "unverified": [
+          "admission.gre_gmat（官网未提及）",
+          "admission.work_experience",
+          "english（项目页未单列 IELTS/TOEFL 具体分数）",
+          "tuition.note（申请费与分期细则未在已核实页面列明）",
+          "curriculum.core 第 4 门必修课代码（见 conflicts）"
+        ]
+      },
+      "sources": [
+        {
+          "url": "https://admissions.hku.hk/tpg/programme/master-data-science-1",
+          "supports": "所属学院、学制 1.5/2.5 年、学费 339000/369000、September 2027 开学、两轮截止、先修课三领域、入学要求、培养目标"
+        },
+        {
+          "url": "https://mdasc.cds.hku.hk/",
+          "supports": "2027 Entrance Year、72 credits、学费、两轮截止、early October 开放、跨学科定位原文、就业去向清单"
+        },
+        {
+          "url": "https://mdasc.cds.hku.hk/?p=5195",
+          "supports": "课程结构 Core 24 + Electives 36 + Capstone 12、核心与选修课程原名、Programme Highlights、目标学生本科背景、写作要点依据"
+        },
+        {
+          "url": "https://admissions.hku.hk/tpg/sites/default/files/R334_REGULATIONSYLLABUS_3.pdf",
+          "supports": "官方 Regulations & Syllabuses 的必修/选修课程代码清单、Capstone 结构、课程描述、第 4 门必修代码冲突"
+        },
+        {
+          "url": "https://portal.hku.hk/tpg-admissions/programme-details?programme=master-of-data-science-cds",
+          "supports": "SCDS 学院整合官方描述、学制、学费、两轮截止、先修课、Entrance Requirements、毕业时间"
+        }
+      ]
+    },
+    {
+      "id": "hku-msc-computer-science",
+      "name_en": "Master of Science in Computer Science (MSc(CompSc))",
+      "name_zh": "计算机科学理学硕士（非官方译名）",
+      "aliases": [
+        "MSc Computer Science（第三方常见简写）",
+        "MSc in Computer Science（通用写法；官网全称为 Master of Science in Computer Science）",
+        "MSc(CompSc)（官网缩写，非另一学位名称）"
+      ],
+      "degree_type": "授课型（coursework-based）",
+      "faculty": "School of Computing and Data Science",
+      "department": "School of Computing and Data Science（官网 2027/28 项目页未单列系级单位；旧版规章曾归 Department of Computer Science / Faculty of Engineering）",
+      "official_urls": [
+        "https://master.cds.hku.hk/msccs/",
+        "https://master.cds.hku.hk/msccs/about/msc-in-computer-science-application-procedure-2027-28/",
+        "https://www.msc-cs.hku.hk/Admission/Fees",
+        "https://www.msc-cs.hku.hk/prj_streamcourses",
+        "https://portal.hku.hk/tpg-admissions/programme-details?programme=master-of-science-in-computer-science-(general,-cyber-security,-financial-computing-and-multimedia-computing-streams),-with-delta-x-fellowship-cds",
+        "https://portal.hku.hk/tpg-admissions/programme-details?programme=master-of-science-in-computer-science-(ai-and-decentralized-technologies-stream),-with-delta-x-fellowship-cds"
+      ],
+      "duration_ft": "1 年（Full-Time Normal: 1 Academic Year；Maximum registration: 2 Years，U8/U10）",
+      "duration_pt": "2 年（Part-Time Normal: 2 Academic Years；Maximum registration: 3 Years，U8/U10）",
+      "credits": "72 credits：Courses 60（Discipline Courses 至少 48，其中对应 stream 的 stream-specific courses 至少 24；Elective Courses 最多 12）+ Capstone Course 12（U8）",
+      "tuition": {
+        "amount": "HK$275,000（Local）/ HK$375,000（Non-local）",
+        "intake": "2027/28",
+        "applies_to": "含 Delta X Fellowship 的各申请 pathway（Self-funded）；U10/U11 对 full-time 与 part-time 标相同金额。不含 Delta X Fellowship 的第三条 pathway 学费待核实",
+        "note": "官网注明「Fees are subject to University's approval」（U10/U11）；申请费 HK$780（for the 2027/28 intake，U6/U7）；2026/27 参考：一般 stream Local HK$240,000 / Non-local HK$334,800，AIDT Stream Local HK$275,000 / Non-local HK$375,000（U8）"
+      },
+      "application": {
+        "open": "待核实（官网 U6 仅写「The application for 2027/28 intake is now opened」，未列具体开放日期）",
+        "deadlines": [
+          "Main Round：2026 年 12 月 1 日（HKT noon），对应 2027/28 Fall intake（September 2027）（U6/U7/U10/U11）",
+          "Clearing Round：2027 年 4 月 30 日（HKT noon），对应 2027/28 Fall intake（U6/U7/U10/U11）"
+        ],
+        "note": "申请须从三条 pathway 中择一：AIDT Stream with Delta X Fellowship；General / Cyber Security / Financial Computing / Multimedia Computing Streams with Delta X Fellowship；上述四个 streams 不含 Delta X Fellowship（U7）；申请费 HK$780；提交并缴费后约 5 个工作日收到上传材料通知（U7）"
+      },
+      "english": "项目页未单列，援引校级要求：U7/U8 引用「the University English language requirement applicable to high degrees as prescribed under General Regulation G2(b)」并注明 HKU TOEFL code is 9671；全校要求为 IELTS overall 6.0、单项不低于 5.5，TOEFL iBT 80（2026 年 1 月 21 日前考试）或 4.5（2026 年 1 月 21 日起考试）（U31/U32/U33）",
+      "admission": {
+        "background": "A Bachelor's degree or an equivalent qualification，并须 Comply with the University Entrance Requirements（U10/U11 仅列此两条）",
+        "prerequisites": "待核实（官网 U7/U8/U10/U11 未单列先修课；U8 另提及非英语授课背景者须满足大学语言要求、必要时通过 qualifying examination）",
+        "gre_gmat": "官网未提及（不推断为明确不要求）",
+        "work_experience": "待核实"
+      },
+      "curriculum": {
+        "structure": "72 credits：Courses 60（Discipline Courses 至少 48，含对应 stream 至少 24；Elective Courses 最多 12）+ Capstone Course 12（U8）；官网未设统一必修核心课清单，学生按所选 stream 修读，core 列的是官网课程表中跨 stream 的代表性 Discipline Courses 与 Capstone",
+        "core": [
+          "COMP7404 Computational intelligence and machine learning",
+          "COMP7103 Data mining",
+          "COMP7408 Distributed ledger and blockchain technology",
+          "COMP7906 Introduction to cyber security",
+          "DASC7606 Deep learning",
+          "COMP7705 Project（Capstone）",
+          "COMP7706 Computing technology practicum（Capstone）"
+        ],
+        "electives": [
+          "COMP7105 Advanced topics in data science",
+          "COMP7106 Big data management",
+          "COMP7107 Management of complex data types",
+          "COMP7108 Network data analytics",
+          "COMP7305 Cluster and cloud computing",
+          "COMP7608 Large language models",
+          "COMP7412 Banking in Web3.0 – Metaverse, DeFi, NFTs and beyond",
+          "FITE7414 Generative AI in financial services",
+          "COMP7503 Multimedia technologies",
+          "COMP7507 Visualization and visual analytics"
+        ],
+        "tracks": [
+          "General Stream",
+          "Cyber Security",
+          "Financial Computing",
+          "Multimedia Computing",
+          "AI & Decentralized Technologies (AI x Web3)"
+        ]
+      },
+      "highlights": [
+        "「The MSc(CompSc) programme is a comprehensive postgraduate study programme provides advanced and in-depth learning in Computer Science」，为 credit unit based、课程兼具 applied and fundamental nature（U6）",
+        "「Focused streams of study represent a cohesive collection of related courses that provides both fundamental and in-depth exposure to students in a given ICT domain」（U6）",
+        "「General Stream Offers students the most flexibility to design their own study portfolio based on their career aspiration or requirements」（U6）",
+        "「equips students with advanced knowledge and practical expertise in emerging technologies, preparing them to excel in today's rapidly evolving digital landscape」（U11）",
+        "「One HKU Master's Degree. Two Innovation Cities. Infinite Possibilities.」：Delta X Fellowship 提供 HKU-CDS Shanghai Teaching & Research Site（上海张江）一个学期学习、industry immersion、networking、internship 与跨境学习体验（U10/U11）"
+      ],
+      "career": [
+        "待核实（官网 U6/U7/U9/U10/U11 未列系统性就业岗位清单；U6 仅有校友感言提及 technology field、FinTech 与金融机构实习，属 testimonial 而非官方就业数据）"
+      ],
+      "writing_hooks": [
+        "呼应官网「General Stream Offers students the most flexibility to design their own study portfolio based on their career aspiration or requirements」（U6），且 U7 要求申请时即选定 pathway/stream，PS 必须写明目标 stream 及其与职业目标的对应关系。",
+        "AIDT 方向官网定位「Designed for future innovators and technology leaders」，强调 technical expertise、industry exposure 与 global perspective（U11），适合写 AI / Web3 与产业结合的志向。",
+        "呼应官网「equips students with advanced knowledge and practical expertise in emerging technologies」（U11）与「students can explore a diverse range of cutting-edge fields, from data engineering, cloud computing, blockchain, and artificial intelligence to financial fraud analytics」（U10），用具体技术经历对应官网列出的领域。",
+        "Cyber Security 官方描述从「technical, organisational, human, and legal perspectives」切入、Financial Computing 侧重「data, algorithms, and practical numerical methods」（U10/U6），PS 可据此展示对目标方向能力结构的理解。"
+      ],
+      "verification": {
+        "status": "partial",
+        "conflicts": [
+          "旧站 U8/U35 仍显示 2026/27 信息：Main round 为 1 Dec 2025；Clearing 在 U35 首页写 1 March 2026、在 U8 写 30 Apr 2026，两处不一致。2027/28 应以 U6/U7/U10/U11 的 1 Dec 2026 / 30 Apr 2027 为准。",
+          "学费按入学季不同：2026/27 一般 stream 为 Local HK$240,000 / Non-local HK$334,800（U8），2027/28 各含 Delta X Fellowship pathway 为 Local HK$275,000 / Non-local HK$375,000（U10/U11）。",
+          "U6 首页称 Delta X Tech Immersion Fellowship「Available to taught postrgraduate students admitted in 2026/27」，但 U7/U10/U11 的 2027/28 申请 pathway 均包含该 Fellowship，官网表述存在口径差异。"
+        ],
+        "unverified": [
+          "application.open（具体开放日期未列）",
+          "tuition（不含 Delta X Fellowship 的第三条 pathway 学费未列）",
+          "admission.prerequisites",
+          "admission.gre_gmat",
+          "admission.work_experience",
+          "english（项目页未单列具体分数）",
+          "career（官网未列系统性就业去向）"
+        ]
+      },
+      "sources": [
+        {
+          "url": "https://master.cds.hku.hk/msccs/",
+          "supports": "2027/28 五个 streams 名称与官方描述、申请已开放、两轮截止、申请费 HK$780、项目定位与灵活性表述、校友感言"
+        },
+        {
+          "url": "https://master.cds.hku.hk/msccs/about/msc-in-computer-science-application-procedure-2027-28/",
+          "supports": "三条申请 pathway、两轮截止、申请费、申请材料清单、英语要求引用、Delta X Fellowship 内容"
+        },
+        {
+          "url": "https://www.msc-cs.hku.hk/Admission/Fees",
+          "supports": "2026/27 学费 240000/334800 与 AIDT 275000/375000、72 credits 结构、FT 1 年 / PT 2 年、General Regulation G2(b) 引用、TOEFL code 9671、2026/27 截止"
+        },
+        {
+          "url": "https://www.msc-cs.hku.hk/prj_streamcourses",
+          "supports": "各 stream 完整课程代码与英文原名、Capstone COMP7705 / COMP7706 名称"
+        },
+        {
+          "url": "https://portal.hku.hk/tpg-admissions/programme-details?programme=master-of-science-in-computer-science-(general,-cyber-security,-financial-computing-and-multimedia-computing-streams),-with-delta-x-fellowship-cds",
+          "supports": "2027/28 学费 275000/375000、FT/PT 学制、两轮截止、四个 stream 官方描述、Delta X 上海安排、Entrance Requirements"
+        },
+        {
+          "url": "https://portal.hku.hk/tpg-admissions/programme-details?programme=master-of-science-in-computer-science-(ai-and-decentralized-technologies-stream),-with-delta-x-fellowship-cds",
+          "supports": "2027/28 学费、FT 1 年、两轮截止、AIDT 方向定位与培养目标、Entrance Requirements"
+        }
+      ]
+    },
+    {
+      "id": "hku-msc-artificial-intelligence",
+      "name_en": "Master of Science in Artificial Intelligence (MSc(AI))",
+      "name_zh": "人工智能理学硕士（非官方译名）",
+      "aliases": [
+        "MSc in AI（简写）",
+        "Master of Science in Artificial intelligence（官网 U16 出现的小写 intelligence 写法）",
+        "MSc(AI)（官网缩写，非另一学位名称）"
+      ],
+      "degree_type": "授课型（coursework-based）",
+      "faculty": "Faculty of Science",
+      "department": "Department of Mathematics (host)，与 School of Computing and Data Science 联合开设（U12/U14/U16）",
+      "official_urls": [
+        "https://admissions.hku.hk/tpg/programme/master-science-artificial-intelligence",
+        "https://portal.hku.hk/tpg-admissions/programme-details?mode=1&programme=master-of-science-in-artificial-intelligence-sci",
+        "https://www.mscai.hku.hk/",
+        "https://www.mscai.hku.hk/curriculum/",
+        "https://www.mscai.hku.hk/?p=974/",
+        "https://www.scifac.hku.hk/prospective/tpg/ArtificialIntelligence"
+      ],
+      "duration_ft": "1.5 年（Full Time: one and a half years, including daytime, evenings and/or weekends，U12/U16）",
+      "duration_pt": "待核实（官网 U12/U13/U14/U15/U16 仅列 Full-time）",
+      "credits": "72 credits = 42 credits compulsory courses + 18 credits disciplinary electives + 12 credits capstone project（U15）",
+      "tuition": {
+        "amount": "HK$420,000",
+        "intake": "2027/28（Expected Programme Start Date: September 2027，U12/U13）",
+        "applies_to": "待核实（官网 U12/U13 未区分 local / non-local）",
+        "note": "项目官网 U16 另列「The tuition fee is HK$390,000 for students admitted in September 2026」，属 2026/27 入学季，并注明分三期缴纳、subject to approval；U16 另列 MSc(AI) Entrance Scholarship HK$20,000、Outstanding Performance Scholarship HK$20,000–HK$30,000、Tongcheng Travel Scholarship HK$100,000（适用 2026/27）"
+      },
+      "application": {
+        "open": "待核实（官网 U12/U13/U14/U15/U16 未列明确开放日期）",
+        "deadlines": [
+          "Round 1 (Main)：2026 年 11 月 16 日 12:00 noon (GMT+8)，对应 2027/28 入学（U12/U13）",
+          "Round 2 (Clearing)：2027 年 2 月 1 日 12:00 noon (GMT+8)，对应 2027/28 入学（U12/U13）"
+        ],
+        "note": "课程含 daytime、evenings 和/或 weekends（U12）；Expected degree conferment 为 Full Time: July 2029 (Summer Congregation)（U13）；U16 对 2026/27 入学写 expected degree conferment 为 July 2028"
+      },
+      "english": "项目页未单列，援引校级要求：U12/U13 仅写「Fulfil the University Entrance Requirements」；HKU 全校 General Regulation G2(b) 为 IELTS overall 6.0、单项不低于 5.5，TOEFL iBT 80（2026 年 1 月 21 日前考试）或 4.5（2026 年 1 月 21 日起考试）（U31/U32/U33）",
+      "admission": {
+        "background": "A Bachelor's degree or an equivalent qualification（U12/U13）",
+        "prerequisites": "须具备 linear algebra、calculus、probability theory、introductory statistics 与 computer programming 知识（U12/U13 原文：Applicants should possess knowledge of linear algebra, calculus, probability theory, introductory statistics, and computer programming）",
+        "gre_gmat": "官网未提及（不推断为明确不要求）",
+        "work_experience": "待核实"
+      },
+      "curriculum": {
+        "structure": "72 credits：Compulsory Courses 42 + Disciplinary Electives 18 + Capstone Project 12（U15）；官网注明若选修课程与既往学习内容相似，Department 可不予批准",
+        "core": [
+          "ARIN7001 Foundations of artificial intelligence",
+          "ARIN7011 Optimization in artificial intelligence",
+          "ARIN7013 Numerical methods in artificial intelligence",
+          "ARIN7101 Statistics in artificial intelligence",
+          "ARIN7102 Applied data mining and text analytics",
+          "COMP7404 Computational intelligence and machine learning"
+        ],
+        "electives": [
+          "ARIN7015 Topics in artificial intelligence and machine learning",
+          "MATH7224 Topics in advanced probability theory",
+          "MATH7502 Topics in applied discrete mathematics",
+          "MATH7503 Topics in advanced optimization",
+          "STAT6011 Computational statistics and Bayesian learning",
+          "STAT7008 Programming for data science",
+          "STAT8020 Quantitative strategies and algorithmic trading"
+        ],
+        "tracks": []
+      },
+      "highlights": [
+        "「an interdisciplinary taught postgraduate programme jointly offered by the Department of Mathematics (host) and the School of Computing and Data Science」（U14/U16）",
+        "「Its academic focus is promoting the applications of mathematics, statistics, and computer science to facilitate AI in decision-making and problem-solving for various organizations and enterprises within the private and public sectors」（U16）",
+        "「Interdisciplinary and well-balanced curriculum」：core courses 提供 solid training，electives 覆盖 mathematics、statistics、computer science，并有 capstone project with real-life applications、guest lectures by distinguished scholars and industry experts、internship opportunities in the AI industry and academia（U14）",
+        "「Learning within and beyond AI」与「The theoretical elements in the curriculum will help students develop essential intellectual capacity at large」（U14）",
+        "「Teaching team has strong connections with high-tech industries in the Greater Bay Area」（U14/U16）"
+      ],
+      "career": [
+        "software engineers",
+        "consultants",
+        "research scientists in AI and related fields such as big data and financial technology"
+      ],
+      "writing_hooks": [
+        "呼应官网「an interdisciplinary taught postgraduate programme」与「applications of mathematics, statistics, and computer science to facilitate AI in decision-making and problem-solving」（U14/U16），按数学、统计、计算机三条线逐项对应先修课「linear algebra, calculus, probability theory, introductory statistics, and computer programming」（U12），证明量化与编程准备度。",
+        "官网强调面向「organizations and enterprises within the private and public sectors」的 decision-making / problem-solving（U16），适合写「用 AI 解决真实组织决策问题」的动机，而非仅表达技术兴趣。",
+        "呼应「capstone project with real-life applications」与「internship opportunities in the AI industry and academia」（U14），可结合课程项目、科研或实习经历展开落地能力。",
+        "官网「The theoretical elements in the curriculum will help students develop essential intellectual capacity at large」（U14）表明项目重理论训练，PS 宜体现愿意接受扎实数学、优化与统计基础的取向。"
+      ],
+      "verification": {
+        "status": "partial",
+        "conflicts": [
+          "学费：招生系统 U12/U13 对 September 2027 入学列 HK$420,000，项目官网 U16 对 admitted in September 2026 列 HK$390,000；属不同入学季（非数值矛盾，但需按季区分）。",
+          "课程版本：U15（mscai.hku.hk/curriculum）列 6 门 ARIN/COMP 必修，U17（scifac.hku.hk 理学院页面）另列 ARIN7015、MATH7224、MATH7502、MATH7503、STAT6011、STAT7008、STAT8020 等，两组清单不一致，2027/28 适用版本待核实。"
+        ],
+        "unverified": [
+          "duration_pt（官网仅列全日制）",
+          "application.open",
+          "tuition.applies_to（未区分 local / non-local）",
+          "admission.gre_gmat",
+          "admission.work_experience",
+          "english（项目页未单列具体分数）",
+          "curriculum.electives（2027/28 适用版本）"
+        ]
+      },
+      "sources": [
+        {
+          "url": "https://admissions.hku.hk/tpg/programme/master-science-artificial-intelligence",
+          "supports": "Faculty of Science 归属、FT 1.5 年、学费 HK$420000、September 2027、两轮截止（11/16、2/1）、先修课五领域、联合开设说明"
+        },
+        {
+          "url": "https://portal.hku.hk/tpg-admissions/programme-details?mode=1&programme=master-of-science-in-artificial-intelligence-sci",
+          "supports": "同上各字段、Faculty of Science 官方介绍、July 2029 学位授予、Entrance Requirements"
+        },
+        {
+          "url": "https://www.mscai.hku.hk/",
+          "supports": "Programme Features 三段官方表述、Greater Bay Area 产业联系、就业去向、写作要点依据"
+        },
+        {
+          "url": "https://www.mscai.hku.hk/curriculum/",
+          "supports": "72 credits 结构（42+18+12）、6 门必修课程代码与英文原名、课程描述"
+        },
+        {
+          "url": "https://www.mscai.hku.hk/?p=974/",
+          "supports": "2026/27 学费 HK$390000、Department of Mathematics (host) 与 SCDS 联合开设、FT 1.5 年、奖学金、Programme Highlights、就业去向"
+        },
+        {
+          "url": "https://www.scifac.hku.hk/prospective/tpg/ArtificialIntelligence",
+          "supports": "理学院所列另一组课程代码（ARIN7015、MATH7224、MATH7502、MATH7503、STAT6011、STAT7008、STAT8020），用于标注课程版本差异"
+        }
+      ]
+    },
+    {
+      "id": "hku-msc-fintech-data-analytics",
+      "name_en": "Master of Science in Financial Technology and Data Analytics (MSc(FTDA))",
+      "name_zh": "金融科技与数据分析理学硕士（非官方译名）",
+      "aliases": [
+        "MSc in FinTech and Data Analytics（简写）",
+        "MSc(FTDA)（官网缩写，非另一学位名称）"
+      ],
+      "degree_type": "授课型（coursework-based）",
+      "faculty": "School of Computing and Data Science",
+      "department": "School of Computing and Data Science（官网 U22 申请系统路径归 SCDS；旧版规章 R356 曾指向 mscftda.cs.hku.hk / Faculty of Engineering）",
+      "official_urls": [
+        "https://mscftda.cds.hku.hk/",
+        "https://mscftda.cds.hku.hk/Admission/Application",
+        "https://mscftda.cds.hku.hk/Admission/Fee",
+        "https://mscftda.cds.hku.hk/Curriculum/Structure",
+        "https://sweb.hku.hk/tola/servlet/ApplicantDownloadForm/getForm?pREF_CODE=R410&pDOCUMENT_TYPE=PROGRAMINFORMATION"
+      ],
+      "duration_ft": "待核实（官网 U21/U22 仅列 part-time 2 年制，未见全日制选项）",
+      "duration_pt": "2 年（The normative study period of part-time students is 2 years；最长注册 3 年，U21/U22）",
+      "credits": "75 至 81 credits（含 capstone experience）：Discipline Courses 不少于 51（含 3 门 Disciplinary compulsory courses）、Elective Courses 最多 12、Project 12（U21）；多数课程 6 credits，法学院课程 9 credits，修读 1 或 2 门 9-credit 课程者分别需完成 78 或 81 credits",
+      "tuition": {
+        "amount": "HK$275,000（Local part-time）/ HK$375,000（Non-local part-time）",
+        "intake": "2027/28",
+        "applies_to": "Local part-time 学生 HK$275,000；Non-local part-time 学生 HK$375,000（U18/U20）",
+        "note": "官网注明 subject to the University's approval（U18/U20）；分 4 期等额缴纳，Admission Deposit 分别为 HK$68,750 / HK$93,750，另需 Caution Money HK$350（U20）；申请费 HK$780（U19/U22）；部分课程列入 Continuing Education Fund 可获发还课程名单（U20）"
+      },
+      "application": {
+        "open": "待核实（官网 U18 首页写「Admissions for 2027 intake are now open」；U19 Application Procedures 页写「The application for 2026-27 is now closed. Application for 2027-28 will open around October 2026」，两页表述不一致，见 verification.conflicts）",
+        "deadlines": [
+          "Main round：2026 年 12 月 1 日（HKT 12:00 noon），对应 2027/28 入学（U19）",
+          "Clearing round：2027 年 4 月 30 日（HKT 12:00 noon），对应 2027/28 入学（U19）"
+        ],
+        "note": "面试为邀请制（Interviews are by invitation only，U19）；主轮截止后收到的申请滚入下一轮；2027 年 7 月 31 日前未获通知可视为申请未成功（U19）；申请费 HK$780（U19/U22）"
+      },
+      "english": "项目页未单列，援引校级要求：U22 引用「the University English language requirement applicable to high degrees as prescribed under General Regulation G2(b)」并注明 HKU TOEFL code is 9671；全校要求为 IELTS overall 6.0、单项不低于 5.5，TOEFL iBT 80（2026 年 1 月 21 日前考试）或 4.5（2026 年 1 月 21 日起考试）（U31/U32/U33）",
+      "admission": {
+        "background": "须持 Engineering 或 Science 学科学士学位（U22 原文：a Bachelor's degree in Engineering or Science discipline of this University or a qualification of equivalent standard）；官网另写 An application for exemption from the above requirements shall be considered on a case by case basis",
+        "prerequisites": "待核实（官网 U18/U19/U21/U22 未单列先修课；U21 仅规定非 computer science 背景者须选 FITE7409、CS 背景者须选 COMP7408）",
+        "gre_gmat": "官网未提及（不推断为明确不要求）",
+        "work_experience": "待核实"
+      },
+      "curriculum": {
+        "structure": "须完成 Project 与 10 门课程，共 75 至 81 credits：Discipline Courses 不少于 51 credits（含 3 门 List-A Disciplinary compulsory courses）、Elective Courses 最多 2 门 / 12 credits、Capstone Experience（Project）12 credits；List-B 至少 3 门（List-B-1 与 List-B-2 各至少 1 门），List-C 至少 2 门（List-C-1 与 List-C-2 各至少 1 门）（U21）",
+        "core": [
+          "FITE7409 Blockchain and cryptocurrency（非 computer science 背景者修读）",
+          "COMP7408 Distributed ledger and blockchain technology（computer science 背景者修读）",
+          "MFIN7002 Investment analysis and portfolio management",
+          "LLAW6093 Regulation of financial markets",
+          "FITE7001 Project（12 credits Capstone）"
+        ],
+        "electives": [
+          "COMP7802 Introduction to financial computing",
+          "FITE7407 Securities transaction banking",
+          "COMP7906 Introduction to cyber security",
+          "FITE7410 Financial fraud analytics",
+          "ECOM7126 Machine learning for business and e-commerce",
+          "FITE7405 Techniques in computational finance",
+          "COMP7412 Banking in Web3.0 – Metaverse, DeFi, NFTs and beyond",
+          "FITE7414 Generative AI in financial services",
+          "DASC7606 Deep learning",
+          "COMP7404 Computational intelligence and machine learning",
+          "STAT8020 Quantitative strategies and algorithmic trading",
+          "LLAW6046 Privacy and data protection"
+        ],
+        "tracks": []
+      },
+      "highlights": [
+        "「The HKU Master of Science in Financial Technology and Data Analytics [MSc(FTDA)] Programme aims to prepare students for a career in the ever-changing world of FinTech」（U18）",
+        "「The programme consists of foundation courses in computing, statistics, finance, and law」（U18），跨学科覆盖计算、统计、金融与法律，含 Faculty of Law 的 9-credit 课程（U21）",
+        "仅 part-time 2 年制（normative），最长注册 3 年；2027/28 仍招生、未停办未改名（U21/U22）",
+        "课程分类 List-A 必修、List-B / List-C 学科选修、Capstone 为 FITE7001 Project（U21）"
+      ],
+      "career": [
+        "待核实（官网 U18/U19/U20/U21/U22 未列具体岗位清单，仅有「prepare students for a career in the ever-changing world of FinTech」的表述）"
+      ],
+      "writing_hooks": [
+        "呼应官网「a Bachelor's degree in Engineering or Science discipline」（U22），PS 开头需先论证本科专业归属；非 CS 背景者官网还规定必修选 FITE7409 而非 COMP7408（U21），可顺势说明自己的技术起点。",
+        "官网「foundation courses in computing, statistics, finance, and law」（U18）与必修「LLAW6093 Regulation of financial markets」（U21）显示项目重合规/监管维度，对 RegTech、金融监管有兴趣是差异化切入点。",
+        "呼应「aims to prepare students for a career in the ever-changing world of FinTech」（U18），适合写行业快速变化与技能持续更新的动机，并对应 U21 的 Generative AI in financial services、Banking in Web3.0 等课程。",
+        "官网明确为 part-time 2 年制（U21/U22），PS 宜说明如何兼顾在职与学习（此为依据官网学制的写作建议，非官网明文表述）。"
+      ],
+      "verification": {
+        "status": "partial",
+        "conflicts": [
+          "申请开放状态：U18 首页写「Admissions for 2027 intake are now open」，U19 Application Procedures 页写「Application for 2027-28 will open around October 2026」，两页表述不一致。",
+          "U22（R410 program information，标题为 September 2027 admission）正文残留 September 2026 / 2026/27 intake 的 Composition Fee 段落（HK$275,000 local / HK$375,000 non-local）；2027/28 学费以 U18 首页与 U20 学费页为准（金额相同）。",
+          "项目为仅 part-time 制，与其他 5 个项目（均设或仅设全日制）不同；旧版规章 R356 的申请费曾为 HK$300，2027/28 为 HK$780（U19/U22）。"
+        ],
+        "unverified": [
+          "duration_ft（官网仅列 part-time）",
+          "application.open（官网两页表述不一致）",
+          "admission.prerequisites",
+          "admission.gre_gmat",
+          "admission.work_experience",
+          "english（项目页未单列具体分数）",
+          "career（官网未列具体岗位）"
+        ]
+      },
+      "sources": [
+        {
+          "url": "https://mscftda.cds.hku.hk/",
+          "supports": "2027/28 学费 275000/375000、2027 intake 招生状态、课程四领域定位、项目目标"
+        },
+        {
+          "url": "https://mscftda.cds.hku.hk/Admission/Application",
+          "supports": "申请开放表述、Main/Clearing 两轮截止、申请费 HK$780、申请材料清单、面试邀请制、结果通知 2027-07-31"
+        },
+        {
+          "url": "https://mscftda.cds.hku.hk/Admission/Fee",
+          "supports": "2027/28 part-time 学费与 Admission Deposit 68750/93750、4 期分期、Caution Money HK$350、CEF 信息"
+        },
+        {
+          "url": "https://mscftda.cds.hku.hk/Curriculum/Structure",
+          "supports": "part-time 2 年、75 至 81 credits 结构、List-A 必修 3 门、List-B/C 完整选修课程代码、Capstone FITE7001 Project"
+        },
+        {
+          "url": "https://sweb.hku.hk/tola/servlet/ApplicantDownloadForm/getForm?pREF_CODE=R410&pDOCUMENT_TYPE=PROGRAMINFORMATION",
+          "supports": "官方 Program Information：September 2027 招生、Engineering/Science 学位要求、part-time 2 年 / 最长 3 年、英语要求引用、申请费、non-local 定义"
+        }
+      ]
+    },
+    {
+      "id": "hku-master-statistics",
+      "name_en": "Master of Statistics (MStat)",
+      "name_zh": "统计学硕士（非官方译名）",
+      "aliases": [
+        "MSc in Statistics（官网无此名称，用户及第三方常见误称）",
+        "Master of Science in Statistics（官网无此名称）",
+        "MStat（官网缩写，非另一学位名称）"
+      ],
+      "degree_type": "授课型（coursework-based）",
+      "faculty": "School of Computing and Data Science",
+      "department": "School of Computing and Data Science（官网项目页未单列系级单位；原属 Department of Statistics and Actuarial Science，见 general.notes 的学院整合说明）",
+      "official_urls": [
+        "http://mstat.cds.hku.hk/",
+        "https://mstat.cds.hku.hk/programme-2027-28/",
+        "https://admissions.hku.hk/tpg/programme/master-statistics-1",
+        "https://sweb.hku.hk/tola/servlet/ApplicantDownloadForm/getForm?pREF_CODE=R411&pDOCUMENT_TYPE=PROGRAMINFORMATION&pVIEW=Y"
+      ],
+      "duration_ft": "1 年（Full Time，含 daytime、evenings 和 Saturdays，U25）",
+      "duration_pt": "2 年（Part Time，含 evenings 和 Saturdays，U25）",
+      "credits": "60 credits（U23/U24/U25/U26）；U24 的 2027-28 课程页列 Two compulsory courses 12 credits、Theme-specific elective courses 24 credits，其余学分块拆分未在该页完整列出",
+      "tuition": {
+        "amount": "HK$245,000（Local）/ HK$265,000（Non-local）",
+        "intake": "2027/28（September 2027 入学，U25/U26）",
+        "applies_to": "Local 学生 HK$245,000；Non-local 学生 HK$265,000；full-time 与 part-time 学费相同（U23/U25/U26）",
+        "note": "官网注明 subject to the University's approval（U25/U26）；full-time 分 2 期、part-time 分 4 期缴纳（U26）；申请费 HK$780（U26）；2027-28 设 Entrance Scholarship for the Master of Statistics HK$20,000、Lifelong Learning Prize in Statistics HK$5,000 至 HK$10,000、Master of Statistics Outstanding Performance Scholarship HK$50,000 及 Belt and Road Scholarship in Statistics and Data Science（U26）"
+      },
+      "application": {
+        "open": "2026 年 10 月初（官网原文：Application will start in early October，U23）",
+        "deadlines": [
+          "Round 1 (Main)：2026 年 12 月 1 日 12:00 noon（HK Time / GMT+8），对应 2027/28 入学（U23/U25/U26）",
+          "Round 2 (Clearing)：2027 年 4 月 30 日 12:00 noon（HK Time / GMT+8），对应 2027/28 入学（U23/U25/U26）"
+        ],
+        "note": "官网首页 U23 称 Main Round / Clearing Round，招生系统 U25 称 Round 1 (Main) / Round 2 (Clearing)，日期一致；2027 年 7 月 31 日前未获通知可视为申请未成功（U26）；预计毕业 Full Time 为 2028 年 7 月、Part Time 为 2029 年 7 月（U25）"
+      },
+      "english": "项目页未单列，援引校级要求：U26 引用「the University English language requirement applicable to high degrees as prescribed under General Regulation G2(b)」并注明 HKU TOEFL code is 9671；全校要求为 IELTS overall 6.0、单项不低于 5.5，TOEFL iBT 80（2026 年 1 月 21 日前考试）或 4.5（2026 年 1 月 21 日起考试）（U31/U32/U33）",
+      "admission": {
+        "background": "A Bachelor's degree or an equivalent qualification（U25/U26）",
+        "prerequisites": "须具备 matrices and calculus、introductory statistics、linear modelling 知识（U25/U26 原文：shall have knowledge of matrices and calculus, and shall also have knowledge of introductory statistics and linear modelling）",
+        "gre_gmat": "官网未提及（不推断为明确不要求）",
+        "work_experience": "待核实（官网未列为硬性要求；U25 有「The programme is recommended for those at work to be part-time students」的推荐性表述，非入学要求）"
+      },
+      "curriculum": {
+        "structure": "60 credits：Two compulsory courses 12 credits + Theme-specific elective courses 24 credits + 其他选修与 Capstone（U24 2027-28 课程页）；可选 general approach，或专攻 Risk Management / Data Analytics / Financial Statistics 主题并印于成绩单",
+        "core": [
+          "STAT7101 Fundamentals of statistical inference",
+          "STAT7102 Advanced statistical modelling"
+        ],
+        "electives": [
+          "STAT7008 Programming for data science",
+          "STAT8017 Data mining techniques",
+          "STAT8021 Big data analytics",
+          "STAT6013 Financial data analysis",
+          "STAT8003 Time series forecasting",
+          "STAT8020 Quantitative strategies and algorithmic trading",
+          "STAT8308 Blockchain data analytics",
+          "STAT6015 Advanced quantitative risk management",
+          "STAT8002 Project（Capstone 选项）",
+          "STAT8088 Practicum（Capstone 选项）",
+          "STAT8089 Capstone project（Capstone 选项）"
+        ],
+        "tracks": [
+          "Risk Management",
+          "Data Analytics",
+          "Financial Statistics"
+        ]
+      },
+      "highlights": [
+        "「rigorous training in the principles and the practice of statistics」并「emphasizes in applications」，通过 computer-aided and hands-on experience 为 further study、research、consulting work 与 administration 做准备（U25）",
+        "「The programme offers great flexibilities for students who wish to take a general approach, or a specialized theme in Risk Management, Data Analytics, or Financial Statistics」（U25）",
+        "Programme Highlights：「Be a knowledgeable statistician in principles and practice」「Experience hands-on applications of methodologies with powerful statistical software」「Could select electives from the School's research postgraduate courses」「Join the programme of more than 30 years in curriculum development and delivery」（U24）",
+        "官网「extensive analysis of structured or unstructured data」，涵盖 spatial data analysis、advanced statistical inference、big data analytics、marketing analytics、data mining techniques 及 SAS、R、Python 等统计软件（U23 官网版本）",
+        "「The programme emphasises applications and aims to train knowledgeable statisticians, preparing candidates for consulting work or research in the field」（U26）"
+      ],
+      "career": [
+        "Actuary",
+        "Algorithm Engineer",
+        "Data Analyst",
+        "Data Engineer",
+        "Equity Data Specialist",
+        "Investment Portfolio Manager",
+        "Quantitative Trader",
+        "Risk Management Analyst",
+        "Risk Assurance Associate",
+        "Statistical Officer"
+      ],
+      "writing_hooks": [
+        "呼应官网「Students joining the programme are expected to come from a wide range of disciplines」（U25）与其列出的 science、social sciences、engineering、medical sciences、information systems、business and finance 本科背景（U23），跨专业申请者应说明原专业如何为统计方法提供领域知识。",
+        "官网「emphasizes in applications」「through computer-aided and hands-on experience」（U25）与「hands-on applications of methodologies with powerful statistical software」（U24）表明重实操，PS 宜用 SAS / R / Python、数据分析项目或实证经历佐证。",
+        "官网「great flexibilities … general approach, or a specialized theme in Risk Management, Data Analytics, or Financial Statistics」（U25）要求 PS 明确主题方向或 general 取向，并对应 U24 相应 theme 的选修课。",
+        "官网区分两类人群「recommended for those at work to be part-time students … as well as for fresh graduates to be full-time students」（U25），应届生与在职者应分别论证 1 年全日制 / 2 年兼读制的学制选择。"
+      ],
+      "verification": {
+        "status": "partial",
+        "conflicts": [
+          "官网 U23 存在两个缓存版本：一版显示 2027 Entrance Year、学费 HK$245,000 / HK$265,000、Main Round 1 December 2026 / Clearing 30 April 2027；另一版显示 2026 Entrance Year、学费 HK$228,000 / HK$238,800、Main Round 1 December 2025 / Clearing 31 March 2026。2027/28 以 U25/U26 为准。",
+          "官网首页 U23 动态渲染的 QS 排名、Admission Rate（出现 0、8% 等）疑似占位值，且 2026-27 录取人数在不同页面表述不一致，均未采信。",
+          "名称纠正：官网无 MSc in Statistics，正式名为 Master of Statistics (MStat)，且现属 SCDS 而非 Faculty of Science。"
+        ],
+        "unverified": [
+          "admission.gre_gmat",
+          "admission.work_experience",
+          "english（项目页未单列具体分数）",
+          "curriculum.structure（2027-28 页面未完整列出各学分块拆分）"
+        ]
+      },
+      "sources": [
+        {
+          "url": "http://mstat.cds.hku.hk/",
+          "supports": "2027 Entrance Year、FT 1 年 / PT 2 年、60 credits、学费 245000/265000、两轮截止、early October 开放、三个 theme、目标学生背景、就业去向清单"
+        },
+        {
+          "url": "https://mstat.cds.hku.hk/programme-2027-28/",
+          "supports": "2027-28 专用课程页：60 credits、2 门必修 STAT7101/STAT7102、三个 theme、主题选修与 Capstone 课程代码、Programme Highlights"
+        },
+        {
+          "url": "https://admissions.hku.hk/tpg/programme/master-statistics-1",
+          "supports": "SCDS 归属、FT/PT 学制、学费、September 2027、两轮截止、先修课（matrices and calculus 等）、项目定位、在职/应届生分流表述、毕业时间"
+        },
+        {
+          "url": "https://sweb.hku.hk/tola/servlet/ApplicantDownloadForm/getForm?pREF_CODE=R411&pDOCUMENT_TYPE=PROGRAMINFORMATION&pVIEW=Y",
+          "supports": "官方 Program Information：September 2027、三个 theme、FT 1 年 / PT 2 年、2027/28 学费、奖学金金额、先修课、申请费 HK$780、入学要求"
+        }
+      ]
+    },
+    {
+      "id": "hku-msc-business-analytics",
+      "name_en": "Master of Science in Business Analytics (MSc(BA))",
+      "name_zh": "商业分析理学硕士（非官方译名）",
+      "aliases": [
+        "Master in Business Analytics（第三方 GlobalAdmissions 等使用的叫法）",
+        "MSc(BA)（官网缩写，非另一学位名称）"
+      ],
+      "degree_type": "授课型（coursework-based）",
+      "faculty": "HKU Business School",
+      "department": "HKU Business School（U27 项目页 Faculty 字段；U30 旧版规章归 Faculty of Business and Economics）",
+      "official_urls": [
+        "https://admissions.hku.hk/tpg/programme/master-science-business-analytics",
+        "https://masters.hkubs.hku.hk?p=13926/",
+        "https://masters.hkubs.hku.hk/curriculumstructure?op=10",
+        "https://www4.hku.hk/pubunit/drcd/files/pgdr2024-25/Business/MSc(BA).pdf"
+      ],
+      "duration_ft": "2 年（招生系统 U27 标 Expected Duration 2 years；HKU Business School masters 官网标 Normative Duration: 2 years）",
+      "duration_pt": "待核实（官网 U27/U28/U29 仅列 Full-time）",
+      "credits": "10 门课程、每门 6 credits（U27/U29/U30）；U29 官网课程页为 4 Core + 5 Elective + 1 Capstone，U30 规章为 5 core（含 1 capstone）+ 5 elective，见 verification.conflicts",
+      "tuition": {
+        "amount": "HK$468,000",
+        "intake": "2027 intake（HKU Business School Masters Programmes for the 2027 intake 学费表，U28）",
+        "applies_to": "待核实（U28 学费表未区分 local / non-local）",
+        "note": "Deposit HK$156,000（U28）；学费表注明 Subject to the University's approval、余款分 2 期缴纳；申请费 HK$780（U28）；招生系统 U27 该项目页 Fees 栏写 To be updated"
+      },
+      "application": {
+        "open": "待核实（官网 U27/U28/U29 未列明确开放日期；U27 已列出 2027 intake 三轮截止）",
+        "deadlines": [
+          "Early Admission Round：2026 年 7 月 24 日 12:00 noon (GMT+8)，对应 2027 intake（U27）",
+          "Round 1：2026 年 9 月 28 日 12:00 noon (GMT+8)，对应 2027 intake（U27）",
+          "Round 2：2026 年 12 月 4 日 12:00 noon (GMT+8)，对应 2027 intake（U27）"
+        ],
+        "note": "HKU Business School masters 官网显示 Application rounds for 2027 intake are now open、Intake: August；招生系统 U27 的 Expected Programme Start Date 写 To be updated；申请需两位推荐人提交 Statements（U27）"
+      },
+      "english": "项目页明列：非英语教学大学背景者须提交 TOEFL/IELTS，原文为「A minimum score of 80 in the internet-based TOEFL for tests taken before 21 January 2026, or a minimum score of 4.5 for tests taken on or after 21 January 2026, or a minimum overall band of 6 with no subtest lower than 5.5 in IELTS is required」（U27）；U31 补充成绩须为入学年份 9 月 1 日前两年内、TOEFL iBT Home Edition 与 IELTS One Skill Retake 不接受、HKU TOEFL code 9671",
+      "admission": {
+        "background": "A recognized Bachelor's degree or equivalent，并需 Statements from two referees（U27）",
+        "prerequisites": "待核实（U27 入学要求未列先修课；U29 设 Boot Camp：Consulting Fundamentals 1 & 2 6 hours、Database 3 hours、Mathematics 6 hours、Programming 15 hours、Statistics 6 hours，官网称供 those without a pure quantitative background 补足基础）",
+        "gre_gmat": "官网未提及（不推断为明确不要求）",
+        "work_experience": "待核实（U27 未列为入学要求；U28 的 Dean's Master Fellowship 评核会参考 Relevance of work experience, if applicable，属奖学金评核标准而非入学要求）"
+      },
+      "curriculum": {
+        "structure": "Students need to complete a total of ten courses（U27）；U29 官网课程页为 4 Core + 5 Elective + 1 Capstone 并附 Boot Camp；可选 Artificial Intelligence (AI) stream 或 Management Consulting (MC) stream，最多 2 门选修可取自 School 其他授课型硕士课程（U27/U29）",
+        "core": [
+          "Python for Data Analytics",
+          "Business Statistics",
+          "Decision Analytics",
+          "Operations Analytics",
+          "Business Analytics Capstone（Capstone 选项之一）",
+          "Business Case Analysis Capstone（Capstone 选项之一）"
+        ],
+        "electives": [
+          "Machine Learning",
+          "Deep Learning",
+          "Forecasting and Predictive Analytics",
+          "Applied Large Language Models",
+          "Generative Artificial Intelligence",
+          "Big Data Analytics on the Cloud",
+          "Quantitative Trading",
+          "Ethics in Artificial Intelligence",
+          "Business Simulation",
+          "Geospatial and Business Analytics",
+          "Storytelling with Data",
+          "Financial Engineering"
+        ],
+        "tracks": [
+          "Artificial Intelligence (AI) stream",
+          "Management Consulting (MC) stream"
+        ]
+      },
+      "highlights": [
+        "「offers a comprehensive curriculum that aims to help students develop both hard and soft skills related to business analytics throughout the programme」（U27）",
+        "「Our students will learn the knowledge and skills of understanding data, transforming data into information and converting information into executable actions」（U27）",
+        "「There is currently an unprecedented industry demand for business analytics professionals」（U27）",
+        "「The programme boasts a real world business analytics project - The Capstone Project - with reputable corporations in the region」，学生把所学用于 project sponsors 的 real life business problem（U27）",
+        "「a rigorous learning experience across a wide spectrum of fields, including big data techniques, business statistics, simulation and forecasting models, operations and supply chain management, and financial and marketing analytics」，工具含 R 与 Python（U29）"
+      ],
+      "career": [
+        "待核实（官网 U27/U29 未列具体岗位清单；U27 有「unprecedented industry demand for business analytics professionals」，U29 站点提及 Career Development Team 提供 employer connections、workshops、coaching 等支持）"
+      ],
+      "writing_hooks": [
+        "呼应官网「understanding data, transforming data into information and converting information into executable actions」（U27/U29），PS 可按「数据 → 信息 → 可执行决策」三段组织动机与经历。",
+        "官网「develop both hard and soft skills related to business analytics」（U27）表明除技术外重软技能，U29 亦提及沟通、critical thinking、teamwork、leadership，宜用团队项目或客户沟通经历佐证。",
+        "U29 官网明言 Boot Camp 服务「Those without a pure quantitative background can build up essential competencies」，跨专业申请者可据此说明如何补齐数学、编程、数据库与统计基础。",
+        "官网「The Capstone Project - with reputable corporations in the region … to a real life business problem facing our project sponsors」（U27）与 AI / MC 两个 stream（U27/U29）要求 PS 明确方向选择并写出实践导向。"
+      ],
+      "verification": {
+        "status": "partial",
+        "conflicts": [
+          "学制：招生系统 U27 与商学院官网均标 2 years（2027 intake），U30（2024-25 regulations）与第三方 Masterstudies / GlobalAdmissions 写 1 年制；疑为 MSc 2.0 改版，待项目办公室确认。",
+          "课程结构与核心课名：U29 官网课程页为 4 Core + 5 Elective + 1 Capstone（Python for Data Analytics、Decision Analytics），U30 规章为 5 core（含 1 capstone）+ 5 elective（MSBA7001 Business Intelligence and analytics、MSBA7003 Quantitative Analysis Methods、MSBA7005 Business Analytics Capstone 等）。",
+          "学费：U28 商学院 2027 intake 学费表列 HK$468,000，招生系统 U27 该项目页 Fees 写 To be updated。",
+          "开学日期：U27 的 Expected Programme Start Date 写 To be updated，商学院 masters 官网首页写 Intake: August。"
+        ],
+        "unverified": [
+          "duration_pt",
+          "tuition.applies_to（未区分 local / non-local）",
+          "application.open",
+          "admission.prerequisites",
+          "admission.gre_gmat",
+          "admission.work_experience",
+          "career（官网未列具体岗位）"
+        ]
+      },
+      "sources": [
+        {
+          "url": "https://admissions.hku.hk/tpg/programme/master-science-business-analytics",
+          "supports": "HKU Business School 归属、FT / Expected Duration 2 years、2027 intake 三轮截止、明列 TOEFL/IELTS 分数、两封推荐信、10 门课结构、AI/MC 两个 stream、Capstone 与企业合作、培养目标原文"
+        },
+        {
+          "url": "https://masters.hkubs.hku.hk?p=13926/",
+          "supports": "2027 intake 学费表 MSc(BA) HK$468000、Deposit HK$156000、申请费 HK$780、奖学金评核标准"
+        },
+        {
+          "url": "https://masters.hkubs.hku.hk/curriculumstructure?op=10",
+          "supports": "Boot Camp 内容与小时数、10 门课结构、4 门核心课与 Capstone 英文原名、AI/MC 两个 stream 完整选修清单、R/Python 工具、课程分层叙事"
+        },
+        {
+          "url": "https://www4.hku.hk/pubunit/drcd/files/pgdr2024-25/Business/MSc(BA).pdf",
+          "supports": "官方 Regulations 版核心课代码 MSBA7001 至 MSBA7005 及选修清单，用于标注课程版本差异"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+# 密钥：绝不提交真实凭证
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*_rsa
+*_ed25519
+
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+node_modules/
+frontend/dist/
+data/
+backend/data/
+*.log
+.DS_Store
+.idea/
+.vscode/
+*.docx

@@ -1,0 +1,51 @@
+/* 页头样式统一由 app.wxss 提供 */
+
+.info-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 18rpx 0;
+  border-top: 2rpx solid #eef1f6;
+}
+
+.info-value {
+  max-width: 62%;
+  color: #1f2329;
+  font-size: 26rpx;
+  font-weight: 500;
+  text-align: right;
+  word-break: break-all;
+}
+
+.info-url {
+  color: #3b5bdb;
+}
+
+.address-hint {
+  display: block;
+  margin-top: 16rpx;
+}
+
+.save-url {
+  width: 100%;
+  margin-top: 24rpx;
+  font-size: 27rpx;
+}
+
+.logout-button {
+  margin-top: 8rpx;
+  background: #d64545;
+  box-shadow: 0 10rpx 26rpx rgba(214, 69, 69, 0.24);
+}
+
+.footnote {
+  padding: 32rpx 8rpx 40rpx;
+}
+
+.footnote .muted {
+  display: block;
+}
+
+.footnote-gap {
+  margin-top: 12rpx;
+}

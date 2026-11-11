@@ -1,0 +1,78 @@
+/* 页头样式统一由 app.wxss 提供 */
+
+.create-button {
+  margin-bottom: 30rpx;
+}
+
+.profile-card {
+  padding: 30rpx 32rpx;
+}
+
+.profile-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.profile-main {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.profile-label {
+  color: #16192b;
+  font-size: 33rpx;
+  font-weight: 700;
+}
+
+.profile-sub {
+  margin-top: 8rpx;
+}
+
+.profile-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 24rpx;
+  padding-top: 20rpx;
+  border-top: 2rpx solid #eef1f6;
+}
+
+.delete-link {
+  color: #d64545;
+  font-size: 26rpx;
+}
+
+.profile-card-active {
+  border: 2rpx solid #c9d4f8;
+  background: #f8faff;
+}
+
+.profile-label-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14rpx;
+}
+
+.profile-foot {
+  flex-wrap: wrap;
+  gap: 14rpx;
+}
+
+.profile-actions {
+  display: flex;
+  align-items: center;
+  gap: 22rpx;
+}
+
+.action-link {
+  color: #2f49b0;
+  font-size: 26rpx;
+}
+
+.jump-button {
+  margin-top: 8rpx;
+}

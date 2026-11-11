@@ -1,0 +1,119 @@
+/* 页头样式统一由 app.wxss 提供 */
+
+.quota-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 24rpx;
+}
+
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.chip {
+  margin: 0 16rpx 16rpx 0;
+  padding: 14rpx 28rpx;
+  border: 2rpx solid #dfe5f1;
+  border-radius: 999rpx;
+  background: #ffffff;
+  color: #4a5368;
+  font-size: 26rpx;
+  transition: all 0.2s ease;
+}
+
+.chip-active {
+  border-color: transparent;
+  background: linear-gradient(135deg, #4c6ef5 0%, #3b5bdb 55%, #2f49b0 100%);
+  color: #ffffff;
+  font-weight: 600;
+  box-shadow: 0 8rpx 20rpx rgba(59, 91, 219, 0.28);
+}
+
+.generate-hint {
+  display: block;
+  margin: 22rpx 8rpx 40rpx;
+  text-align: center;
+}
+
+.mask {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(23, 30, 52, 0.60);
+}
+
+.mask-card {
+  box-sizing: border-box;
+  width: 600rpx;
+  padding: 48rpx 42rpx;
+  border-radius: 32rpx;
+  background: #ffffff;
+  box-shadow: 0 30rpx 80rpx rgba(12, 18, 38, 0.35);
+}
+
+.mask-title {
+  display: block;
+  color: #16192b;
+  font-size: 36rpx;
+  font-weight: 800;
+}
+
+.mask-time {
+  display: block;
+  margin-top: 12rpx;
+}
+
+.node-list {
+  margin: 30rpx 0;
+}
+
+.node-item {
+  display: flex;
+  align-items: center;
+  padding: 10rpx 0;
+}
+
+.node-dot {
+  margin-right: 14rpx;
+  color: #3b5bdb;
+  font-size: 36rpx;
+  font-weight: 700;
+}
+
+.node-text {
+  color: #4a5368;
+  font-size: 26rpx;
+}
+
+.mask-note {
+  display: block;
+  padding-top: 22rpx;
+  border-top: 2rpx solid #eef1f6;
+}
+
+.picker-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.picker-head .card-title {
+  margin-bottom: 22rpx;
+}
+
+.picker-link {
+  color: #2f49b0;
+  font-size: 26rpx;
+}
+
+.picker-hint {
+  display: block;
+  margin-top: 12rpx;
+}

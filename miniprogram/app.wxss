@@ -1,0 +1,243 @@
+/* AppliCraft 小程序全局样式 —— 与网页版共用同一套视觉规范：
+   浅灰蓝底 + 白卡片 + 靛蓝渐变主色 + 柔和阴影 + 大圆角 */
+
+page {
+  min-height: 100%;
+  background: #f4f6fb;
+  color: #1f2329;
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "PingFang SC", sans-serif;
+}
+
+.page {
+  box-sizing: border-box;
+  min-height: 100vh;
+  padding: 32rpx 28rpx 60rpx;
+}
+
+/* ---------- 卡片 ---------- */
+.card {
+  box-sizing: border-box;
+  margin-bottom: 24rpx;
+  padding: 32rpx 30rpx;
+  border-radius: 28rpx;
+  background: #ffffff;
+  box-shadow: 0 10rpx 40rpx rgba(31, 45, 84, 0.06);
+}
+
+.card-title {
+  display: block;
+  margin-bottom: 22rpx;
+  color: #1f2329;
+  font-size: 30rpx;
+  font-weight: 700;
+}
+
+.eyebrow {
+  color: #3b5bdb;
+  font-size: 21rpx;
+  font-weight: 700;
+  letter-spacing: 3rpx;
+}
+
+.muted {
+  color: #7a8496;
+  font-size: 25rpx;
+  line-height: 1.65;
+}
+
+.placeholder {
+  color: #aab2c0;
+}
+
+/* ---------- 按钮 ---------- */
+button::after {
+  border: none;
+}
+
+.primary-button {
+  width: 100%;
+  border-radius: 20rpx;
+  background: linear-gradient(135deg, #4c6ef5 0%, #3b5bdb 55%, #2f49b0 100%);
+  color: #ffffff;
+  font-size: 30rpx;
+  font-weight: 600;
+  box-shadow: 0 10rpx 26rpx rgba(59, 91, 219, 0.30);
+}
+
+.primary-button[disabled] {
+  background: linear-gradient(135deg, #aeb9e8 0%, #a9b8ef 100%);
+  color: #ffffff;
+  box-shadow: none;
+}
+
+.ghost-button {
+  border: 2rpx solid #dbe2f0;
+  border-radius: 20rpx;
+  background: #ffffff;
+  color: #3b5bdb;
+  font-size: 28rpx;
+  font-weight: 500;
+  box-shadow: 0 4rpx 14rpx rgba(31, 45, 84, 0.04);
+}
+
+.danger-text {
+  color: #d64545;
+}
+
+/* ---------- 表单 ---------- */
+.field {
+  margin-bottom: 26rpx;
+}
+
+.field-label {
+  display: block;
+  margin-bottom: 12rpx;
+  color: #4a5368;
+  font-size: 26rpx;
+  font-weight: 600;
+}
+
+.field-input {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 80rpx;
+  padding: 18rpx 22rpx;
+  border: 2rpx solid #e4e9f4;
+  border-radius: 16rpx;
+  background: #f8fafd;
+  color: #1f2329;
+  font-size: 28rpx;
+}
+
+.field-textarea {
+  box-sizing: border-box;
+  width: 100%;
+  height: 150rpx;
+  padding: 18rpx 22rpx;
+  border: 2rpx solid #e4e9f4;
+  border-radius: 16rpx;
+  background: #f8fafd;
+  color: #1f2329;
+  font-size: 28rpx;
+  line-height: 1.6;
+}
+
+.picker-value {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 80rpx;
+  padding: 20rpx 22rpx;
+  border: 2rpx solid #e4e9f4;
+  border-radius: 16rpx;
+  background: #f8fafd;
+  color: #1f2329;
+  font-size: 28rpx;
+}
+
+/* ---------- 提示条 ---------- */
+.notice {
+  box-sizing: border-box;
+  margin-bottom: 24rpx;
+  padding: 22rpx 26rpx;
+  border-radius: 18rpx;
+  background: #fff6e6;
+  color: #8a5a00;
+  font-size: 25rpx;
+  line-height: 1.6;
+}
+
+.notice-error {
+  background: #fdecec;
+  color: #a12b2b;
+}
+
+/* ---------- 状态占位 ---------- */
+.state-box {
+  box-sizing: border-box;
+  padding: 96rpx 36rpx;
+  border-radius: 28rpx;
+  background: #ffffff;
+  box-shadow: 0 10rpx 40rpx rgba(31, 45, 84, 0.06);
+  text-align: center;
+}
+
+.state-title {
+  display: block;
+  color: #4a5368;
+  font-size: 30rpx;
+  font-weight: 700;
+}
+
+.state-desc {
+  display: block;
+  margin-top: 14rpx;
+  color: #8a94a6;
+  font-size: 26rpx;
+  line-height: 1.6;
+}
+
+.state-action {
+  margin-top: 34rpx;
+  width: 60%;
+  border-radius: 20rpx;
+  background: linear-gradient(135deg, #4c6ef5 0%, #3b5bdb 55%, #2f49b0 100%);
+  color: #ffffff;
+  font-size: 27rpx;
+  font-weight: 600;
+  box-shadow: 0 10rpx 26rpx rgba(59, 91, 219, 0.30);
+}
+
+.divider {
+  height: 2rpx;
+  margin: 24rpx 0;
+  background: #eef1f6;
+}
+
+/* ---------- 标签 ---------- */
+.tag {
+  display: inline-block;
+  padding: 8rpx 18rpx;
+  border-radius: 999rpx;
+  background: #eef2ff;
+  color: #3b5bdb;
+  font-size: 22rpx;
+  font-weight: 600;
+}
+
+.tag-warn {
+  background: #fff4e5;
+  color: #a96600;
+}
+
+.tag-ok {
+  background: #e8f7ee;
+  color: #1a7f47;
+}
+
+/* ---------- 页头（各页通用：渐变强调条 + 大标题 + 副说明）---------- */
+.page-head {
+  margin: 16rpx 6rpx 36rpx;
+}
+
+.page-title {
+  display: block;
+  margin-top: 14rpx;
+  color: #16192b;
+  font-size: 46rpx;
+  font-weight: 800;
+  letter-spacing: 1rpx;
+}
+
+.head-sub {
+  display: block;
+  margin-top: 14rpx;
+}
+
+.head-accent {
+  display: block;
+  width: 72rpx;
+  height: 10rpx;
+  margin-top: 18rpx;
+  border-radius: 999rpx;
+  background: linear-gradient(90deg, #4c6ef5, #3b5bdb);
+}

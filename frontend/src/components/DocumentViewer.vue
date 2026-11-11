@@ -1,0 +1,266 @@
+<script setup lang="ts">
+import { computed, reactive, ref, watch } from 'vue'
+import { marked } from 'marked'
+import { DIMENSION_LABELS } from '../types'
+import type { DocumentDetail, Issue, RegenPayload } from '../types'
+
+const props = defineProps<{
+  document: DocumentDetail | null
+  issues: Issue[]
+  outline: any[]
+  warnings: string[]
+  regenerating: boolean
+  regenStage: string
+}>()
+const emit = defineEmits<{
+  save: [string]
+  remove: [string]
+  regenerate: [payload: RegenPayload]
+}>()
+
+const editing = ref(false)
+const draft = ref('')
+const selectedVersion = ref('current')
+// 逐项审核建议：key 为待核项序号，值是该条的用户修改意见。
+const suggestions = reactive<Record<number, string>>({})
+const overallFeedback = ref('')
+// 审核建议卡默认折叠；有待核项或正在重新生成时自动展开。
+const regenOpen = ref(false)
+
+function resetFeedback() {
+  for (const key of Object.keys(suggestions)) delete suggestions[Number(key)]
+  overallFeedback.value = ''
+}
+
+watch(() => props.document?.meta.id, () => {
+  editing.value = false
+  selectedVersion.value = 'current'
+  resetFeedback()
+  regenOpen.value = false
+})
+// 手机视口下不自动展开审核面板：正文自然滚动本身就很长，8 条意见再自动展开
+// 会让页面膨胀到 5000px+；入口由吸附工具栏的「审核建议 · N 项待核」按钮承担。
+const isMobileView = window.matchMedia('(max-width: 760px)')
+// 校验意见变化（如重新生成后）时清空旧建议，避免序号错配。
+watch(() => props.issues.map(issue => issue.quote + issue.type).join('|'), () => resetFeedback())
+watch(() => props.issues.length, (count) => {
+  if (count > 0 && !editing.value && !isMobileView.matches) regenOpen.value = true
+})
+watch(() => props.regenerating, (busy) => {
+  if (busy) regenOpen.value = true
+  else regenOpen.value = !isMobileView.matches && props.issues.length > 0
+})
+
+const displayMarkdown = computed(() => {
+  const doc = props.document
+  if (!doc) return ''
+  if (selectedVersion.value === 'current') return doc.markdown
+  return doc.versions.find(v => v.name === selectedVersion.value)?.markdown || doc.markdown
+})
+
+function sanitize(html: string): string {
+  return html
+    .replace(/<script[\s\S]*?<\/script>/gi, '')
+    .replace(/<iframe[\s\S]*?<\/iframe>/gi, '')
+    .replace(/\son\w+\s*=\s*["'][^"']*["']/gi, '')
+    .replace(/javascript:/gi, '')
+}
+
+const rendered = computed(() => sanitize(String(marked.parse(displayMarkdown.value, { breaks: true }))))
+
+const advisedCount = computed(() =>
+  props.issues.filter((_, i) => (suggestions[i] || '').trim()).length,
+)
+const canRegenerate = computed(() =>
+  !props.regenerating && (advisedCount.value > 0 || !!overallFeedback.value.trim()),
+)
+
+function startEdit() {
+  if (selectedVersion.value !== 'current') selectedVersion.value = 'current'
+  draft.value = displayMarkdown.value
+  editing.value = true
+  regenOpen.value = false
+}
+/** 工具栏入口：展开审核建议面板（固定在底部，与正文独立滚动，无需滚动定位）。 */
+function showRegen() {
+  regenOpen.value = true
+}
+function save() {
+  emit('save', draft.value)
+  editing.value = false
+}
+function copy() {
+  navigator.clipboard?.writeText(displayMarkdown.value)
+}
+function download(format: 'md' | 'docx') {
+  if (!props.document) return
+  const version = selectedVersion.value === 'current' ? '' : `&version=${selectedVersion.value}`
+  window.location.href = `/api/documents/${props.document.meta.id}/download?format=${format}${version}`
+}
+function submitRegenerate() {
+  if (!canRegenerate.value) return
+  const issueFeedback = props.issues
+    .map((_, index) => ({ index, suggestion: (suggestions[index] || '').trim() }))
+    .filter(item => item.suggestion)
+  emit('regenerate', { feedback: overallFeedback.value.trim(), issueFeedback })
+}
+</script>
+
+<template>
+  <template v-if="document">
+    <div class="viewer-toolbar">
+      <button v-if="!editing" class="btn small" @click="startEdit">编辑</button>
+      <template v-else>
+        <button class="btn small primary" @click="save">保存为新版本</button>
+        <button class="btn small" @click="editing = false">取消</button>
+      </template>
+      <button class="btn small" @click="copy">复制</button>
+      <button class="btn small" @click="download('md')">.md</button>
+      <button class="btn small" @click="download('docx')">.docx</button>
+      <button
+        v-if="!editing" class="btn small" :class="{ 'regen-entry': issues.length }"
+        title="逐项填写修改意见，按建议重新生成"
+        @click="showRegen"
+      >
+        审核建议{{ issues.length ? ` · ${issues.length} 项待核` : '' }}
+      </button>
+      <select v-model="selectedVersion">
+        <option value="current">当前 v{{ document.meta.version }}</option>
+        <option v-for="version in document.versions" :key="version.name" :value="version.name">{{ version.name }}</option>
+      </select>
+      <span class="spacer"></span>
+      <span class="badge" :class="document.meta.passed_verification ? 'ok' : 'warn'">
+        {{ document.meta.passed_verification ? '已核验' : '待核对' }}
+      </span>
+      <button class="link danger" @click="emit('remove', document.meta.id)">删除</button>
+    </div>
+
+    <div class="doc-scroll">
+      <textarea v-if="editing" v-model="draft" class="editor" spellcheck="false"></textarea>
+      <article v-else class="prose" v-html="rendered"></article>
+
+
+      <details v-if="!editing" class="trace">
+        <summary>生成轨迹与校验记录</summary>
+        <div class="trace-body">
+          <div v-if="outline.length">
+            <h4>段落大纲</h4>
+            <ol>
+              <li v-for="(section, i) in outline" :key="i">
+                <b>{{ section.title }}</b> — {{ section.goal }}
+                <span v-if="section.evidence_ids && section.evidence_ids.length">[{{ section.evidence_ids.join(', ') }}]</span>
+              </li>
+            </ol>
+          </div>
+          <div v-if="document.trace.critique && (document.trace.critique.score != null || (document.trace.critique.dimensions && Object.keys(document.trace.critique.dimensions).length))">
+            <h4>质量评分{{ document.trace.critique.score != null ? ' · ' + document.trace.critique.score + '/100' : '' }}</h4>
+            <div class="dim-grid">
+              <div v-for="(val, key) in (document.trace.critique.dimensions || {})" :key="key" class="dim-mini">
+                <span>{{ DIMENSION_LABELS[key] || key }}</span><strong>{{ val }}/5</strong>
+              </div>
+            </div>
+          </div>
+          <div v-if="document.trace.knowledge && document.trace.knowledge.sources && document.trace.knowledge.sources.length">
+            <h4>引用项目官方资料 · {{ document.trace.knowledge.sources.length }} 份</h4>
+            <ul class="kb-mini">
+              <li v-for="(src, i) in document.trace.knowledge.sources" :key="i">
+                <template v-if="src.url"><a :href="src.url" target="_blank" rel="noopener">{{ src.school }} · {{ src.program }}</a></template>
+                <template v-else>{{ src.school }} · {{ src.program }}</template>
+                <small> · {{ src.field }}</small>
+              </li>
+            </ul>
+          </div>
+          <div v-if="document.trace.references && document.trace.references.length">
+            <h4>使用的参考文档 · {{ document.trace.references.filter((r: any) => r.included !== false).length }} 份</h4>
+            <ul class="kb-mini">
+              <li v-for="(ref, i) in document.trace.references" :key="i">
+                {{ ref.name || ref.filename || ref.id }}
+                <small v-if="ref.included === false"> · 未注入（超字数预算）</small>
+                <small v-else-if="ref.missing"> · 已删除</small>
+              </li>
+            </ul>
+          </div>
+          <div v-if="document.trace.skills && document.trace.skills.length">
+            <h4>启用的写作技能 · {{ document.trace.skills.filter((s: any) => s.included !== false).length }} 个</h4>
+            <ul class="kb-mini">
+              <li v-for="(skill, i) in document.trace.skills" :key="i">
+                {{ skill.name || skill.id }}
+                <small v-if="skill.missing"> · 已删除</small>
+                <small v-else-if="skill.included === false"> · 未注入（超字数预算）</small>
+                <small v-else-if="skill.truncated"> · 内容按预算截断</small>
+                <small v-else> · {{ skill.origin === 'user' ? '我导入的' : '系统内置' }}</small>
+              </li>
+            </ul>
+          </div>
+          <div v-if="warnings.length">
+            <h4>需要人工确认</h4>
+            <ul><li v-for="(warning, i) in warnings" :key="i">{{ warning }}</li></ul>
+          </div>
+          <div v-if="(document.trace.critique?.numeric_warnings || []).length">
+            <h4>数字待核对（最后一轮复检）</h4>
+            <ul><li v-for="(warning, i) in document.trace.critique!.numeric_warnings" :key="'n' + i">{{ warning }}</li></ul>
+          </div>
+          <div>
+            <h4>元信息</h4>
+            模型 {{ document.trace.model || document.meta.model }} · 语言 {{ document.meta.language }} ·
+            约 {{ document.meta.word_count }} 词 · 修订 {{ document.trace.revision_count || 0 }} 次 ·
+            共 {{ document.versions.length }} 个版本
+          </div>
+        </div>
+      </details>
+    </div>
+
+    <!-- 逐项审核建议：独立于正文滚动区的底部面板，展开时内部滚动，不挤占正文阅读位置 -->
+    <details
+      v-if="!editing" class="regen-card" :class="{ busy: regenerating }"
+      :open="regenOpen" @toggle="(e: Event) => regenOpen = (e.target as HTMLDetailsElement).open"
+    >
+      <summary>
+        <strong>审核建议与重新生成</strong>
+        <span class="hint" v-if="!regenerating">
+          {{ issues.length ? `${issues.length} 项待核 · 已填 ${advisedCount} 项` : '无待核项 · 可填写整体修改要求后重新生成' }}
+        </span>
+        <span class="hint" v-else>{{ regenStage || '正在调用模型…' }}</span>
+      </summary>
+      <div class="regen-card-inner">
+        <div v-if="issues.length" class="issue-advisories">
+          <div v-for="(issue, i) in issues" :key="i" class="issue-advisory">
+            <div class="issue-advisory-head">
+              <span class="issue-no">{{ i + 1 }}</span>
+              <span class="tag" :class="issue.type">{{ issue.type }}</span>
+              <p>{{ issue.reason }}</p>
+            </div>
+            <small v-if="issue.quote || issue.fix">「{{ issue.quote }}」→ {{ issue.fix }}</small>
+            <input
+              v-model="suggestions[i]" :disabled="regenerating"
+              :placeholder="`第 ${i + 1} 项的审核意见，例如：保留原意，只把「显著提升」换成具体指标`"
+            />
+          </div>
+        </div>
+
+        <label class="field overall-field">
+          <span>{{ issues.length ? '整体补充说明（可选）' : '整体修改要求' }}</span>
+          <textarea
+            v-model="overallFeedback" rows="2" :disabled="regenerating"
+            placeholder="跨条目的要求，例如：全文语气更克制；结尾的职业规划与 MSc 课程挂钩"
+          ></textarea>
+        </label>
+
+        <div class="regen-actions">
+          <button class="btn small primary" :disabled="!canRegenerate" @click="submitRegenerate">
+            {{ regenerating ? '重新生成中…' : '按审核建议重新生成' }}
+          </button>
+          <span class="hint">
+            保存为 v{{ document.meta.version + 1 }} 新版本 · 只用已锁定事实
+          </span>
+        </div>
+      </div>
+    </details>
+  </template>
+
+  <div v-else class="empty-state">
+    <span class="empty-icon">▤</span>
+    <strong>尚未选择文书</strong>
+    <span>从左侧列表打开一份材料，或去生成页创建第一份</span>
+  </div>
+</template>

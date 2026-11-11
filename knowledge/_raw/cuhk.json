@@ -1,0 +1,829 @@
+{
+  "school_id": "CUHK",
+  "school_name_zh": "香港中文大学",
+  "school_name_en": "The Chinese University of Hong Kong",
+  "region": "HK",
+  "snapshot_date": "2026-11-09",
+  "intake_target": "2027/28",
+  "general": {
+    "english_requirement": "研究生院统一最低英语要求（https://www.gs.cuhk.edu.hk/admissions/requirements）：TOEFL 79 of 120 / 4.5 of 6（Internet-based/Home Edition）；IELTS (Academic) 6.5（Test Centre based/Online）；GMAT Band 21 (Verbal)；GMAT Focus Edition Band 78 (Verbal)；或香港地区大学学位 / 英语授课学位；HKAL(AS Level)、HKHEL、CUHK Matriculation、GCE A-Level/AS-Level 英语合格；HKDSE 英国语文科 4 级或以上；或认可专业资格（考试以英语进行）。TOEFL/IELTS 成绩自考试日起 2 年有效，GMAT/GRE 5 年有效。部分项目页另列 TOEFL 550（paper-based）/ 213（computer-based）。",
+    "application_open": "待核实（6 个项目官网均只列申请截止 / 轮次，未列统一申请开放日期）",
+    "notes": [
+      "【核实口径】本报告核实日期 2026-11-09，以 cuhk.edu.hk 实时官网页面为准，6 个项目均已发布 2027/28 入学截止日期与学费。2027/28 招生信息仍在滚动更新，入库前建议二次复核。",
+      "【搜索引擎缓存陷阱】搜索引擎索引缓存大量停留在 2026/27，与实时官网不一致：MSc CS 缓存 HK$264,000 / HK$228,800、截止 31 Jan 2026；DSBS 缓存 HK$220,000 / HK$96,000 p.a.、31 Dec 2025 / 28 Feb 2026；MSc IE 缓存 HK$260,500 / HK$242,500、2025/26 轮次；MSc BA 缓存 HK$380,000、31 Mar 2026；MSc FinTech 缓存 HK$380,000「for 2026-27 and 2027-28」、2025/26 轮次；MSc AI 缓存 HK$380,000、2025/26 轮次。实时页均对应 2027/28，本报告一律以实时页为准，差异写入各项目 verification.conflicts。",
+      "【院系子页面未同步】MSc AI 的 programme-information 子页仍显示 2026/27 轮次（6 Oct 2025 / 17 Nov 2025 / 29 Dec 2025 / 26 Feb 2026）与 9/6/12 units 分组，Admission 页与研究生院页为 2027/28 轮次与 10/6/11 units；CSE 学费页把 2027-28 学年学费标注「待確定」；MSc IE 的 Academic 页课程清单标注「applicable to the 2026-27 academic year」；MSc FinTech 项目站 Admission 页未列学费与语言分数。",
+      "【重要纠偏 1｜学院归属】MSc in Financial Technology 属 Faculty of Engineering / Division of Engineering，并非商学院项目（第三方资料常误列为商学院）；同院另设 PgD in Financial Technology，为并行项目、非合并。相对地，MSc in Business Analytics 属 Faculty of Business Administration。工程学院授课硕士清单见 https://erg.cuhk.edu.hk/erg/PostgraduateStudies。",
+      "【重要纠偏 2｜新开项目】MSc in Artificial Intelligence 由 CUHK 教务会 2024-25 学年第一次会议（2024-10-16）批准「self-financed Master of Science Programme in Artificial Intelligence」，生效 2025-26，即 2025/26 首招，属新开项目，非改名 / 停办 / 合并；同批批准 MSc in Robotics。依据 https://www.cuhk.edu.hk/governance/senate/documents/20241016e.pdf 与工程学院「New MSc Programme」公告 https://www4.mae.cuhk.edu.hk?p=2920/。",
+      "【重要纠偏 3｜系所更名】Department of Statistics 自 2025-08-01 起更名为 Department of Statistics and Data Science（校董会 2025-07-10 会议批准，https://cuhk.edu.hk/governance/council/documents/summary-reports/20250710e.pdf；理学院 https://www.sci.cuhk.edu.hk/wp-content/uploads/STAT_UG.pdf）。研究生院 MSc in Data Science and Business Statistics 项目页字段仍作 Division of Statistics，两者需同时收录。2019 年校方新闻稿曾简称 MSc in FinTech，现行官方全称为 MSc in Financial Technology。",
+      "【4 个易混淆的同类 AI 项目，均非本批 6 个项目】① MSc in Artificial Intelligence for Science（Faculty of Science，2026/27 新开，2027 intake 学费 HK$360,000，FT 1.5 年 / PT 3 年，27 credits，截止 30 Apr 2027，https://www.sci.cuhk.edu.hk/academic/postgraduate-studies/programme-offered/aisci/）；② Master of Science in Digital Economy and Artificial Intelligence（Faculty of Social Science / Division of Economics，新项目且 subject to University approval，2027/28，FT 1 年，27 units，HK$385,000 per annum*，轮次 14 Dec 2026 / 22 Feb 2027，https://www.gs.cuhk.edu.hk/programmes/social-science/master-science-digital-economy-and-artificial-intelligence）；③ MSc in Artificial Intelligence and Communication（School of Journalism and Communication，2027 September Intake，FT HK$240,000 per annum，截止 31 Mar 2027，须交 500 字英文 critical reflection statement 并披露是否使用 AI 工具，https://aicomm.com.cuhk.edu.hk/?p=2）；④ 香港中文大学（深圳）同名 MSc in Artificial Intelligence（gs.cuhk.edu.cn，不同校区 / 不同法人，不属本次香港沙田校本部范围）。另 MSc in Robotics 为工程学院 2025-26 新开项目，亦不与 MSc AI 相同。",
+      "【学费口径】6 个项目官网均只给出单一自资（Self-financed）费率，未区分 local / non-local 学费，全部标注待核实，不得推断。MSc CS、MSc AI、MSc FinTech 的学费在官网不同页面存在数值差异或「待確定」标注，见各项目 verification.conflicts。",
+      "【已排除来源】msc-cs.hku.hk 为香港大学（HKU）项目；openoffer.uk、mastermate.cn、jjl.cn、eic.org.cn、新东方等为第三方中介页面，仅作线索、未采信其课程名 / 分数 / 学费；cuhk.edu.cn、sse.cuhk.edu.cn 为中大深圳，均不属本次范围。",
+      "【degree_type 判定】含可选 project / internship / dissertation 路径者（MSc AI、MSc IE、MSc FinTech）标注「授课型（含可选 dissertation/project 路径）」；纯 coursework 者（MSc CS、DSBS、MSc BA）标注「授课型（coursework-based）」。MSc CS 与 MSc IE 官网均无指定必修课，curriculum.core 为空数组并在 structure 中说明。"
+    ]
+  },
+  "programs": [
+    {
+      "id": "cuhk-msc-computer-science",
+      "name_en": "MSc in Computer Science",
+      "name_zh": "计算机科学理学硕士（非官方译名）",
+      "aliases": [
+        "Master of Science in Computer Science（部门站全称写法）",
+        "MSc CS（CSE 官网常用缩写）"
+      ],
+      "degree_type": "授课型（coursework-based）",
+      "faculty": "Faculty of Engineering",
+      "department": "Division of Computer Science and Engineering（研究生院字段；学系 Department of Computer Science and Engineering）",
+      "official_urls": [
+        "https://www.gs.cuhk.edu.hk/programmes/engineering/msc-computer-science",
+        "http://msc.cse.cuhk.edu.hk/",
+        "https://msc.cse.cuhk.edu.hk/?p=96",
+        "https://www.cse.cuhk.edu.hk/academics/pg-course-list/"
+      ],
+      "duration_ft": "1 年",
+      "duration_pt": "2 年",
+      "credits": "24 units（8 门课）；无必修课（There are no compulsory courses），全部为选修",
+      "tuition": {
+        "amount": "HK$300,000（全日制，分 2 期）/ HK$260,000（兼读制，分 4 期）",
+        "intake": "2027/28",
+        "applies_to": "待核实（官网未区分 local / non-local，为单一自资费率）",
+        "note": "Funding Nature: Self-financed。CSE 系学费页把「2027-28學年入學」金额标注为「待確定」，金额与研究生院实时页一致但状态未确认。2026-27 学年为 HK$264,000（全日制）/ HK$228,800（兼读制）。未能于最低修业年期取得 24 学分者，每科需额外缴费，详见学费页。"
+      },
+      "application": {
+        "open": "待核实",
+        "deadlines": [
+          "31 January 2027（2027/28 入学，单一截止，无分轮）"
+        ],
+        "note": "部门 FAQ：录取结果通常于 11 月至次年 5 月公布；申请费一经缴交不设退还或转让；非本地生与本地生入学条件相同，但注册前须取得有效签证 / 进入许可（签证手续费 HK$450）。"
+      },
+      "english": "部门 FAQ 明确：TOEFL 不低于 550（paper-based）/ 213（computer-based）/ 79（internet-based）；IELTS 不低于 Band 6.5；GMAT Verbal 不低于 21；或香港 / 英语国家大学学位、HKDSE 英语合格等；原文注明「The scores listed below are for reference only」。研究生院通用要求：TOEFL 79 of 120 / 4.5 of 6（iBT/Home Edition）、IELTS (Academic) 6.5、GMAT Band 21 (Verbal)、GMAT Focus Edition Band 78 (Verbal)。",
+      "admission": {
+        "background": "认可大学 Computer Science、Computer Engineering 或相关领域学士学位；并须符合研究生院一般要求（荣誉等级一般不低于 Second Class 或平均成绩不低于「B」）",
+        "prerequisites": "待核实（官网未列指定先修课清单；仅要求 CS / Computer Engineering 或相关领域本科背景）",
+        "gre_gmat": "官网未提及（不推断为明确不要求）；部门 FAQ 仅将 GMAT（Verbal 不低于 21）列为英语能力证明选项之一",
+        "work_experience": "待核实（官网未列工作经验要求）"
+      },
+      "curriculum": {
+        "structure": "至少 8 门课 / 24 units 方可毕业；官网 Programme Organization 明确「There are no compulsory courses」，学生可选 CSE 开设的日间及晚间研究生课程。可选课程代码范围：AIST 5000-level、CENG、CSCI 5000 / 6000-level（除 CSCI6500）、ENGG5100-level；经课程主任批准，最多可选 2 门其他工程学院硕士（BMEG、ECLT、ELEG、FTEC、IEMS、LSCM、MAEG、SEEM 5000-level）或资讯科技管理硕士（DOTE 5000 / 6000-level，除 DOTE6790）课程。毕业须累计 GPA 不低于 2.0。Individual courses and the programme curriculum are subject to review and revision without prior notice.",
+        "core": [],
+        "electives": [
+          "CSCI5150 Machine Learning Algorithms and Applications",
+          "CSCI5640 Natural Language Processing",
+          "CSCI5280 / ENGG5104 Image Processing and Computer Vision",
+          "CSCI5470 / ENGG5105 Computer and Network Security",
+          "CSCI5180 / ENGG5103 Techniques for Data Mining",
+          "CSCI5030 Machine Learning Theory",
+          "AIST5020 Trustworthy Artificial Intelligence",
+          "AIST5030 Generative Artificial Intelligence"
+        ],
+        "tracks": []
+      },
+      "highlights": [
+        "官网 Objectives 原文：mastery of knowledge in state-of-the-art information technology, emerging software technology, and latest research topics in computer science",
+        "官网 Objectives 原文：understanding, analysis, management, and handling of real life information technology problems in workplace",
+        "官网 Objectives 原文：awareness of the latest development in computer science research and computer industry in both worldwide and local contexts",
+        "官网 Objectives 原文：written and oral communication skills; conduct of literature reviews; analytical skills for problem solving, including critical analysis, problem identification, and devising practical solutions",
+        "官网 Objectives 原文：communicate and cooperate effectively with other people in teamwork; take up leadership opportunities; propose and present new thoughts or ideas with a critical and open mindset; adapt solutions to reflect social, economic, environmental, health and safety considerations",
+        "官网 Programme Organization：无必修课，可选日间及晚间研究生课程，全日制 1 年 / 兼读制 2 年完成 8 门课"
+      ],
+      "career": [
+        "待核实（官网 Objectives / Programme Organization 页未提供具体雇主、行业或就业率等系统性就业数据）"
+      ],
+      "writing_hooks": [
+        "呼应官网 Objectives「state-of-the-art information technology, emerging software technology, and latest research topics in computer science」，说明你最想深入的前沿技术方向及阅读过的近期研究。",
+        "呼应官网 Objectives「real life information technology problems in workplace」，用一段真实工作或实习中的 IT 问题，说明你如何理解、分析、管理并处理它。",
+        "呼应官网 Objectives「written and oral communication skills; conduct of literature reviews; critical analysis, problem identification, and devising practical solutions」，用文献综述或项目复盘展示批判分析与设计实用解法的能力。",
+        "呼应官网 Objectives「take up leadership opportunities」「propose and present new thoughts or ideas with a critical and open mindset」「adapt solutions to reflect social, economic, environmental, health and safety considerations」，并结合 Programme Organization「There are no compulsory courses」说明自主选课规划（如 AI / 安全 / 数据挖掘赛道）。"
+      ],
+      "verification": {
+        "status": "partial",
+        "conflicts": [
+          "搜索引擎索引缓存（2026/27）显示学费 HK$264,000 / HK$228,800、截止 31 January 2026、联系人为 Professor KING Kuo Chin；研究生院实时页（2027/28）为 HK$300,000 / HK$260,000、截止 31 January 2027、联系人为 Prof. SHAO Zili。",
+          "CSE 系学费页把「2027-28學年入學」学费标注为「待確定」，与研究生院实时页金额一致但官方状态未确认。",
+          "项目站首页 / 部门站标题写作「Master of Science in Computer Science」，研究生院项目页写作「MSc in Computer Science」，为全称与简称差异，非改名。"
+        ],
+        "unverified": [
+          "学费是否区分 local / non-local",
+          "申请开放日期",
+          "具体就业去向 / 雇主与就业率",
+          "GRE/GMAT 是否为硬性要求",
+          "工作经验要求",
+          "2027/28 学费官方标注「待確定」"
+        ]
+      },
+      "sources": [
+        {
+          "url": "https://www.gs.cuhk.edu.hk/programmes/engineering/msc-computer-science",
+          "supports": "name_en、faculty、department、duration_ft、duration_pt、credits、tuition.amount、tuition.intake、admission.background、application.deadlines、联系人"
+        },
+        {
+          "url": "http://msc.cse.cuhk.edu.hk/",
+          "supports": "official_urls、项目站入口、CSE 归属与全称写法"
+        },
+        {
+          "url": "https://msc.cse.cuhk.edu.hk/?p=96",
+          "supports": "highlights、writing_hooks（Objectives 培养目标与共通能力原文）"
+        },
+        {
+          "url": "https://msc.cse.cuhk.edu.hk/?p=160",
+          "supports": "credits、curriculum.structure（8 门课 / 24 units、无必修课、可选课程代码范围、跨项目最多 2 门、GPA 2.0）"
+        },
+        {
+          "url": "https://msc.cse.cuhk.edu.hk/?p=126",
+          "supports": "tuition.note、verification.conflicts（2026-27 与 2027-28「待確定」学费及分期）"
+        },
+        {
+          "url": "https://msc.cse.cuhk.edu.hk?p=65/",
+          "supports": "english、admission.gre_gmat、application.note、verification.unverified（local / non-local 要求相同）"
+        },
+        {
+          "url": "https://www.cse.cuhk.edu.hk/academics/pg-course-list/",
+          "supports": "curriculum.electives（CSCI / AIST / CENG / ENGG 课程代码与官方课程名，含 2026-27 新增课）"
+        },
+        {
+          "url": "https://www.gs.cuhk.edu.hk/admissions/requirements",
+          "supports": "general.english_requirement、english（校级统一语言要求与成绩有效期）"
+        }
+      ]
+    },
+    {
+      "id": "cuhk-msc-data-science-and-business-statistics",
+      "name_en": "MSc in Data Science and Business Statistics",
+      "name_zh": "数据科学与商业统计理学硕士（非官方译名）",
+      "aliases": [
+        "M.Sc. in Data Science and Business Statistics（项目站写法）",
+        "MSc. in Data Science and Business Science（项目站首页标题疑为笔误）",
+        "數據科學及商業統計碩士課程（官网繁中名称）"
+      ],
+      "degree_type": "授课型（coursework-based）",
+      "faculty": "Faculty of Science",
+      "department": "Division of Statistics（研究生院字段）；开课系 Department of Statistics and Data Science（原 Department of Statistics，2025-08-01 起更名）",
+      "official_urls": [
+        "https://www.gs.cuhk.edu.hk/programmes/science/msc-data-science-and-business-statistics",
+        "https://dsbs.cuhk.edu.hk/",
+        "https://dsbs.cuhk.edu.hk/zh-hk/programme-details"
+      ],
+      "duration_ft": "1 年",
+      "duration_pt": "2 年",
+      "credits": "24 units（3 门核心 + 至少 5 门选修，共 8 门课）",
+      "tuition": {
+        "amount": "全日制 HK$231,000 每年；兼读制 HK$102,500 每年（为期两年）",
+        "intake": "2027/28",
+        "applies_to": "待核实（官网未区分 local / non-local，为单一自资费率）",
+        "note": "Funding Nature: Self-financed。项目站 FAQ 明确「本課程將於 2026–27 學年起增設全日制修讀模式」。STAT5101、STAT5102 已列入持续进修基金（CEF）可获发还款项课程名单（CEF 课程编号 42Z124710 / 42Z124729）；母课程获资历架构 QF Level 6 认可（资历名册登记编号 09/001124/6）。"
+      },
+      "application": {
+        "open": "待核实",
+        "deadlines": [
+          "31 December 2026（2027/28 首轮 Priority round）",
+          "28 February 2027（2027/28 最终轮 Final round）"
+        ],
+        "note": "Applications will be processed on a rolling basis until all places have been filled. Early applications are strongly encouraged. 须提交两封保密推荐信（由推荐人线上提交）；个人陈述与简历非必需文件，可作补充；申请阶段只需上传成绩单与英语成绩扫描本。"
+      },
+      "english": "项目站明确：托福 550（笔试）/ 79（网上机测）；雅思（学术）6.5；GMAT Band 21（Verbal；中文页写「口語」，按研究生院通用为 Verbal）；或香港地区大学学位 / 英语授课学位；HKAL(AS)、HKHEL、CUHK Matriculation、GCE A-Level / AS-Level 英语合格；HKDSE 英国语文科 4 级或以上；认可专业资格（考试以英语进行）。托福和雅思成绩由测试日起计有效两年，GMAT 有效 5 年。研究生院通用另列 GMAT Focus Edition Band 78 (Verbal)。",
+      "admission": {
+        "background": "一般入学要求：毕业于认可大学并获得学士学位，荣誉等级一般不低于二等或平均成绩等级一般不低于「B」；或于大专院校完成学业并获得等同荣誉学位的专业资格或类似资历。项目站 FAQ 明确不设本科主修限制、会取录非量化研究学位学生，官网定位「designed for students with non-statistics background」。",
+        "prerequisites": "无指定先修课；项目站 FAQ Q2 明确「申請人不需要擁有深入的數學及編程知識，但需要不抗拒學習及使用此類技能」；课程涵盖 R、Python、SAS 等数据软件",
+        "gre_gmat": "官网未提及（不推断为明确不要求）；项目站 FAQ Q5 明确「申請人無需提交GRE資料」，但可提供成绩表作补充；GMAT 仅作英语能力证明选项之一",
+        "work_experience": "待核实（官网未设为要求；FAQ 明确接受非量化背景、无先修主修限制）"
+      },
+      "curriculum": {
+        "structure": "合计 24 units / 8 门课；3 门核心 + 至少 5 门选修。兼读制：第一修业学年核心 9 学分 + 选修 3 学分，第二修业学年选修 12 学分；全日制：第一学期核心 6 + 选修 6，第二学期核心 3 + 选修 9。每科每星期一节三小时大课，星期一至五晚上及星期六于沙田中文大学上课。无综合考试，按所修科目表现评核（作业、期中 / 期末考试、课堂表现、项目等）；毕业须累计 GPA 不低于 2.0。",
+        "core": [
+          "STAT5101 Foundations of Data Science",
+          "STAT5102 Regression in Practice",
+          "STAT5106 Programming Techniques for Data Science"
+        ],
+        "electives": [
+          "STAT5103 High-dimensional Data Analysis",
+          "STAT5104 Data Mining",
+          "STAT5105 Applied Survival Data Analysis",
+          "STAT5107 Discrete Data Analytics",
+          "STAT6104 Financial Time Series",
+          "STAT6105 Basic Actuarial Principles and Their Applications",
+          "STAT6106 Applied Bayesian Methods",
+          "STAT6107 Selected Topics on Data Science and Business Statistics",
+          "STAT6108 Official Statistics and Structural Equation Modelling",
+          "RMSC5101 Statistical Methods in Risk Management and Finance",
+          "STAT 6207 應用深度學習（官网繁中课程名）",
+          "RMSC 6007 風險和金融數據分析及其Python應用（官网繁中课程名）"
+        ],
+        "tracks": []
+      },
+      "highlights": [
+        "官网原文：The programme is designed for students with non-statistics background. We impart data analytic knowledge and provide quantitative training to our students.",
+        "官网原文：ENHANCE BUSINESS ADVANTAGES WITH DATA ANALYTIC SKILLS & KNOWLEDGE；INTERPRETING STATISTICAL RESULTS TO MAKE DECISIONS",
+        "官网原文：Statistical packages such as R, Python and SAS will be covered.；Data Science is an integrated science which incorporates knowledge from the fields of statistics, mathematics and computer science",
+        "官网：课程于 2004 年由香港中文大学统计（与数据科学）系创办（we launched this programme to meet the societal needs two decades ago）；并邀请富经验的专家分享业内最新发展",
+        "官网：已获 Royal Statistical Society (RSS) 认证，毕业生可申请 Graduate Statistician（视所修科目组合），认证涵盖由 2023-24 学年入学至 2028-29 学年入学的学生"
+      ],
+      "career": [
+        "待核实（官网未提供系统性就业统计；仅项目站校友感言提及 HSBC、Google Cloud Industry Lead、Accenture Data Science Specialist、香港特区政府统计处、差饷物业估价署等个案）"
+      ],
+      "writing_hooks": [
+        "呼应官网「designed for students with non-statistics background」，跨专业申请者应说明量化学习动机，并回应 FAQ「申請人不需要擁有深入的數學及編程知識，但需要不抗拒學習及使用此類技能」。",
+        "呼应官网「INTERPRETING STATISTICAL RESULTS TO MAKE DECISIONS」与「make business decisions」，突出数据驱动商业决策的应用导向，而非纯统计理论。",
+        "呼应官网「Statistical packages such as R, Python and SAS will be covered」，说明你已具备或计划强化的工具链，并从 STAT5104 Data Mining、STAT6104 Financial Time Series 等官方选修中点名具体方向。",
+        "注意官网 FAQ「個人陳述和簡歷不是申請的必要文件」但「兩封保密推薦信」为必需，文书宜聚焦统计思维与职场应用，不宜把 PS 写成硬性门槛。"
+      ],
+      "verification": {
+        "status": "partial",
+        "conflicts": [
+          "搜索引擎索引缓存（2026/27 或更早）显示学费 HK$220,000 / HK$96,000 per annum、截止 31 December 2025 / 28 February 2026；研究生院实时页与项目站（2027/28）为 HK$231,000 / HK$102,500 per annum、截止 31 December 2026 / 28 February 2027。",
+          "项目站首页标题一处写作「MSc. in Data Science and Business Science」，与研究生院及简章「MSc in Data Science and Business Statistics」不一致，疑为笔误。",
+          "研究生院项目页字段仍作 Division of Statistics，而开课系已于 2025-08-01 更名为 Department of Statistics and Data Science。",
+          "旧版简章（2025-26 admission）列学费 HK$90,000 per annum for two years、截止 31 December 2024 / 28 February 2025，与 2027/28 实时数据差异较大，属不同入学季版本。"
+        ],
+        "unverified": [
+          "学费是否区分 local / non-local",
+          "申请开放日期",
+          "系统性就业去向 / 就业率",
+          "GRE/GMAT 是否为硬性要求",
+          "工作经验要求"
+        ]
+      },
+      "sources": [
+        {
+          "url": "https://www.gs.cuhk.edu.hk/programmes/science/msc-data-science-and-business-statistics",
+          "supports": "name_en、faculty、department、duration_ft、duration_pt、credits、tuition.amount / intake、application.deadlines"
+        },
+        {
+          "url": "https://dsbs.cuhk.edu.hk/",
+          "supports": "highlights（non-statistics background 定位、R/Python/SAS、2004 创办、聚焦数据分析与决策）、aliases"
+        },
+        {
+          "url": "https://dsbs.cuhk.edu.hk/zh-hk/programme-details",
+          "supports": "tuition、application.deadlines、english、curriculum.core / electives / structure、admission（FAQ）、highlights（RSS / CEF / QF 认证）、writing_hooks"
+        },
+        {
+          "url": "https://www.sta.cuhk.edu.hk/mscdbs/booklet/MScDSBS_leaflet-20241101.pdf",
+          "supports": "curriculum.electives（英文课程名）、application.note（两封推荐信）、career（校友感言）、verification.conflicts（2025-26 学费与截止）"
+        },
+        {
+          "url": "https://www.sta.cuhk.edu.hk/mscdbs/booklet/MScDSBS_leaflet-20221220.pdf",
+          "supports": "curriculum.core / electives / structure（3 核心 + 5 选修、课程描述、GPA 2.0、无综合考试）"
+        },
+        {
+          "url": "https://cuhk.edu.hk/governance/council/documents/summary-reports/20250710e.pdf",
+          "supports": "department、general.notes（统计系 2025-08-01 更名）"
+        },
+        {
+          "url": "https://www.sci.cuhk.edu.hk/wp-content/uploads/STAT_UG.pdf",
+          "supports": "department、general.notes（Department of Statistics and Data Science 官方名称）"
+        },
+        {
+          "url": "https://www.gs.cuhk.edu.hk/admissions/requirements",
+          "supports": "general.english_requirement、english（校级统一语言要求）"
+        }
+      ]
+    },
+    {
+      "id": "cuhk-msc-artificial-intelligence",
+      "name_en": "MSc in Artificial Intelligence",
+      "name_zh": "人工智能理学硕士（非官方译名）",
+      "aliases": [
+        "Master of Science in Artificial Intelligence（官网全称）",
+        "MSc AI（官网简称）",
+        "（易混淆，非本项目）MSc in Artificial Intelligence for Science — Faculty of Science 另一项目",
+        "（易混淆，非本项目）Master of Science in Digital Economy and Artificial Intelligence — Faculty of Social Science / Division of Economics 新项目",
+        "（易混淆，非本项目）MSc in Artificial Intelligence and Communication — School of Journalism and Communication 项目",
+        "（易混淆，非本项目）香港中文大学（深圳）MSc in Artificial Intelligence — 不同校区 / 不同法人"
+      ],
+      "degree_type": "授课型（含可选 dissertation/project 路径）",
+      "faculty": "Faculty of Engineering",
+      "department": "Division of Engineering（研究生院字段；项目站仅称 Offered by the Faculty of Engineering，未指明具体学系）",
+      "official_urls": [
+        "https://www.gs.cuhk.edu.hk/programmes/engineering/msc-artificial-intelligence",
+        "https://mscai.erg.cuhk.edu.hk/",
+        "https://mscai.erg.cuhk.edu.hk/admission",
+        "https://mscai.erg.cuhk.edu.hk/course-list-and-descriptions"
+      ],
+      "duration_ft": "1.5 年（最长 3 年）",
+      "duration_pt": "3 年（最长 4 年）",
+      "credits": "27 credits；Required courses / Core Elective Courses / Elective Courses（含 Project）分组学分在不同官网页面分别写作 10 / 6 / 11 与 9 / 6 / 12 units，总学分 27 一致，分组学分待核实",
+      "tuition": {
+        "amount": "HK$395,000（全日制分 3 期 / 兼读制分 6 期）",
+        "intake": "待核实（研究生院实时页与项目站未标注该金额适用入学季；同页申请轮次为 2026-10 至 2027-02，按 2027/28 口径收录，属推测）",
+        "applies_to": "待核实（官网未区分 local / non-local，为单一自资费率）",
+        "note": "Funding Nature: Self-financed。设 Admission Scholarship 与 Academic Achievement Scholarship，颁予合适人选。旧版研究生院页曾注明 2025-26、2026-27 入选 UGC「Hong Kong Future Talents Scholarship Scheme for Advanced Studies」（仅部分本地学生），实时页已移除，待核实。"
+      },
+      "application": {
+        "open": "待核实",
+        "deadlines": [
+          "2 October 2026（2027/28 第 1 轮）",
+          "6 November 2026（2027/28 第 2 轮）",
+          "31 December 2026（2027/28 第 3 轮）",
+          "28 February 2027（2027/28 第 4 轮 / Final round）"
+        ],
+        "note": "Applications will be processed on a rolling basis until all places have been filled. Therefore, early applications are strongly encouraged. 申请人须上传成绩单及其他证明文件扫描本；若学校采用 100 分制，鼓励填报 100-based GPA；入围者须邮寄纸质证明文件，所有提交文件不获发还。"
+      },
+      "english": "Admission 页明确：TOEFL 550 (Paper-based) / 79 (Internet-based/Home Edition)；IELTS (Academic) 6.5 (Test Centre based/Online)；GMAT Band 21 (Verbal)；GMAT Focus Edition Band 78 (Verbal)；或香港大学学位 / 英语授课学位；HKAL(AS)、HKHEL、CUHK Matriculation、GCE A-Level/AS-Level 英语合格；HKDSE 英国语文科 4 级或以上；认可专业资格（考试以英语进行）。",
+      "admission": {
+        "background": "认可大学 Engineering 或 Science 学科学士学位，荣誉不低于 Second Class 或平均成绩不低于「B」；或同等专业资格。其他学科背景者须具备至少两年与项目相关的 post-qualification working experience。",
+        "prerequisites": "待核实（官网未列指定先修课清单；仅要求 Engineering / Science 本科背景，或其他学科背景 + 2 年相关工作经验）",
+        "gre_gmat": "官网未提及（不推断为明确不要求）；GMAT 仅作英语能力证明选项之一",
+        "work_experience": "对非 Engineering / Science 本科背景者为硬性要求：至少 2 年与项目相关的 post-qualification working experience；对工程 / 理学背景者官网未列要求"
+      },
+      "curriculum": {
+        "structure": "27 credits。Required courses 10 units（另一官网页面写 9 units）、Core Elective Courses 6 units（至少修 6 units）、Elective Courses 11 units（含 Project；另一页面写 12 units，至少修 12 units）——分组学分官网不一致，待核实。Elective 分为 Theoretical Group、Applications Group、Data Analytics Group、Practicum and Projects Group。官网注明 Individual courses and the programme curriculum are subject to review and revision without prior notice.",
+        "core": [
+          "AIMS5701 Fundamentals in Artificial Intelligence",
+          "AIMS5702 Artificial Intelligence in Practice",
+          "AIMS5703 Emerging Technologies in Artificial Intelligence",
+          "AIMS5704 Machine Learning Theory"
+        ],
+        "electives": [
+          "AIMS5710 Deep Learning Fundamentals and Theories",
+          "AIMS5720 Computer Vision and Pattern Recognition",
+          "AIMS5730 Natural Language Processing",
+          "AIMS5740 Generative Artificial Intelligence",
+          "AIMS5760 Technology Commercialization of AI Innovations",
+          "AIMS5761 From Business Plan to Investable AI Ventures",
+          "AIMS5780 Artificial Intelligence Internship",
+          "AIMS5790 Artificial Intelligence Project I",
+          "AIMS5791 Artificial Intelligence Project II",
+          "ELEG5757 Intelligent Wearable Electronics"
+        ],
+        "tracks": []
+      },
+      "highlights": [
+        "官网：Offered by the Faculty of Engineering, the Master of Science in Artificial Intelligence (MSc AI) Programme aims to train graduates with comprehensive state-of-the-art knowledge and relevant expertise in AI.",
+        "官网：students will not only have solid foundation knowledge in AI, but also have accumulated experience in practical applications and project development, enabling them to apply AI technologies in real life.",
+        "官网（CUHK 教务会 2024-25 第一次会议，2024-10-16）：批准 self-financed Master of Science Programme in Artificial Intelligence，生效 2025-26 → 属新开项目，2025/26 首招，非改名 / 停办 / 合并；同批批准 MSc in Robotics。",
+        "官网：30+ elective courses available for building a flexible curriculum tailored to students' career-development objectives；涵盖 robotics、life science and medicine、financial technology、Internet-of-Things and edge AI、computational imaging、neuromorphic computing、speech and language processing、IC design、big-data analytics。",
+        "官网：Faculty of Engineering hosts 30 IEEE Fellows and 4 ACM Fellows；AI / machine learning 研究归于 Information and Automation Technology，为 CUHK 四大 Strategic Areas 之一。",
+        "官网：Students can opt for the course titled 'From Business Plan to Investable AI Ventures'；Internship 为至少 12 weeks（学术导师 + 企业导师双指导）；6-unit 2-semester project course；Mentorship and Industrial Interactions。"
+      ],
+      "career": [
+        "待核实（官网未提供具体雇主 / 系统性就业数据；仅表述 future career development、career-development objectives）"
+      ],
+      "writing_hooks": [
+        "呼应官网「accumulated experience in practical applications and project development」「apply AI technologies in real life」，用具体 AI 项目说明落地应用与工程实现经历。",
+        "呼应官网「30+ elective courses available for building a flexible curriculum tailored to students' career-development objectives」，点名 1-2 个应用域（如 robotics、financial technology、edge AI、speech and language processing）说明选课与职业目标。",
+        "呼应官网入学要求「at least two years of post-qualification working experience which is relevant to the programme」：非工程 / 理学背景者须显式说明 2 年相关工作经验及其与 AI 项目的相关性（官网硬性条件）。",
+        "呼应官网 Entrepreneurship and pitching / Internship / Research opportunity / Mentorship and Industrial Interactions 四项特色，说明希望在 AIMS5761、AIMS5780 或 6-unit 2-semester project course 中选择哪条路径。"
+      ],
+      "verification": {
+        "status": "partial",
+        "conflicts": [
+          "搜索引擎索引缓存（2026/27）显示学费 HK$380,000、轮次 6 Oct 2025 / 17 Nov 2025 / 29 Dec 2025 / 26 Feb 2026；研究生院实时页与 Admission 页（2027/28）为 HK$395,000、轮次 2 Oct 2026 / 6 Nov 2026 / 31 Dec 2026 / 28 Feb 2027。",
+          "项目站 programme-information 子页仍显示 2026/27 轮次与 9 / 6 / 12 units 分组，Admission 页与 course-list 页为 2027/28 轮次与 10 / 6 / 11 units，属官网子页面未同步。",
+          "课程分组学分在不同官网页面写作 10 / 6 / 11 与 9 / 6 / 12 units，总学分 27 一致。",
+          "旧版研究生院页列 2025-26、2026-27 入选 UGC Hong Kong Future Talents Scholarship Scheme，实时页已移除该备注。"
+        ],
+        "unverified": [
+          "学费适用入学季（官网未标注）",
+          "学费是否区分 local / non-local",
+          "申请开放日期",
+          "课程分组学分（10/6/11 与 9/6/12 冲突）",
+          "具体就业去向 / 雇主",
+          "GRE/GMAT 是否为硬性要求",
+          "Hong Kong Future Talents Scholarship Scheme 适用入学季（仅旧版页）"
+        ]
+      },
+      "sources": [
+        {
+          "url": "https://www.gs.cuhk.edu.hk/programmes/engineering/msc-artificial-intelligence",
+          "supports": "name_en、faculty、department、duration_ft / pt、credits、tuition.amount、admission.background / work_experience、application.deadlines"
+        },
+        {
+          "url": "https://mscai.erg.cuhk.edu.hk/",
+          "supports": "highlights、writing_hooks（项目目标、30+ 选修、创业路演、12 周实习、6-unit 研究项目、mentorship、学院 IEEE / ACM Fellows 实力）"
+        },
+        {
+          "url": "https://mscai.erg.cuhk.edu.hk/admission",
+          "supports": "english、application.deadlines / note、admission.background / work_experience"
+        },
+        {
+          "url": "https://mscai.erg.cuhk.edu.hk/programme-information",
+          "supports": "credits、tuition.note、curriculum.structure、verification.conflicts（旧版 2026/27 轮次与 9/6/12 分组）"
+        },
+        {
+          "url": "https://mscai.erg.cuhk.edu.hk/course-list-and-descriptions",
+          "supports": "curriculum.core / electives（AIMS 课程代码与官方课程名、四个 Elective Group、实习与项目课）"
+        },
+        {
+          "url": "https://www.cuhk.edu.hk/governance/senate/documents/20241016e.pdf",
+          "supports": "highlights、general.notes（2025-26 生效的新开批准，证明为新项目）"
+        },
+        {
+          "url": "https://www4.mae.cuhk.edu.hk?p=2920/",
+          "supports": "highlights、general.notes（工程学院「New MSc Programme」公告）"
+        },
+        {
+          "url": "https://www.gs.cuhk.edu.hk/admissions/requirements",
+          "supports": "general.english_requirement、english（校级统一语言要求）"
+        }
+      ]
+    },
+    {
+      "id": "cuhk-msc-information-engineering",
+      "name_en": "MSc in Information Engineering",
+      "name_zh": "信息工程理学硕士（非官方译名）",
+      "aliases": [
+        "Master of Science in Information Engineering（官网全称）",
+        "MScIE（官网简称）"
+      ],
+      "degree_type": "授课型（含可选 dissertation/project 路径）",
+      "faculty": "Faculty of Engineering",
+      "department": "Division of Information Engineering（Department of Information Engineering）",
+      "official_urls": [
+        "https://www.gs.cuhk.edu.hk/programmes/engineering/msc-information-engineering",
+        "https://msc.ie.cuhk.edu.hk/",
+        "https://msc.ie.cuhk.edu.hk/admission/",
+        "https://msc.ie.cuhk.edu.hk/academic/"
+      ],
+      "duration_ft": "1 年（2 terms；最长 3 年）",
+      "duration_pt": "2 年（4 terms；最长 4 年）",
+      "credits": "24 units（8 门研究生课程，每门 3 units）：IEMS 15–24 units + ENGG / IERG 0–6 units；另可跨其他工程学院硕士最多 6 units，或选修 MSc in Business Analytics 的 DOTE 5000-level 最多 3 units",
+      "tuition": {
+        "amount": "全日制 HK$284,000（分 2 期）/ 兼读制 HK$242,500（分 3 期）",
+        "intake": "2027/28",
+        "applies_to": "待核实（官网未区分 local / non-local，为单一自资费率）",
+        "note": "Admission 页明确标注「For 2027-28 intake」；Additional tuition fee will be charged for each course taken after the normative study period；Funding Nature: Self-financed。申请费 HK$500（non-refundable）。研究生院页备注 2025-26 及 2026-27 入选 UGC「Hong Kong Future Talents Scholarship Scheme for Advanced Studies」（仅部分本地学生）。"
+      },
+      "application": {
+        "open": "待核实",
+        "deadlines": [
+          "30 September 2026（2027/28 第 1 轮）",
+          "30 November 2026（2027/28 第 2 轮）",
+          "31 March 2027（2027/28 第 3 轮 / Final round）"
+        ],
+        "note": "Applications will be processed on a rolling basis until all places have been filled. Therefore, early applications are strongly encouraged. 申请流程：线上申请 → 缴交 HK$500 不可退还申请费 → 上传证明文件 → 填报 2 位推荐人资料（Two referee reports are required）→ 线上查阅结果；入围者或须邮寄纸质证明文件。"
+      },
+      "english": "Admission 页明确：TOEFL 79 of 120 / 4.5 of 6 (Internet-based/Home Edition)；IELTS (Academic) 6.5 (Test Centre based/Online)；GMAT Band 21 (Verbal)；GMAT Focus Edition Band 78 (Verbal)；或香港大学学位；HKAL(AS)、HKHEL、CUHK Matriculation、GCE A-Level/AS-Level 英语合格；HKDSE 英国语文科 4 级或以上；认可专业资格（考试以英语进行）。Academic 页注明 All courses are conducted in English。",
+      "admission": {
+        "background": "三条路径任一：① 认可大学 engineering、science 或相关领域学士学位，通常 Second Class Honours 或以上 / 平均成绩「B」或以上；② 于大专院校完成相关课程并取得等同荣誉学位的专业或类似资格；③ 其他领域第一学位但具相关背景（曾修读 IE 相关本科 / 研究生课程，或具 IT 相关行业工作经验）。项目站 Programme-Specific Requirements 另写须具 science or engineering 学士学位、至少 Second Class Honors、平均不低于「B」。",
+        "prerequisites": "待核实（官网未列指定先修课清单；第 ③ 条允许用 IE 相关课程或 IT 行业经验作为相关背景）",
+        "gre_gmat": "官网未提及（不推断为明确不要求）；GMAT 仅作英语能力证明选项之一",
+        "work_experience": "官网未设为硬性要求；但「having work experiences in Information Technology related industries」可作为第 ③ 条相关背景的证明途径之一"
+      },
+      "curriculum": {
+        "structure": "至少 24 units（8 门研究生课程，每门 3 units）。IEMS 课程 15–24 units；Department of Information Engineering 的 ENGG / IERG 课程 0–6 units；学生可在 Option (a) 其他工程学院硕士课程（BMEG、CMSC、ECLT、ELEG、FTEC、MAEG、SEEM 5000-level，最多 6 units）或 Option (b) MSc in Business Analytics 的 DOTE 5000-level（最多 3 units）中二选一。另可修 IEMS5910 / IEMS5920 Advanced Research and Development Project I / II 及 IEMS5930 Information Engineering Internship。所有课程以英语授课，于沙田主校区面授；Academic 页课程清单标注「applicable to the 2026-27 academic year」，并注明并非每年所有课程均会开设、须视座位供应。",
+        "core": [],
+        "electives": [
+          "IEMS5701 Wireless Communication",
+          "IEMS5705 Optical Communication and Lightwave Networks",
+          "IEMS5710 Cryptography, Information Security and Privacy",
+          "IEMS5725 Blockchain and Applications",
+          "IEMS5726 Data Science in Practice",
+          "IEMS5730 Big Data Systems and Information Processing",
+          "IEMS5780 Building and Deploying Scalable Machine Learning Services",
+          "IEMS5910 Advanced Research and Development Project I",
+          "IEMS5920 Advanced Research and Development Project II",
+          "IEMS5930 Information Engineering Internship",
+          "ENGG5301 Information Theory",
+          "IERG5050 AI Foundation Models, Systems and Applications",
+          "IERG5250 Edge AI and Applications",
+          "IERG5350 Reinforcement Learning",
+          "IERG5460 Multimodal Machine Learning"
+        ],
+        "tracks": []
+      },
+      "highlights": [
+        "官网：Established in 1997, the Master of Science in Information Engineering (MScIE) programme is a well-established taught postgraduate programme offered by the Department of Information Engineering at CUHK.",
+        "官网部门使命：Building a Connected, Secure and Smart Society in the Age of Digital Transformation",
+        "官网：Founded in 1989 by Professor Charles Kao, the father of optical communications, the Department of Information Engineering is the first and still the only academic department of its kind in Hong Kong.",
+        "官网研究方向：AI, Multimodal and Embodied Intelligence；Cyber-Security and Applied Cryptography；Information and Coding Theory；AI and Networked Systems；Optical Communications and Networking；Wireless Communications and Networked Systems；并涵盖 data science、big data analytics、blockchain、cloud computing、IoT。",
+        "官网 Programme Objectives：To excel in engineering and professional positions in industries and organizations that design, develop, deploy, or employ information systems, networks, and services；To develop a global perspective ... and be able to contribute to or lead interdisciplinary engineering projects；To continue their personal development through professional studies and life-long learning。",
+        "官网：flexible curriculum、holistic learning experience、industry exposure、extensive alumni network；可跨 Faculty of Engineering 与 Faculty of Business Administration 选课；提供 Advanced Research and Development Project I & II 与 Information Engineering Internship。"
+      ],
+      "career": [
+        "待核实（官网未提供具体雇主 / 系统性就业统计；Programme Objectives 仅表述在设计、开发、部署或使用信息系统、网络与服务的行业中胜任工程与专业职位，及部分毕业生升读研究生院）"
+      ],
+      "writing_hooks": [
+        "呼应官网部门使命「Building a Connected, Secure and Smart Society in the Age of Digital Transformation」，说明你关注的信息工程议题（AI、cyber-security、networked systems 等）与部门研究强项的对应。",
+        "呼应官网 Programme Objectives「be able to contribute to or lead interdisciplinary engineering projects」与「develop a global perspective」，用跨团队协作项目体现全球视野与跨领域领导潜力。",
+        "呼应官网「flexible curriculum」与跨院选课（其他工程学院硕士最多 6 units，或 MSc in Business Analytics 的 DOTE 5000-level 最多 3 units），说明拟如何组合技术与管理课程，并表明是否选择 IEMS5910/5920 研究项目或 IEMS5930 实习。",
+        "呼应官网第 ③ 条入学路径「having work experiences in Information Technology related industries」：非理工背景者用 IE 相关修课或 IT 行业经历论证 relevant background。"
+      ],
+      "verification": {
+        "status": "partial",
+        "conflicts": [
+          "搜索引擎索引缓存（2026/27）显示学费 HK$260,500 / HK$242,500、轮次 30 Sep 2025 / 1 Nov 2025 / 1 Dec 2025 / 31 Mar 2026；研究生院实时页与 Admission 页（2027/28）为 HK$284,000 / HK$242,500、轮次 30 Sep 2026 / 30 Nov 2026 / 31 Mar 2027。",
+          "Academic 页课程清单标注「applicable to the 2026-27 academic year」，而 2027/28 入学学费与轮次已发布，课程清单适用学年待核实。",
+          "研究生院页写第 3 轮 31 March 2027，项目站 Admission 页写 Final Round 31 March 2027，轮次命名略有差异。"
+        ],
+        "unverified": [
+          "学费是否区分 local / non-local",
+          "申请开放日期",
+          "具体就业去向 / 雇主",
+          "GRE/GMAT 是否为硬性要求",
+          "2027/28 适用课程清单（Academic 页仅标注 2026-27）"
+        ]
+      },
+      "sources": [
+        {
+          "url": "https://www.gs.cuhk.edu.hk/programmes/engineering/msc-information-engineering",
+          "supports": "name_en、faculty、department、duration_ft / pt、credits、tuition、admission.background、application.deadlines、FTSS 备注"
+        },
+        {
+          "url": "https://msc.ie.cuhk.edu.hk/admission/",
+          "supports": "tuition（For 2027-28 intake）、application.deadlines / note、english、申请费 HK$500、2 封推荐人报告"
+        },
+        {
+          "url": "https://msc.ie.cuhk.edu.hk/academic/",
+          "supports": "credits、curriculum.electives / structure、highlights（Programme Objectives）、duration（最长修业期）、verification.conflicts（课程适用 2026-27）"
+        },
+        {
+          "url": "https://msc.ie.cuhk.edu.hk/about/",
+          "supports": "highlights、writing_hooks（1997 创办、1989 年由 Charles Kao 创系、部门使命、六大研究方向、研究项目与实习、跨院选课）"
+        },
+        {
+          "url": "http://www.ie.cuhk.edu.hk/msc",
+          "supports": "official_urls（研究生院页给出的部门项目入口）"
+        },
+        {
+          "url": "https://www.gs.cuhk.edu.hk/admissions/requirements",
+          "supports": "general.english_requirement、english（校级统一语言要求）"
+        }
+      ]
+    },
+    {
+      "id": "cuhk-msc-business-analytics",
+      "name_en": "MSc in Business Analytics",
+      "name_zh": "商业分析理学硕士（非官方译名）",
+      "aliases": [
+        "Master of Science Programme in Business Analytics（官网正式写法）",
+        "MScBA（官网简章 / 邮箱常用缩写）"
+      ],
+      "degree_type": "授课型（coursework-based）",
+      "faculty": "Faculty of Business Administration（CUHK Business School）",
+      "department": "Division of Business Administration（研究生院字段）；商学院师资页所列教师全部隶属 Department of Decisions, Operations and Technology（据此推断为承办系，官网未明文写由该系开办，待核实）",
+      "official_urls": [
+        "https://www.gs.cuhk.edu.hk/programmes/business-administration/msc-business-analytics",
+        "https://masters.bschool.cuhk.edu.hk/programmes/mscba",
+        "https://masters.bschool.cuhk.edu.hk/programmes/mscba/curriculum/",
+        "https://www.bschool.cuhk.edu.hk/index.php/programs/masters/msc-in-business-analytics/apply-now"
+      ],
+      "duration_ft": "1 年（3 个 trimesters + 暑期）",
+      "duration_pt": "不设 / 待核实（研究生院项目页仅列 Full-time；但商学院站点页面顶部出现「Part-time: 30 Apr 2027」截止日期，口径不一致，待核实）",
+      "credits": "30 units（5 门核心 + 5 门选修，各 3 credits）",
+      "tuition": {
+        "amount": "HK$400,000（整个项目）",
+        "intake": "2027/28",
+        "applies_to": "待核实（官网未区分 local / non-local，为单一自资费率）",
+        "note": "Funding Nature: Self-financed。分 3 期：HK$200,000（留位费，确认录取后 2 周内）、第 2 个 trimester 初 HK$100,000、第 3 个 trimester 初 HK$100,000。入学奖学金最高可达全额学费，所有新生自动考虑、无需另行申请；本地学生可申请 Extended Non-means tested Loan Scheme (ENLS)。2026/27 学费为 HK$380,000（简章注明「for intake 2026 only」）。"
+      },
+      "application": {
+        "open": "待核实",
+        "deadlines": [
+          "31 July 2026（2027/28 Early Round，研究生院实时页）",
+          "31 March 2027（2027/28 主截止，Full-time）"
+        ],
+        "note": "Application will be processed on a rolling basis until all places fill up. Therefore, early applications are strongly encouraged. The application deadline may be closed early if places are no longer available. 提交申请后或获电邮邀请参加 optional interview（研究生院页）/ interview at Programme's discretion（简章）。"
+      },
+      "english": "项目简章与商学院通用录取要求页明确：TOEFL 不低于 550（paper-based）/ 79（internet-based）；IELTS (Academic) 不低于 6.5；GMAT Verbal 不低于 21；GMAT Focus Edition Band 78 (Verbal)（通用页）；或香港大学学位 / 英语授课学位 / 认可专业资格（考试以英语进行）。TOEFL 与 IELTS 成绩自考试日起 2 年有效，GMAT / GRE 5 年有效。curriculum 页注明 Courses are taught in English, except when Chinese is preferable。",
+      "admission": {
+        "background": "认可大学任何学科学士学位（a recognised bachelor's degree in any discipline），通常荣誉不低于 Second Class 或平均成绩不低于「B」；或大专院校课程 + 等同学士学位的专业或类似资格。无特定本科主修限制。",
+        "prerequisites": "待核实（官网未列指定先修课；简章写「a recognised bachelor's degree in any discipline」）",
+        "gre_gmat": "项目页与研究生院页明确：GMAT / GRE scores are not mandatory, but a good GMAT / GRE score will strengthen the application。【官网冲突】商学院通用录取要求页另写「Applicants applying to full-time programme may be required to submit a GMAT / GMAT Focus Edition or GRE score report」；以项目页 / 研究生院页为准。MSc in Business Analytics 的 GMAT institution code 为 R9H-0W-71、GRE 为 R3153/4301。",
+        "work_experience": "简章明确：work experience are not mandatory, but ... will strengthen the application（非必需，但可加强申请）；商学院通用页称部分项目 / 修读模式偏好具备 post-qualification full-time work experience 者，详情看各项目 Admission 页。"
+      },
+      "curriculum": {
+        "structure": "共 30 credits = 5 门核心（15 credits）+ 5 门选修（15 credits），每门 3 credits。全日制 1 年分 3 个 trimesters 及暑期；Core and elective courses are subject to change；Courses are taught in English, except when Chinese is preferable；部分选修或以隔年密集课程 / 暑期形式开设。",
+        "core": [
+          "Statistical Analysis",
+          "Decision Models and Applications",
+          "Data Mining for Managers",
+          "Machine Learning for Business I",
+          "Advanced Business Analytics Practicum (DOTE6696BA)"
+        ],
+        "electives": [
+          "Economic Analytics",
+          "Managing Service Operations",
+          "Web Analytics and Intelligence",
+          "Business Process Analysis and Simulation",
+          "Fintech and Its Applications",
+          "Database and Big Data Management",
+          "Technology Field Study",
+          "Supply Chain and Logistics Management",
+          "Risk and Operations Analytics",
+          "Generative Artificial Intelligence for Business",
+          "Machine Learning for Business II",
+          "Business Field Study"
+        ],
+        "tracks": []
+      },
+      "highlights": [
+        "官网（商学院硕士首页）：This data-driven programme hones participants' ability to extract meaningful information and insights from mass business data and make effective business decisions.",
+        "官网（curriculum 页）：convert large amounts of data into meaningful information by asking the right questions, choosing the right technology and implementing the right algorithms",
+        "官网（简章）：Integration of business and data analysis study；The curriculum often incorporates the latest trends in analytics, such as machine learning and artificial intelligence",
+        "官网（简章）：Advanced Business Analytics Practicum (DOTE6696BA) bridges the gap between classroom and real world —— 与企业 / 机构合作完成真实商业分析项目，由课程教师、faculty mentor 与赞助企业主管联合指导。",
+        "官网（商学院新闻稿）：2024 年 4 月庆祝 MSc in Business Analytics 项目 10 周年；校友论坛分享涵盖 internet technology、banking、finance、consulting 等行业。",
+        "官网（2026-2027 简章班级画像）：平均年龄 23、平均 GMAT 681、平均 13 个月工作经验；本科背景 Business & Economics 37.9%、Finance 20.9%、Accounting 11.8%、IT 5.9%、Math & Statistics 4.6%、Engineering 3.3%、Science 3.3%、Others 12.4%。"
+      ],
+      "career": [
+        "官网 10 周年新闻稿提及校友分布于 internet technology、banking、finance、consulting 等行业（论坛分享）；系统性就业率 / 雇主统计：待核实"
+      ],
+      "writing_hooks": [
+        "呼应官网 curriculum 原文「asking the right questions, choosing the right technology and implementing the right algorithms」，用一段商业问题说明你如何定义问题、选择工具并落地算法。",
+        "呼应官网「Integration of business and data analysis study」与「extract meaningful information and insights from mass business data and make effective business decisions」，突出数据到商业决策的转化，而非纯技术堆叠。",
+        "呼应官网必修课 Advanced Business Analytics Practicum（DOTE6696BA）「bridges the gap between classroom and real world」，说明希望参与企业真实项目、团队协作与跨职能沟通的经历。",
+        "呼应官网「GMAT / GRE scores and work experience are not mandatory, but a good GMAT / GRE score or proof(s) of work experience will strengthen the application」，用量化项目 / 实习 / 工作经历补强文书，并可从 Generative Artificial Intelligence for Business、Fintech and Its Applications 等官方选修中点名具体方向。"
+      ],
+      "verification": {
+        "status": "partial",
+        "conflicts": [
+          "搜索引擎索引缓存（2026/27）显示学费 HK$380,000、截止 1 August 2025 (Early Round) / 31 March 2026；研究生院实时页与 apply-now 页（2027/28）为 HK$400,000、Early Round 31 July 2026 / 31 March 2027。",
+          "研究生院项目页仅列 Full-time，但商学院站点页面顶部出现「Part-time: 30 Apr 2027」截止日期，是否开设兼读制口径不一致。",
+          "GMAT/GRE 表述：项目页 / 研究生院页写「not mandatory, but a good GMAT / GRE score will strengthen the application」，商学院通用录取页写全日制申请人「may be required to submit」GMAT/GRE 成绩，两处不一致。",
+          "2019 年之前项目名为 MSc in Business Analytics 沿用至今，无改名；简章文件名为 2026-2027 但内文注明学费「for intake 2026 only」，与 2027/28 实时页不同，属不同入学季版本。"
+        ],
+        "unverified": [
+          "学费是否区分 local / non-local",
+          "申请开放日期",
+          "是否开设 Part-time（官网口径冲突）",
+          "具体就业统计 / 雇主",
+          "承办系（官网未明文写由 Department of Decisions, Operations and Technology 开办，仅师资页显示）"
+        ]
+      },
+      "sources": [
+        {
+          "url": "https://www.gs.cuhk.edu.hk/programmes/business-administration/msc-business-analytics",
+          "supports": "name_en、faculty、department、duration_ft、credits、tuition.amount / intake、admission.gre_gmat、application.deadlines、optional interview"
+        },
+        {
+          "url": "https://www.bschool.cuhk.edu.hk/index.php/programs/masters/msc-in-business-analytics/apply-now",
+          "supports": "tuition（2027/2028 HK$400,000 与 3 期分期）、application.deadlines、admission.background、入学奖学金与 ENLS、verification.conflicts（Part-time 30 Apr 2027）"
+        },
+        {
+          "url": "https://masters.bschool.cuhk.edu.hk/programmes/mscba/curriculum/",
+          "supports": "credits、curriculum.core / electives / structure、english（授课语言）、highlights（curriculum overview）"
+        },
+        {
+          "url": "https://masters.bschool.cuhk.edu.hk/wp-content/uploads/2024/12/CUHK-MScBA-Brochure-2026-2027_20251008.pdf",
+          "supports": "curriculum.core / electives、english、admission.gre_gmat / work_experience、tuition.note（2026 学费 HK$380,000）、highlights（Practicum、班级画像）、writing_hooks"
+        },
+        {
+          "url": "https://masters.bschool.cuhk.edu.hk/admission-requirements/",
+          "supports": "english、admission.gre_gmat（含 institution codes）、verification.conflicts（GMAT/GRE 口径差异）"
+        },
+        {
+          "url": "https://www.bschool.cuhk.edu.hk/programmes/mscba",
+          "supports": "department（师资隶属 Department of Decisions, Operations and Technology）、verification.unverified（承办系）"
+        },
+        {
+          "url": "https://masters.bschool.cuhk.edu.hk",
+          "supports": "highlights（data-driven programme 项目简介）、aliases"
+        },
+        {
+          "url": "https://www.bschool.cuhk.edu.hk/?p=40261/",
+          "supports": "highlights、career（10 周年与校友行业）"
+        },
+        {
+          "url": "https://www.gs.cuhk.edu.hk/admissions/requirements",
+          "supports": "general.english_requirement、english（校级统一语言要求）"
+        }
+      ]
+    },
+    {
+      "id": "cuhk-msc-financial-technology",
+      "name_en": "MSc in Financial Technology",
+      "name_zh": "金融科技理学硕士（非官方译名）",
+      "aliases": [
+        "Master of science in Financial Technology（项目站标题写法）",
+        "MSc in FinTech（2019 年校方新闻稿简称）"
+      ],
+      "degree_type": "授课型（含可选 dissertation/project 路径）",
+      "faculty": "Faculty of Engineering（重要纠偏：非 Faculty of Business Administration；同院另设 PgD in Financial Technology，为并行项目、非合并）",
+      "department": "Division of Engineering",
+      "official_urls": [
+        "https://www.gs.cuhk.edu.hk/programmes/engineering/msc-financial-technology",
+        "https://fintech.erg.cuhk.edu.hk/",
+        "https://fintech.erg.cuhk.edu.hk/node/38",
+        "https://fintech.erg.cuhk.edu.hk/admission"
+      ],
+      "duration_ft": "1 年（最长 2 年）",
+      "duration_pt": "2 年（最长 4 年）",
+      "credits": "24 units（至少 8 门课）= 9 units 必修 + 15 units 选修；选修可为课程、实习或 industrial project",
+      "tuition": {
+        "amount": "HK$395,000（全日制分 2 期 / 兼读制分 4 期）",
+        "intake": "待核实（研究生院实时页未标注该金额适用入学季；同页申请轮次为 2026-10 至 2027-02，按 2027/28 口径收录，属推测）",
+        "applies_to": "待核实（官网未区分 local / non-local，为单一自资费率）",
+        "note": "Funding Nature: Self-financed。【官网冲突】搜索引擎索引缓存的研究生院页曾写「HK$380,000 for 2026-27 and 2027-28」；实时页为 HK$395,000；2023 年简章写 MSc HK$340,000 / PgD HK$170,000，三个官方数字不一致，待核实。简章另列 Admission Scholarship HK$80,000（每学年 8 名）、Dean's List Academic Achievement Scholarship HK$15,000、恒生银行 FinTecubator Scholarship HK$50,000（适用入学季待核实）。"
+      },
+      "application": {
+        "open": "待核实",
+        "deadlines": [
+          "2 October 2026（2027/28 第 1 轮）",
+          "6 November 2026（2027/28 第 2 轮）",
+          "31 December 2026（2027/28 第 3 轮）",
+          "28 February 2027（2027/28 第 4 轮）"
+        ],
+        "note": "Applications will be processed on a rolling basis until all places have been filled. Therefore, early applications are strongly encouraged.（研究生院实时页）"
+      },
+      "english": "项目站未单列具体分数，仅援引研究生院 General Requirements and English Language Requirements；简章注明 Medium of Instruction: English。项目页未单列，援引校级要求：TOEFL 79 of 120 / 4.5 of 6 (iBT/Home Edition)、IELTS (Academic) 6.5、GMAT Band 21 (Verbal)、GMAT Focus Edition Band 78 (Verbal)；项目自身最低分待核实。",
+      "admission": {
+        "background": "认可大学 Engineering、Science、Mathematics 或 Finance/Business-related discipline 学士学位或同等专业资格；官网以「preferably」表述为偏好条件",
+        "prerequisites": "最好具备良好数学知识（calculus、linear algebra、probability）及至少一门现代编程语言（C、C++、Java 或 Python）能力，并能在成绩单上体现（as shown in academic transcript(s)）",
+        "gre_gmat": "官网未提及（不推断为明确不要求）；GMAT 仅作校级英语能力证明选项之一",
+        "work_experience": "简章明确：relevant job experience would be favourably considered（相关工作经验获优先考虑，非硬性要求）"
+      },
+      "curriculum": {
+        "structure": "至少 8 门课 / 24 units = 9 units 必修 + 15 units 选修；选修可由 courses、internship 或 industrial project 构成。选修分三类：Technology-Oriented Electives、Business/Application-Oriented Electives、Enrichment Training。三条 track 依兴趣与职业取向选择：Course Track（3 必修 + 5 选修）、Practicum Track（3 必修 + 4 选修 + 3 units 实习）、Industrial Project Track（3 必修 + 3 选修 + 6 units 两学期 industrial project）。具金融背景者可豁免必修 FINA6122 Financial Markets and Instruments，须另补一门选修。FTEC5540 实习须至少 12 continuous weeks 并参加监管机构工作坊；FTEC5910 学分须与后续学期修读 FTEC5920 一并确认。Individual courses and the programme curriculum are subject to review and revision without prior notice.",
+        "core": [
+          "FINA6122 Financial Markets and Instruments",
+          "FTEC5510 Advanced Financial Infrastructure",
+          "FTEC5520 Applied Blockchain and Cryptocurrencies"
+        ],
+        "electives": [
+          "FTEC5530 Quantitative and Algorithmic Trading",
+          "FTEC5580 Data Analytics for Financial Technology",
+          "FTEC5610 Computational Finance",
+          "FTEC5660 Agentic AI for Business and FinTech",
+          "FTEC5680 AI Applications in FinTech",
+          "FTEC5550 Elements of RegTech for the Financial Market",
+          "FTEC5640 Decentralized Finance",
+          "FTEC5650 Topics in International FinTech",
+          "FTEC5670 Financial Technology Entrepreneurship Field Trip",
+          "ECLT5720 Electronic Payments Systems",
+          "ENGG5108 Big Data Analytics",
+          "IERG5350 Reinforcement Learning",
+          "FTEC5540 Financial Technology Internship",
+          "FTEC5910 Financial Technology Project I",
+          "FTEC5920 Financial Technology Project II"
+        ],
+        "tracks": [
+          "Course Track",
+          "Practicum Track",
+          "Industrial Project Track"
+        ]
+      },
+      "highlights": [
+        "官网：FinTech is an emerging discipline that focuses on employing technological innovations in financial practices. It leverages on the cutting-edge developments of artificial intelligence, data sciences and information technology to revolutionize the financial industry.",
+        "官网：FinTech 学生将掌握 cyber security、blockchain、data science、AI 等技术用于 finance 与 e-commerce，同时具备 finance 与 law（financial markets、financial engineering、regulatory policy、contracts、intellectual property）广度理解；能 identify, formulate, and apply 知识解决问题。",
+        "重要纠偏：项目属 Faculty of Engineering / Division of Engineering，并非商学院项目；同院另设 PgD in Financial Technology（并行项目，非合并）。",
+        "官网（校方新闻稿）：2019/20 学年开办，首届收生约 50 人；强调 hands-on experience and industrial training，与本地金融监管机构合作提供培训及实习，安排实地参观 FinTech 公司；提供三种学习模式（课堂 / 实习 / 论文）。",
+        "官网：Three tracks are available for students to choose depending on their interest and career aspirations；实习通常于完成前两学期后的暑期进行，至少 12 continuous weeks，并参加 HKMA、SFC、Insurance Authority 等监管机构工作坊。",
+        "官网（Admission 页）：Our graduates are expected to have acquired comprehensive, in-depth, state-of-the-art knowledge and relevant updated expert skills in FinTech and related technologies ... accumulated some experience in practical training, project development, or research activities."
+      ],
+      "career": [
+        "官网校方新闻稿明确：毕业生适合 banking、insurance、asset management、internet finance、FinTech start-ups、government regulatory agencies 等技术性岗位",
+        "系统性就业率 / 雇主统计：待核实"
+      ],
+      "writing_hooks": [
+        "呼应官网「good knowledge of mathematics (such as calculus, linear algebra and probability) and proficiency in at least one modern programming language (such as C, C++, Java or Python) as shown in academic transcript(s)」，用成绩单与项目直接回应数学与编程偏好。",
+        "呼应官网「Three tracks are available for students to choose depending on their interest and career aspirations」，说明选择 Course / Practicum / Industrial Project Track 的理由，以及 12 周实习或 6 units 两学期企业项目的规划。",
+        "呼应官网「identify, formulate, and apply their learned knowledge in solving problems」与「advanced knowledge in technologies such as cyber security, blockchain, data science, AI ... while maintaining a broad understanding of finance and law」，突出技术 + 金融 + 监管的复合定位，而非纯 CS 或纯金融。",
+        "呼应官网选修方向（FTEC5550 Elements of RegTech for the Financial Market、FTEC5640 Decentralized Finance、FTEC5660 Agentic AI for Business and FinTech），结合香港 / 大湾区 FinTech 生态说明具体职业目标。"
+      ],
+      "verification": {
+        "status": "partial",
+        "conflicts": [
+          "搜索引擎索引缓存（2026/27）显示学费「HK$380,000 for 2026-27 and 2027-28」、轮次 6 Oct 2025 / 17 Nov 2025 / 29 Dec 2025 / 26 Feb 2026；研究生院实时页（2027/28 轮次）为 HK$395,000、轮次 2 Oct 2026 / 6 Nov 2026 / 31 Dec 2026 / 28 Feb 2027。",
+          "学费官方数字三处不一致：实时研究生院页 HK$395,000、缓存研究生院页 HK$380,000、2023 简章 HK$340,000；且实时页未标注金额适用入学季。",
+          "项目站 Admission 页未列学费与语言分数，仅援引研究生院要求，与研究生院实时页口径不同步。",
+          "研究生院实时页联系人为 Professor CHAN Nan，缓存版为 Professor CHAN Chun Kwong；2023 简章列 Programme Director 为 Prof. Chun Kwong CHAN。"
+        ],
+        "unverified": [
+          "2027/28 学费金额（HK$395,000 与 HK$380,000 冲突）",
+          "学费适用入学季",
+          "学费是否区分 local / non-local",
+          "申请开放日期",
+          "项目页单列的语言最低分（仅援引校级要求）",
+          "具体就业统计 / 雇主",
+          "GRE/GMAT 是否为硬性要求",
+          "奖学金适用入学季"
+        ]
+      },
+      "sources": [
+        {
+          "url": "https://www.gs.cuhk.edu.hk/programmes/engineering/msc-financial-technology",
+          "supports": "name_en、faculty、department、duration_ft / pt、credits、tuition.amount、admission.background / prerequisites、application.deadlines / note"
+        },
+        {
+          "url": "https://fintech.erg.cuhk.edu.hk/",
+          "supports": "highlights、writing_hooks（FinTech 定义、学习内容、培养方向）"
+        },
+        {
+          "url": "https://fintech.erg.cuhk.edu.hk/node/38",
+          "supports": "curriculum.core / electives / structure / tracks、credits、writing_hooks（三条 track、12 continuous weeks 实习、FINA6122 豁免）"
+        },
+        {
+          "url": "https://fintech.erg.cuhk.edu.hk/admission",
+          "supports": "highlights（毕业生预期能力）、verification.conflicts（项目页未列学费与语言分数）"
+        },
+        {
+          "url": "https://fintech.erg.cuhk.edu.hk/sites/default/files/FinTechLeaflet2023%20ENG.pdf",
+          "supports": "curriculum.electives、credits、duration、tuition.note（HK$340,000 历史对照、奖学金）、admission.work_experience、english（Medium of Instruction）"
+        },
+        {
+          "url": "https://erg.cuhk.edu.hk/erg/PostgraduateStudies",
+          "supports": "faculty、department、general.notes（工程学院授课硕士清单，确认 MSc / PgD in Financial Technology 归属）"
+        },
+        {
+          "url": "https://cloud.itsc.cuhk.edu.hk/enewsasp/app/article-details.aspx/F2553328A8F4F28B0F1952A2A6FD4800",
+          "supports": "highlights、career、aliases（2019/20 首招约 50 人、三种 track、就业去向、MSc in FinTech 简称）"
+        },
+        {
+          "url": "https://www.cpr.cuhk.edu.hk/tc?p=49883",
+          "supports": "highlights、aliases（中文新闻稿佐证开办年份、名额与学习模式）"
+        },
+        {
+          "url": "https://www.gs.cuhk.edu.hk/admissions/requirements",
+          "supports": "general.english_requirement、english（项目页援引的校级统一语言要求）"
+        }
+      ]
+    }
+  ]
+}

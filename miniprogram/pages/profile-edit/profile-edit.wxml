@@ -1,0 +1,180 @@
+<view class="page">
+  <view class="notice notice-error" wx:if="{{error}}">{{error}}</view>
+
+  <view class="state-box" wx:if="{{state === 'loading'}}">
+    <text class="state-title">正在加载档案…</text>
+  </view>
+  <view class="state-box" wx:if="{{state === 'error'}}">
+    <text class="state-title">加载失败</text>
+    <text class="state-desc">{{error}}</text>
+  </view>
+
+  <block wx:if="{{state === 'ready'}}">
+    <view class="card">
+      <text class="card-title">基本信息</text>
+      <view class="field">
+        <text class="field-label">档案名称</text>
+        <input maxlength="{{-1}}" class="field-input" value="{{form.label}}" data-field="label" bindinput="onTopInput" placeholder="例如：2027 港校申请" placeholder-class="placeholder" />
+      </view>
+      <view class="field">
+        <text class="field-label">英文姓名</text>
+        <input maxlength="{{-1}}" class="field-input" value="{{form.basics.name_en}}" data-field="name_en" bindinput="onBasicsInput" placeholder="与成绩单、护照一致" placeholder-class="placeholder" />
+      </view>
+      <view class="field">
+        <text class="field-label">中文姓名</text>
+        <input maxlength="{{-1}}" class="field-input" value="{{form.basics.name_zh}}" data-field="name_zh" bindinput="onBasicsInput" placeholder-class="placeholder" />
+      </view>
+      <view class="field">
+        <text class="field-label">邮箱 / 电话</text>
+        <input maxlength="{{-1}}" class="field-input" value="{{form.basics.email}}" data-field="email" bindinput="onBasicsInput" placeholder="邮箱" placeholder-class="placeholder" />
+        <input maxlength="{{-1}}" class="field-input field-gap" value="{{form.basics.phone}}" data-field="phone" bindinput="onBasicsInput" placeholder="电话" placeholder-class="placeholder" />
+      </view>
+    </view>
+
+    <view class="card">
+      <text class="card-title">教育经历</text>
+      <text class="muted section-hint">每条经历都会成为文书可引用的事实，请只填写真实信息。</text>
+      <view class="sub-item" wx:for="{{form.education}}" wx:key="id" wx:for-index="edIndex">
+        <view class="sub-head">
+          <text class="sub-title">教育 {{edIndex + 1}}</text>
+          <text class="remove-link" data-group="education" data-index="{{edIndex}}" bindtap="removeItem">移除</text>
+        </view>
+        <view class="field">
+          <text class="field-label">学校</text>
+          <input maxlength="{{-1}}" class="field-input" value="{{item.school}}" data-group="education" data-index="{{edIndex}}" data-field="school" bindinput="onArrayInput" />
+        </view>
+        <view class="field">
+          <text class="field-label">学位 / 专业</text>
+          <input maxlength="{{-1}}" class="field-input" value="{{item.degree}}" data-group="education" data-index="{{edIndex}}" data-field="degree" bindinput="onArrayInput" placeholder="Bachelor / Master" placeholder-class="placeholder" />
+          <input maxlength="{{-1}}" class="field-input field-gap" value="{{item.major}}" data-group="education" data-index="{{edIndex}}" data-field="major" bindinput="onArrayInput" placeholder="专业" placeholder-class="placeholder" />
+        </view>
+        <view class="field">
+          <text class="field-label">GPA / 满分</text>
+          <input maxlength="{{-1}}" class="field-input" value="{{item.gpa}}" data-group="education" data-index="{{edIndex}}" data-field="gpa" bindinput="onArrayInput" placeholder="3.7" placeholder-class="placeholder" />
+          <input maxlength="{{-1}}" class="field-input field-gap" value="{{item.gpa_scale}}" data-group="education" data-index="{{edIndex}}" data-field="gpa_scale" bindinput="onArrayInput" placeholder="4.0" placeholder-class="placeholder" />
+        </view>
+        <view class="field">
+          <text class="field-label">起止时间（YYYY-MM）</text>
+          <input maxlength="{{-1}}" class="field-input" value="{{item.start_date}}" data-group="education" data-index="{{edIndex}}" data-field="start_date" bindinput="onArrayInput" placeholder="2022-09" placeholder-class="placeholder" />
+          <input maxlength="{{-1}}" class="field-input field-gap" value="{{item.end_date}}" data-group="education" data-index="{{edIndex}}" data-field="end_date" bindinput="onArrayInput" placeholder="2026-06" placeholder-class="placeholder" />
+        </view>
+        <view class="field">
+          <text class="field-label">相关课程（用逗号分隔）</text>
+          <input maxlength="{{-1}}" class="field-input" value="{{item.courses_text}}" data-group="education" data-index="{{edIndex}}" data-field="courses_text" bindinput="onArrayInput" placeholder="Machine Learning、Statistics" placeholder-class="placeholder" />
+        </view>
+        <view class="field">
+          <text class="field-label">论文 / 补充亮点</text>
+          <textarea maxlength="{{-1}}" class="field-textarea" value="{{item.highlights}}" data-group="education" data-index="{{edIndex}}" data-field="highlights" bindinput="onArrayInput" placeholder="可选" placeholder-class="placeholder" />
+        </view>
+      </view>
+      <button class="ghost-button add-button" data-group="education" bindtap="addItem">＋ 添加教育经历</button>
+    </view>
+
+    <view class="card">
+      <text class="card-title">科研 / 实习 / 项目经历</text>
+      <text class="muted section-hint">要点一行一条，尽量写清「做了什么 + 结果」，有数字就写数字。</text>
+      <view class="sub-item" wx:for="{{form.experiences}}" wx:key="id" wx:for-index="exIndex">
+        <view class="sub-head">
+          <text class="sub-title">经历 {{exIndex + 1}}</text>
+          <text class="remove-link" data-group="experiences" data-index="{{exIndex}}" bindtap="removeItem">移除</text>
+        </view>
+        <view class="field">
+          <text class="field-label">类型</text>
+          <picker range="{{expTypeLabels}}" value="{{item.type_index}}" data-index="{{exIndex}}" bindchange="onTypeChange">
+            <view class="picker-value">{{item.type_label}}</view>
+          </picker>
+        </view>
+        <view class="field">
+          <text class="field-label">机构 / 角色</text>
+          <input maxlength="{{-1}}" class="field-input" value="{{item.org}}" data-group="experiences" data-index="{{exIndex}}" data-field="org" bindinput="onArrayInput" placeholder="实验室或公司" placeholder-class="placeholder" />
+          <input maxlength="{{-1}}" class="field-input field-gap" value="{{item.role}}" data-group="experiences" data-index="{{exIndex}}" data-field="role" bindinput="onArrayInput" placeholder="Research Assistant" placeholder-class="placeholder" />
+        </view>
+        <view class="field">
+          <text class="field-label">起止时间</text>
+          <input maxlength="{{-1}}" class="field-input" value="{{item.start_date}}" data-group="experiences" data-index="{{exIndex}}" data-field="start_date" bindinput="onArrayInput" placeholder="2024-09" placeholder-class="placeholder" />
+          <input maxlength="{{-1}}" class="field-input field-gap" value="{{item.end_date}}" data-group="experiences" data-index="{{exIndex}}" data-field="end_date" bindinput="onArrayInput" placeholder="2025-12" placeholder-class="placeholder" />
+        </view>
+        <view class="field">
+          <text class="field-label">事实要点（一行一条）</text>
+          <textarea maxlength="{{-1}}" class="field-textarea field-textarea-tall" value="{{item.bullets_text}}" data-group="experiences" data-index="{{exIndex}}" data-field="bullets_text" bindinput="onArrayInput" placeholder="Built an OCR evaluation pipeline over 50,000 images" placeholder-class="placeholder" />
+        </view>
+      </view>
+      <button class="ghost-button add-button" data-group="experiences" bindtap="addItem">＋ 添加经历</button>
+    </view>
+
+    <view class="card">
+      <text class="card-title">目标项目</text>
+      <text class="muted section-hint">「为什么契合」写得越具体，PS 的 why-this-programme 段落越不会留下待确认占位符。截止日期请以官网为准。</text>
+      <view class="sub-item" wx:for="{{form.target_programs}}" wx:key="id" wx:for-index="pgIndex">
+        <view class="sub-head">
+          <text class="sub-title">项目 {{pgIndex + 1}}</text>
+          <text class="remove-link" data-group="target_programs" data-index="{{pgIndex}}" bindtap="removeItem">移除</text>
+        </view>
+        <view class="field">
+          <text class="field-label">学校 / 项目名称</text>
+          <input maxlength="{{-1}}" class="field-input" value="{{item.university}}" data-group="target_programs" data-index="{{pgIndex}}" data-field="university" bindinput="onArrayInput" placeholder="The University of Hong Kong" placeholder-class="placeholder" />
+          <input maxlength="{{-1}}" class="field-input field-gap" value="{{item.program}}" data-group="target_programs" data-index="{{pgIndex}}" data-field="program" bindinput="onArrayInput" placeholder="MSc in Computer Science" placeholder-class="placeholder" />
+        </view>
+        <view class="field">
+          <text class="field-label">入学季 / 截止日期</text>
+          <input maxlength="{{-1}}" class="field-input" value="{{item.intake}}" data-group="target_programs" data-index="{{pgIndex}}" data-field="intake" bindinput="onArrayInput" placeholder="2027 Fall" placeholder-class="placeholder" />
+          <input maxlength="{{-1}}" class="field-input field-gap" value="{{item.deadline}}" data-group="target_programs" data-index="{{pgIndex}}" data-field="deadline" bindinput="onArrayInput" placeholder="以官网为准" placeholder-class="placeholder" />
+        </view>
+        <view class="field">
+          <text class="field-label">课程 / 师资要点</text>
+          <textarea maxlength="{{-1}}" class="field-textarea" value="{{item.curriculum_notes}}" data-group="target_programs" data-index="{{pgIndex}}" data-field="curriculum_notes" bindinput="onArrayInput" placeholder="从官网摘录真实课程名" placeholder-class="placeholder" />
+        </view>
+        <view class="field">
+          <text class="field-label">为什么契合</text>
+          <textarea maxlength="{{-1}}" class="field-textarea" value="{{item.why_fit}}" data-group="target_programs" data-index="{{pgIndex}}" data-field="why_fit" bindinput="onArrayInput" placeholder="结合自己的经历说明，不要空泛" placeholder-class="placeholder" />
+        </view>
+      </view>
+      <button class="ghost-button add-button" data-group="target_programs" bindtap="addItem">＋ 添加目标项目</button>
+    </view>
+
+    <view class="card">
+      <text class="card-title">推荐人</text>
+      <text class="muted section-hint">生成推荐信时按推荐人切换视角；只使用档案中已有的事实。</text>
+      <view class="sub-item" wx:for="{{form.recommenders}}" wx:key="id" wx:for-index="rcIndex">
+        <view class="sub-head">
+          <text class="sub-title">推荐人 {{rcIndex + 1}}</text>
+          <text class="remove-link" data-group="recommenders" data-index="{{rcIndex}}" bindtap="removeItem">移除</text>
+        </view>
+        <view class="field">
+          <text class="field-label">姓名 / 职称</text>
+          <input maxlength="{{-1}}" class="field-input" value="{{item.name}}" data-group="recommenders" data-index="{{rcIndex}}" data-field="name" bindinput="onArrayInput" />
+          <input maxlength="{{-1}}" class="field-input field-gap" value="{{item.title}}" data-group="recommenders" data-index="{{rcIndex}}" data-field="title" bindinput="onArrayInput" placeholder="Professor" placeholder-class="placeholder" />
+        </view>
+        <view class="field">
+          <text class="field-label">单位 / 与你的关系</text>
+          <input maxlength="{{-1}}" class="field-input" value="{{item.affiliation}}" data-group="recommenders" data-index="{{rcIndex}}" data-field="affiliation" bindinput="onArrayInput" />
+          <input maxlength="{{-1}}" class="field-input field-gap" value="{{item.relation}}" data-group="recommenders" data-index="{{rcIndex}}" data-field="relation" bindinput="onArrayInput" placeholder="毕业论文导师" placeholder-class="placeholder" />
+        </view>
+        <view class="field">
+          <text class="field-label">观察到的优势（逗号分隔）</text>
+          <textarea maxlength="{{-1}}" class="field-textarea" value="{{item.strengths_text}}" data-group="recommenders" data-index="{{rcIndex}}" data-field="strengths_text" bindinput="onArrayInput" />
+        </view>
+      </view>
+      <button class="ghost-button add-button" data-group="recommenders" bindtap="addItem">＋ 添加推荐人</button>
+    </view>
+
+    <view class="card">
+      <text class="card-title">目标与约束</text>
+      <view class="field">
+        <text class="field-label">职业目标</text>
+        <textarea maxlength="{{-1}}" class="field-textarea" value="{{form.career_goal}}" data-field="career_goal" bindinput="onTopInput" placeholder="短期与长期想做什么" placeholder-class="placeholder" />
+      </view>
+      <view class="field">
+        <text class="field-label">补充事实</text>
+        <textarea maxlength="{{-1}}" class="field-textarea" value="{{form.additional_notes}}" data-field="additional_notes" bindinput="onTopInput" placeholder="其他可被引用、但上面没地方填的真实信息" placeholder-class="placeholder" />
+      </view>
+      <view class="field">
+        <text class="field-label">写作约束</text>
+        <textarea maxlength="{{-1}}" class="field-textarea" value="{{form.writing_constraints}}" data-field="writing_constraints" bindinput="onTopInput" placeholder="例如：不要提及某段经历、必须强调量化能力" placeholder-class="placeholder" />
+      </view>
+      <text class="muted">奖项、技能分组、语言成绩等字段请到网页版编辑；小程序保存时不会改动它们。</text>
+    </view>
+
+    <button class="primary-button save-button" disabled="{{saving}}" bindtap="save">{{saving ? '保存中…' : '保存档案'}}</button>
+  </block>
+</view>

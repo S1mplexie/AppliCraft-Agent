@@ -1,0 +1,73 @@
+services:
+  postgres:
+    # 本地开发默认用 SQLite，不启动数据库容器；生产用 --profile postgres 启用。
+    profiles: ["postgres"]
+    image: pgvector/pgvector:pg16
+    container_name: applicraft-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${APPLICRAFT_DB_USER:-applicraft}
+      POSTGRES_PASSWORD: ${APPLICRAFT_DB_PASSWORD:-applicraft_dev_only}
+      POSTGRES_DB: ${APPLICRAFT_DB_NAME:-applicraft}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    # 仅绑定本机，方便本地跑测试；公网部署请删掉 ports 这一段。
+    ports:
+      - "127.0.0.1:5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${APPLICRAFT_DB_USER:-applicraft} -d ${APPLICRAFT_DB_NAME:-applicraft}"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
+
+  applicraft:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: applicraft:latest
+    container_name: applicraft
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+        required: false
+    ports:
+      - "8000:8000"
+    # Compose 会自动读取 ./.env 用于下面这些变量插值。
+    environment:
+      APPLICRAFT_LLM_BASE_URL: ${APPLICRAFT_LLM_BASE_URL:-https://api.deepseek.com/v1}
+      APPLICRAFT_LLM_API_KEY: ${APPLICRAFT_LLM_API_KEY:-}
+      APPLICRAFT_LLM_MODEL: ${APPLICRAFT_LLM_MODEL:-deepseek-chat}
+      APPLICRAFT_LLM_TEMPERATURE: ${APPLICRAFT_LLM_TEMPERATURE:-0.5}
+      APPLICRAFT_LLM_TIMEOUT: ${APPLICRAFT_LLM_TIMEOUT:-180}
+      APPLICRAFT_LLM_MAX_RETRIES: ${APPLICRAFT_LLM_MAX_RETRIES:-2}
+      # 默认 SQLite 单文件（落在 ./data 卷里）；启用 postgres profile 时在 .env 覆盖为 PostgreSQL URL。
+      APPLICRAFT_DATABASE_URL: ${APPLICRAFT_DATABASE_URL:-sqlite:////app/data/applicraft.db}
+      APPLICRAFT_DAILY_QUOTA: ${APPLICRAFT_DAILY_QUOTA:-20}
+      APPLICRAFT_ALLOW_REGISTRATION: ${APPLICRAFT_ALLOW_REGISTRATION:-false}
+      APPLICRAFT_BOOTSTRAP_FIRST_USER: ${APPLICRAFT_BOOTSTRAP_FIRST_USER:-true}
+      APPLICRAFT_SESSION_DAYS: ${APPLICRAFT_SESSION_DAYS:-14}
+      APPLICRAFT_COOKIE_SECURE: ${APPLICRAFT_COOKIE_SECURE:-false}
+      APPLICRAFT_COOKIE_SAMESITE: ${APPLICRAFT_COOKIE_SAMESITE:-lax}
+      APPLICRAFT_TRUST_PROXY_HEADERS: ${APPLICRAFT_TRUST_PROXY_HEADERS:-false}
+      APPLICRAFT_PUBLIC_ORIGIN: ${APPLICRAFT_PUBLIC_ORIGIN:-}
+      APPLICRAFT_LOGIN_MAX_ATTEMPTS: ${APPLICRAFT_LOGIN_MAX_ATTEMPTS:-10}
+      APPLICRAFT_REGISTER_MAX_ATTEMPTS: ${APPLICRAFT_REGISTER_MAX_ATTEMPTS:-5}
+      # 可选：微信小程序一键登录，留空则关闭（密钥只存在 .env，不进镜像）。
+      APPLICRAFT_WECHAT_APPID: ${APPLICRAFT_WECHAT_APPID:-}
+      APPLICRAFT_WECHAT_SECRET: ${APPLICRAFT_WECHAT_SECRET:-}
+      APPLICRAFT_WECHAT_AUTO_REGISTER: ${APPLICRAFT_WECHAT_AUTO_REGISTER:-false}
+      APPLICRAFT_DATA_DIR: /app/data
+      APPLICRAFT_STATIC_DIR: /app/static
+    volumes:
+      - ./data:/app/data
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health', timeout=5)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+volumes:
+  pgdata:

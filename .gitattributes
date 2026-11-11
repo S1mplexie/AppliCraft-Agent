@@ -1,0 +1,8 @@
+# 统一使用 LF：避免 Windows 把 Dockerfile 等文件检出成 CRLF，导致 Linux 上构建失败。
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.ico binary
+*.woff binary
+*.woff2 binary

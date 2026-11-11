@@ -1,0 +1,751 @@
+{
+  "school_id": "NTU",
+  "school_name_zh": "新加坡南洋理工大学",
+  "school_name_en": "Nanyang Technological University, Singapore (NTU Singapore)",
+  "region": "SG",
+  "snapshot_date": "2026-11-09",
+  "intake_target": "2027/28（AY2027/28；MSBA / MFE 为 2027 Intake / July 2027；MSIS 学费字段为最近一届 AY2026-2027）",
+  "general": {
+    "english_requirement": "待核实（未核实到校级/院级统一语言标准；各项目页分别列明，详见各项目 english 字段）",
+    "application_open": "待核实（无全校统一开放日；官方 Coursework Programmes Admission Guide 按学院分别列出 AY2027-28 申请期，NBS 项目另有独立申请流程；详见各项目 application.open）",
+    "notes": [
+      "【核实口径】6 个项目全部以 2026-11-09 实时可访问的 ntu.edu.sg 官方页面为准；官方 URL 均已实测 HTTP 200。5 个项目已发布 2027/28 或 2027 Intake 官方学费与申请数据，MSIS 学费仅到 AY2026-2027。",
+      "【CCDS 成立】College of Computing and Data Science (CCDS) 由 NTU 2024-02-19 官方新闻稿宣布成立，2024 年 8 月新学年起运作，为全校第六个学术学院，创院院长 Prof Luke Ong，原 SCSE 的 9 个本科与 5 个研究生项目转入新学院；用户所述「2024 年成立」核实无误。依据 https://www.ntu.edu.sg/docs/default-source/corporate-ntu/hub-news/ntu-singapore-launches-new-college-of-computing-and-data-science-to-propel-ai-ambitions.pdf?sfvrsn=5a38a7bc_4",
+      "【重要纠偏 1｜学院归属】MSc in Information Systems (MSIS) 官方 Provided by 为 Wee Kim Wee School of Communication and Information (WKWSCI)，并非 Nanyang Business School (NBS)；初始知识库若记为 NBS 须修正。NBS 旗下相关授课型硕士为 MSc Business Analytics 与 MSc Financial Engineering。WKWSCI 另有 MSc in Information Studies，为不同项目，勿混淆。",
+      "【重要纠偏 2｜改名/刷新】用户所称「MSc in Cyber Security」现行官方全称为 Master of Science in Cybersecurity (Applied Cybersecurity)，由 CCDS 提供，官网标注 New Programme；CCDS 官方页原文 builds on our established MSc Cybersecurity programme (launched in 2022-2023)，即由 2022-2023 年开设的旧项目改名/课程刷新，非停办、非合并。CCDS 页 HTML title 另作 Master of Science in Applied Cybersecurity。",
+      "【重要纠偏 3｜同名不同项目】NTU 另有 Master of Science in Cybersecurity (Applied Cryptography)，由 School of Physical and Mathematical Sciences (SPMS) 提供，与 CCDS 的 Applied Cybersecurity 在学院、入学季、学费、语言门槛上均不同（2026/27 入学季、学费 S$63,220 含 9% GST、2026-11-09 开课、申请 18 June 至 31 July 2026、TOEFL iBT 4.5 / IELTS 6.0）。本文件 6 个项目未包含它，须另建条目。依据 https://www.ntu.edu.sg/spms/admissions/grad/detail/master-of-science-in-master-of-science-in-cybersecurity-applied-cryptography 与 https://www.ntu.edu.sg/spms/about-us/mathematics/grad/msc-in-cybersecurity-applied-cryptography",
+      "【重要纠偏 4｜入学季标注】MSIS 官网学费表最新仅到 AY2026-2027（总学费 S$47,044.40），AY2027-2028 学费未公布；该学费字段按用户要求采用最近一届 2026/27 并在 tuition.intake 明确标注，不得当作 2027/28 数据使用。",
+      "【官网口径冲突 A｜TOEFL 异常片段】CCDS 三个项目 Admission Requirements 原文为 TOEFL (iBT ≥ 100/ ≥5.0) / IELTS (≥ 6.5)，其中「/ ≥5.0」含义不明（疑似页面排版/编码错误）；本文件只采信 TOEFL iBT ≥ 100 与 IELTS ≥ 6.5，其余分数一律标待核实，不做推断。",
+      "【官网口径冲突 B｜MFE 开学月份】MSc Financial Engineering 的 NBS admissions 页正文写 the application for the July 2027 intake，同页费用表标题却写 August 2027 Intake，官网内部不一致，实际开学月份待核实。",
+      "【官网口径冲突 C｜Cyber 两个申请窗口】Applied Cybersecurity 主项目页写 August 2027 intake 申请期 1 October 2026 至 31 March 2027，CCDS 学院页写 January 2027 intake 申请期 1 July 至 14 September 2026，两窗口并存且指向不同入学批次，已在 verification.conflicts 如实并列。",
+      "【官网口径冲突 D｜MSIS 开放日】MSIS 项目页写申请期 1 November to 15 February，官方 Coursework Programmes Admission Guide（AY2027-28）对 WKWSCI「Applies to all other programmes」写 1 October to 15 February；截止日一致、开放日不一致；FAQ 2022 旧版又写 early November to end January。",
+      "【申请流程差异】官方 Admission Guide 明确 Programmes under Nanyang Business School (NBS) and National Institute of Education (NIE) have a separate application process. Do note that their application period may be different；因此 MSBA / MFE 不与 CCDS / WKWSCI 共用申请窗口。依据 https://www.ntu.edu.sg/admissions/graduate/cwadmissionguide",
+      "【页面结构陷阱】CCDS 项目存在两套官方页面：/education/graduate-programme/ 版为折叠标签页（直接抓取常只返回首个标签），/computing/admissions/graduate-programmes/detail/ 版返回完整标签内容；本文件以完整版官方页为准，二者内容一致。Cybersecurity 主项目页 URL 结尾无右括号，补上右括号会返回 404。",
+      "【URL 卫生】检索结果中部分 ntu.edu.sg 链接带异常用户名前缀（如 :yiyaolin@、qfeng@、sombut.jaidee@、:aprakash@、:eee_msc@），均非有效官方地址；本文件一律使用并核验干净的 www.ntu.edu.sg 规范域名。",
+      "【来源纪律】第三方站点（globaladmissions.com、educations.com、masters-abroad.com、hksg.org、gradwindow.com、mastersportal.com、qschina.cn、compassedu.hk、新东方、金吉列、OpenOffer、LankaScholar、Nbyula 等）仅作交叉核对，未用于填充任何数值、日期、分数或课程名；官网 Curriculum 标签仅给 PDF 链接或课程表无法解析时，精确课程代码/正式课名一律写待核实。",
+      "【政策变更】MSIS 自 AY2025-2026 起为 self-financed programme，申请人不符合 Tuition Fee Loan、Service Obligation 或 MOE Subsidies 等资助资格（属政策变更，非停办）。",
+      "【考试形式限制】NBS 两项目（MSBA / MFE）官网声明 We no longer accept GMAT/GRE and TOEFL/IELTS online test scores taken after 31 December 2023. Only in-person test results taken on/after 1 January 2024 onward are considered valid。",
+      "【CCDS 其他授课型硕士（供后续补全，未计入本批 6 项）】官方 Graduate Education at CCDS 页共列 5 个 Master's by Coursework：Master of Science in Cybersecurity (Applied Cybersecurity)、Master of Computing in Applied AI (MCAAI)、MSAI、MSDS、Master of Science in Blockchain。依据 https://www.ntu.edu.sg/computing/admissions/graduate-programmes"
+    ]
+  },
+  "programs": [
+    {
+      "id": "ntu-msai",
+      "name_en": "Master of Science in Artificial Intelligence (MSAI)",
+      "name_zh": "人工智能理学硕士（非官方译名）",
+      "aliases": [
+        "MSc in Artificial Intelligence（非官网全称的常见简写）"
+      ],
+      "degree_type": "授课型（含可选 dissertation/project 路径）",
+      "faculty": "College of Computing and Data Science (CCDS)",
+      "department": "待核实（官网仅标注 Provided by College of Computing and Data Science (CCDS)，未单列系/开办单位）",
+      "official_urls": [
+        "https://www.ntu.edu.sg/education/graduate-programme/master-of-science-in-artificial-intelligence",
+        "https://www.ntu.edu.sg/computing/admissions/graduate-programmes/detail/master-of-science-in-artificial-intelligence"
+      ],
+      "duration_ft": "1 年（intensive one-year full-time）；最短/最长 candidature 12 / 30 个月",
+      "duration_pt": "2 年（2-year part-time）；最短/最长 candidature 24 / 48 个月",
+      "credits": "30 AUs：12 AUs 核心课 + 18 AUs（AI Master Project 与选修课）；每门课 3 AUs、39 contact hours、13 周",
+      "tuition": {
+        "amount": "S$65,748.80（含 9% GST）",
+        "intake": "AY2027/2028 及以后（官网原文：The tuition fees for Academic Year 2027/2028 and after are as follows）",
+        "applies_to": "待核实（官网仅列单一费率，未分列 international / Singaporean 适用对象；另列有 SC/SPR 补贴与 NTU 校友回扣）",
+        "note": "Deposit Fees S$5,000（录取接受时缴、从首期账单抵扣，不可退不可转）；application fee of S$50；每学年另计一次性杂费；全日制分 2 学期、兼读制分 4 学期缴费；费用按最短修业期计算。Financial Assistance：AY2025 入学起 Singaporeans / PRs 享 S$5,000 补贴（有需要者最多 S$15,000），AY2026 入学起额外 S$5,000 CCDS study grant，NTU 校友额外 10% 学费回扣；CCDS PGC Study Award (AY2027 Intakes) 无需申请、按申请信息选拔、额度 up to S$10,000；另有 LPDP–NTU Master's Scholarship (INSTEP)，面向印尼籍全日制硕士申请人。"
+      },
+      "application": {
+        "open": "1 October（来源：官方 Coursework Programmes Admission Guide，AY2027-28，Semester Programmes / August Intake，College of Computing and Data Science 的 Opening of Application Portal；官网表格未标年份，年份待核实）",
+        "deadlines": [
+          "31 March（同一官方 Admission Guide 的 Closing of Application Portal，对应 AY2027-28 / August 入学；官网未标年份、未分轮次）"
+        ],
+        "note": "项目页本身未列申请起止日期；官网未写分轮次；申请入口为官网 APPLY NOW（https://www.ntu.edu.sg/admissions/graduate/cwadmissionguide/apply-now）。官网另提示 Admission deferment may not be considered。"
+      },
+      "english": "TOEFL iBT ≥ 100 / IELTS ≥ 6.5，或提交 certification of English as medium of instruction (MOI)；官网原文 TOEFL (iBT ≥ 100/ ≥5.0) / IELTS (≥ 6.5) 中「/ ≥5.0」含义不明，见 verification.conflicts。",
+      "admission": {
+        "background": "A) computer science、computer engineering 或相关学科的 good honours degree（含 solid mathematical training）；或 B) 同学科 good bachelor's degree（含 solid mathematical training）加 2 years relevant industry experience。相关学科包括但不限于 NTU College of Engineering 的本科专业。",
+        "prerequisites": "solid mathematical training（官网原文）；官网另设 bridging course Python Programming（0 AU、非必修）供编程训练不足者修读；具体先修课程名称待核实。",
+        "gre_gmat": "GRE：Optional（官网原文 Optional – GRE scores and reference letters）；GMAT：官网未提及（不推断为明确不要求）",
+        "work_experience": "路径 B（good bachelor's degree）要求 2 years relevant industry experience；路径 A（good honours degree）官网未列工作经验要求。"
+      },
+      "curriculum": {
+        "structure": "30 AUs：12 AUs 核心课 + 18 AUs（AI Master Project 与选修课）；每门课 3 AUs、39 contact hours（lectures / tutorials / example classes / labs）、13 周；AI Master Project 为一年 6 AUs，官网明确 The master project is not a compulsory component；bridging course Python Programming 0 AU、非必修。官网 Curriculum 标签仅提供课程 PDF 链接（coursecontent_msai_13mar25.pdf），本次仅能提取 Programme Overview 文字，精确课程代码/正式课名待核实。",
+        "core": [
+          "machine learning（官网简介原文用词，非课程代码/正式课名）",
+          "deep learning（官网简介原文用词，非课程代码/正式课名）",
+          "mathematics for AI（官网简介原文用词，非课程代码/正式课名）",
+          "AI ethics（官网简介原文用词，非课程代码/正式课名）"
+        ],
+        "electives": [
+          "computer vision（官网简介原文用词，选修方向）",
+          "natural language processing（官网简介原文用词，选修方向）",
+          "robotics（官网简介原文用词，选修方向）",
+          "IoT data（官网简介原文用词，选修方向）",
+          "generative AI（官网简介原文用词，选修方向）",
+          "AI Master Project（官网明确，6 AUs、非必修）"
+        ],
+        "tracks": []
+      },
+      "highlights": [
+        "coursework-based graduate degree designed for professionals and graduates who want to deepen their expertise in AI theory, methodologies, and applications（官网原文）",
+        "trains students to design, implement, and manage AI systems while also cultivating the skills to address project management, policy, and ethical considerations（官网原文）",
+        "Hands-on learning is embedded throughout the programme via course projects, an AI Master Project, and internship opportunities（官网原文）",
+        "leading innovations in AI deployment, building intelligent systems, and shaping the responsible use of AI technologies in Singapore and globally（官网原文）",
+        "#4 in the world for Data Science and Artificial Intelligence, according to the 2026 QS World University Rankings by Subject（官网原文）",
+        "FlexiMasters in Artificial Intelligence Fundamentals 经 NTU PACE 提供，合资格 Singaporeans / PRs 可获 SkillsFuture Singapore (SSG) 课程费共同资助（官网原文）"
+      ],
+      "career": [
+        "官网 Top 5 Careers in Artificial Intelligence：Machine Learning Engineer / Data Scientist / Business Intelligence Developer / Research Scientist / Big Data Engineer/Architect",
+        "官网称毕业生 will be prepared to take on advanced roles in industry, government, and research"
+      ],
+      "writing_hooks": [
+        "呼应官网申请门户必填项「reason for pursuing the programme」，PS 应正面回答选择该项目的动机，并与 AI theory / methodologies / applications 三层定位对齐。",
+        "依据官网「designed for professionals and graduates who want to deepen their expertise in AI theory, methodologies, and applications」，在职与应届申请人应分别突出实践深度或研究潜力。",
+        "依据官网「cultivating the skills to address project management, policy, and ethical considerations」与「shaping the responsible use of AI technologies」，文书可加入 AI 治理、伦理与落地管理的具体经历或志向。",
+        "依据官网「Meeting these criteria does not guarantee admission, as selection is competitive」，须以文书体现超出最低录取门槛的竞争力；GRE 与推荐信为 Optional，可作为额外佐证。"
+      ],
+      "verification": {
+        "status": "partial",
+        "conflicts": [
+          "官网 Admission Requirements 原文为「TOEFL (iBT ≥ 100/ ≥5.0) / IELTS (≥ 6.5)」，其中「/ ≥5.0」含义不明（疑似排版/编码错误）；本文件只采信 TOEFL iBT ≥ 100 与 IELTS ≥ 6.5。",
+          "官网两套页面（/education/graduate-programme/ 与 /computing/admissions/graduate-programmes/detail/）内容一致，但前者为折叠标签页、直接抓取只返回首个标签，后者为完整标签版（非数值冲突，属呈现差异）。"
+        ],
+        "unverified": [
+          "精确课程代码与正式课名（官网 Curriculum 仅链接 coursecontent_msai_13mar25.pdf，课程表未能解析）",
+          "GMAT 要求（官网未提及）",
+          "申请开放/截止日期的年份（官方 Admission Guide 表格仅写 1 October / 31 March，未标年份）",
+          "是否分轮次（官网未写）",
+          "TOEFL 原文中「/ ≥5.0」的含义",
+          "具体先修课程名称与 international / Singaporean 费率区分"
+        ]
+      },
+      "sources": [
+        {
+          "url": "https://www.ntu.edu.sg/computing/admissions/graduate-programmes/detail/master-of-science-in-artificial-intelligence",
+          "supports": "官方名称与学院、授课型与全/兼读学制、30 AUs 结构、学费与 9% GST、语言与申请文件、Financial Assistance、Top 5 就业、PS 相关表述（完整标签版）"
+        },
+        {
+          "url": "https://www.ntu.edu.sg/education/graduate-programme/master-of-science-in-artificial-intelligence",
+          "supports": "官方名称与学院、项目定位与培养目标、语言要求、所需申请文件、FlexiMasters 路径"
+        },
+        {
+          "url": "https://www.ntu.edu.sg/media/docs/librariesprovider118/pg/coursecontent_msai_13mar25.pdf?sfvrsn=daa77ce8_1",
+          "supports": "Curriculum 标签所指官方课程 PDF 的可访问性；精确课程名本次未能解析，标注待核实"
+        },
+        {
+          "url": "https://www.ntu.edu.sg/admissions/graduate/cwadmissionguide",
+          "supports": "AY2027-28 中 CCDS / Semester Programmes / August Intake 的申请门户开放与关闭日期"
+        }
+      ]
+    },
+    {
+      "id": "ntu-msds",
+      "name_en": "Master of Science in Data Science (MSDS)",
+      "name_zh": "数据科学理学硕士（非官方译名）",
+      "aliases": [
+        "MSc in Data Science（非官网全称的常见简写）"
+      ],
+      "degree_type": "授课型（含可选 dissertation/project 路径）",
+      "faculty": "College of Computing and Data Science (CCDS)",
+      "department": "待核实（官网仅标注 Provided by / led and mainly run by College of Computing and Data Science (CCDS)，未单列系/开办单位）",
+      "official_urls": [
+        "https://www.ntu.edu.sg/education/graduate-programme/master-of-science-in-data-science-(msds)",
+        "https://www.ntu.edu.sg/computing/admissions/graduate-programmes/detail/master-of-science-in-data-science-(msds)"
+      ],
+      "duration_ft": "1 年（最短 1 年 / 2 学期；最长 2.5 年 / 5 学期）",
+      "duration_pt": "2 年（4 学期）；最长 4 年（8 学期）",
+      "credits": "30 AUs（官方 PDF：five core courses 与 an optional capstone project；Capstone Project 6 AU；除 bridging 外每门课 3 AUs）",
+      "tuition": {
+        "amount": "S$65,748.80（含 9% GST）",
+        "intake": "AY2027/2028 及以后（官网原文：The tuition fees for Academic Year 2027/2028 and after are as follows）",
+        "applies_to": "待核实（官网仅列单一费率，未分列 international / Singaporean 适用对象；另列有 SC/SPR 补贴与 NTU 校友回扣）",
+        "note": "Deposit Fees S$5,000（录取接受时缴、从首期账单抵扣，不可退不可转）；application fee of S$50；每学年另计一次性杂费；全日制分 2 学期、兼读制分 4 学期缴费；费用按最短修业期计算；学费分两期于每学期初缴纳。Financial Assistance：AY2025 入学起 Singaporeans / PRs 享 S$5,000 补贴（有需要者最多 S$15,000），AY2026 入学起额外 S$5,000 CCDS study grant，NTU 校友额外 10% 学费回扣；Singapore Digital (SG:D) Scholarship（仅 Singapore Citizens，由 IMDA 提供）；CCDS PGC Study Award (AY2027 Intakes) 无需申请、额度 up to S$10,000；LPDP–NTU Master's Scholarship (INSTEP) 面向印尼籍申请人。官网注明 The university currently has no scholarship, government service agreement, or service obligation scheme available for students。"
+      },
+      "application": {
+        "open": "1 October（来源：官方 Coursework Programmes Admission Guide，AY2027-28，Semester Programmes / August Intake，College of Computing and Data Science 的 Opening of Application Portal；官网表格未标年份，年份待核实）",
+        "deadlines": [
+          "31 March（同一官方 Admission Guide 的 Closing of Application Portal，对应 AY2027-28 / August 入学；官网未标年份、未分轮次）"
+        ],
+        "note": "项目页本身未列申请起止日期；官网未写分轮次；申请入口为官网 APPLY NOW（https://www.ntu.edu.sg/admissions/graduate/cwadmissionguide/apply-now）。官网另提示 Admission deferment may not be considered。"
+      },
+      "english": "TOEFL iBT ≥ 100 / IELTS ≥ 6.5，或提交 certification of English as medium of instruction (MOI)；官网原文 TOEFL (iBT ≥ 100/ ≥5.0) / IELTS (≥ 6.5) 中「/ ≥5.0」含义不明，见 verification.conflicts。",
+      "admission": {
+        "background": "A) computer science、computer engineering 或相关学科的 good honours degree（含 solid mathematical training）；或 B) 同学科 good bachelor's degree（含 solid mathematical training）加 2 years relevant industry experience。相关学科包括但不限于 NTU College of Engineering 的本科专业。",
+        "prerequisites": "solid mathematical training（官网原文）；官网另设 bridging course Python Programming（0 AU、非必修）供编程训练不足者修读；具体先修课程名称待核实。",
+        "gre_gmat": "GRE：Optional（官网原文 Optional – GRE scores and reference letters）；GMAT：官网未提及（不推断为明确不要求）",
+        "work_experience": "路径 B（good bachelor's degree）要求 2 years relevant industry experience；路径 A（good honours degree）官网未列工作经验要求。"
+      },
+      "curriculum": {
+        "structure": "官方课程 PDF（coursecontent_msds_27jan26.pdf）原文：There are five core courses and an optional capstone project. The elective courses are broadly categorized into three categories, namely, foundation stack, exploration stack, and application domain stack. 总毕业要求 30 AUs；Capstone Project 为一年 6 AU；除 bridging 外每门课 3 AUs、39 教学小时、13 周；bridging course Python Programming 0 AU、非必修；官网注明 the curriculum is subject to change。其余 4 门核心课与选修课正式课程名本次未能核实。",
+        "core": [
+          "Data Science Thinking（官网明确点名的核心课，由 School of Social Sciences (SSS) 与 CCDS 教师合授）",
+          "待核实（官网 PDF 说明共 five core courses，其余 4 门正式课程名本次未能核实）"
+        ],
+        "electives": [
+          "foundation stack（官网 PDF 原文分类）",
+          "exploration stack（官网 PDF 原文分类）",
+          "application domain stack（官网 PDF 原文分类）",
+          "Capstone Project（官网明确，可在 industrial settings 或 academia 完成，6 AU）",
+          "application domain-specific elective（官网明确可由 NBS、SBS、ASE、MAE、EEE、SPMS、SSS、LKC 等学院开设，不含 CCDS）",
+          "Python Programming（官网明确 bridging course，0 AU、非必修）"
+        ],
+        "tracks": []
+      },
+      "highlights": [
+        "Tight integration of relevant theories and principles from social sciences with computing-driven data science（官网 Unique Features 原文）；官网并写 it is paramount to consider social context for any data science problem，核心课兼顾 social / economics / behavioural issues",
+        "Comprehensive coverage of the data science ecosystem（官网原文）；官网写 we do not just simply teach analytics，覆盖 from data preparation to data visualization",
+        "The Capstone Project gives students hands-on opportunities to realize the data science ecosystem for domain-specific applications in industrial settings or academia（官网原文）",
+        "Inter-disciplinary nature of MSDS is supported by courses taught by faculty members from different schools（官网原文）；Data Science Thinking 由 SSS 与 CCDS 合授，部分选修由 SSS 与 SPMS 教师开设，capstone 可与行业参与者、多学院教师及 CCDS 合作",
+        "官网：The program is led and mainly run by the College of Computing and Data Science (CCDS)",
+        "#4 in the world for Data Science and Artificial Intelligence, according to the 2026 QS World University Rankings by Subject（官网原文）"
+      ],
+      "career": [
+        "官网 Top 5 Careers in Data Science：Data Scientist / Data Analyst / Business Intelligence Developer / Applications Architect / Statistician"
+      ],
+      "writing_hooks": [
+        "呼应官网申请门户必填项「reason for pursuing the programme」，PS 应说明为何选择 MSDS 而非纯计算机或纯统计路径。",
+        "依据官网「it is paramount to consider social context for any data science problem」，文书宜体现社会、经济与行为视角，而非只罗列技术栈。",
+        "依据官网「from data preparation to data visualization」与「we do not just simply teach analytics」，可写覆盖数据准备、清洗到可视化的端到端实操经历。",
+        "依据官网 Capstone「in industrial settings or academia」及可与 industry participants 与多学院教师合作，文书应具体说明目标应用领域与希望的项目类型。"
+      ],
+      "verification": {
+        "status": "partial",
+        "conflicts": [
+          "官网 Admission Requirements 原文为「TOEFL (iBT ≥ 100/ ≥5.0) / IELTS (≥ 6.5)」，其中「/ ≥5.0」含义不明（疑似排版/编码错误）；本文件只采信 TOEFL iBT ≥ 100 与 IELTS ≥ 6.5。",
+          "官网两套页面（/education/graduate-programme/ 与 /computing/admissions/graduate-programmes/detail/）内容一致，但前者为折叠标签页、直接抓取只返回首个标签，后者为完整标签版（非数值冲突，属呈现差异）。"
+        ],
+        "unverified": [
+          "除 Data Science Thinking 外 4 门核心课与全部选修课的正式课程名（官网 Curriculum 仅链接 coursecontent_msds_27jan26.pdf，课程表未能解析；第三方复现版本之间对第二门核心课写法不一致，未采信）",
+          "GMAT 要求（官网未提及）",
+          "申请开放/截止日期的年份（官方 Admission Guide 表格仅写 1 October / 31 March，未标年份）",
+          "是否分轮次（官网未写）",
+          "TOEFL 原文中「/ ≥5.0」的含义",
+          "具体先修课程名称与 international / Singaporean 费率区分"
+        ]
+      },
+      "sources": [
+        {
+          "url": "https://www.ntu.edu.sg/computing/admissions/graduate-programmes/detail/master-of-science-in-data-science-(msds)",
+          "supports": "官方名称与学院、学制与 30 AUs 结构、学费与 9% GST、语言与申请文件、Top 5 就业、Financial Assistance 与奖学金（完整标签版）"
+        },
+        {
+          "url": "https://www.ntu.edu.sg/education/graduate-programme/master-of-science-in-data-science-(msds)",
+          "supports": "官方名称与学院、四大 Unique Features、跨学科培养方向、FlexiMasters 路径"
+        },
+        {
+          "url": "https://www.ntu.edu.sg/media/docs/librariesprovider118/pg/coursecontent_msds_27jan26.pdf?sfvrsn=54a4a398_1",
+          "supports": "官方课程 PDF，支撑 five core courses、optional capstone project 与 foundation / exploration / application domain 三类 stack 的分类表述"
+        },
+        {
+          "url": "https://www.ntu.edu.sg/admissions/graduate/cwadmissionguide",
+          "supports": "AY2027-28 中 CCDS / Semester Programmes / August Intake 的申请门户开放与关闭日期"
+        }
+      ]
+    },
+    {
+      "id": "ntu-msc-cybersecurity-applied",
+      "name_en": "Master of Science in Cybersecurity (Applied Cybersecurity)",
+      "name_zh": "应用网络安全理学硕士（非官方译名）",
+      "aliases": [
+        "MSc in Cyber Security（用户初始清单中的叫法，非现行官方名）",
+        "MSc Cybersecurity（官网所称 2022-2023 年开设的旧项目名 established MSc Cybersecurity programme）",
+        "Master of Science in Applied Cybersecurity（CCDS 学院页 HTML title 用词）",
+        "MSc in Cybersecurity (Applied Cryptography)（SPMS 的另一个不同项目，勿混淆）"
+      ],
+      "degree_type": "授课型（coursework-based）",
+      "faculty": "College of Computing and Data Science (CCDS)",
+      "department": "待核实（官网仅标注 Provided by College of Computing and Data Science (CCDS)，未单列系/开办单位）",
+      "official_urls": [
+        "https://www.ntu.edu.sg/education/graduate-programme/master-of-science-in-cybersecurity-(applied-cybersecurity",
+        "https://www.ntu.edu.sg/computing/admissions/graduate-programmes/master-of-science-cybersecurity-(applied-cybersecurity"
+      ],
+      "duration_ft": "1 年（2 学期）；最长 2.5 年（5 学期）",
+      "duration_pt": "2 年（4 学期）；最长 4 年（8 学期）",
+      "credits": "30 AUs；除 Capstone Project 外每门课 3 AUs、39 教学小时、13 周；两学期 Capstone Project",
+      "tuition": {
+        "amount": "S$65,748.80（含 9% GST）",
+        "intake": "AY2027/2028 及以后（官网原文：The tuition fees for Academic Year 2027/2028 and after are as follows）；对应 August 2027 intake",
+        "applies_to": "待核实（官网仅列单一费率，未分列 international / Singaporean 适用对象）",
+        "note": "Deposit Fees S$5,000（录取接受时缴、从首期账单抵扣，不可退不可转）；application fee of S$50；每学年另计一次性杂费；全日制分 2 学期、兼读制分 4 学期缴费；费用按最短修业期计算；学费不含推荐教材与课程材料，差旅、住宿与杂费自理。"
+      },
+      "application": {
+        "open": "1 October 2026（官网主项目页：Applications for the August 2027 intake are open from 1 October 2026 to 31 March 2027）；1 July 2026（官网 CCDS 学院页：Applications for the January 2027 intake are open from 1 July to 14 September 2026）——两个窗口并存，见 verification.conflicts",
+        "deadlines": [
+          "31 March 2027（August 2027 intake，官网主项目页；官网未写分轮次）",
+          "14 September 2026（January 2027 intake，官网 CCDS 学院页；官网未写分轮次）"
+        ],
+        "note": "官方 Coursework Programmes Admission Guide（AY2027-28 / Semester Programmes / August Intake / College of Computing and Data Science）同样列 1 October 开放、31 March 关闭；两个窗口指向不同入学批次，核实日 2026-11-09 时 January 2027 窗口已结束；实际有效批次以申请门户为准（待核实）。"
+      },
+      "english": "TOEFL iBT ≥ 100 / IELTS ≥ 6.5，或提交 certification of English as medium of instruction (MOI)；官网原文 TOEFL (iBT ≥ 100/ ≥5.0) / IELTS (≥ 6.5) 中「/ ≥5.0」含义不明，见 verification.conflicts。",
+      "admission": {
+        "background": "A) computer science、computer engineering 或相关学科的 good honours degree（含 solid mathematical training）；或 B) 同学科 good bachelor's degree（含 solid mathematical training）加 2 years relevant industry experience。相关学科包括但不限于 NTU College of Engineering 的本科专业。",
+        "prerequisites": "solid mathematical training（官网原文）；官网并写 Building on foundations in computer science and information technology；具体先修课程名称待核实。",
+        "gre_gmat": "GRE：Optional（官网原文 Optional – GRE scores and reference letters）；GMAT：官网未提及（不推断为明确不要求）",
+        "work_experience": "路径 B（good bachelor's degree）要求 2 years relevant industry experience；路径 A（good honours degree）官网未列工作经验要求。CCDS 学院页另写 designed for both midcareer professionals and also new university graduates。"
+      },
+      "curriculum": {
+        "structure": "30 AUs；除 Capstone Project 外每门课 3 AUs、39 教学小时、13 周；两学期 Capstone Project 可通过 industry internship 或 applied cybersecurity project 完成；官网 Curriculum 标签为 View the Course Content Here 链接、并注明 the curriculum is subject to change；精确课程代码与 core/elective 划分待核实。CCDS 学院页称核心课由本院教师讲授，部分实用选修课由 industry experts 讲授。",
+        "core": [
+          "Computer Security（官网 Why This Programme? 模块领域用词，非课程代码）",
+          "Application and Software Security（官网模块领域用词，非课程代码）",
+          "Cryptography（官网模块领域用词；CCDS 页称 core technical modules such as computer and network security and cryptography）",
+          "Network Security（官网模块领域用词，非课程代码）"
+        ],
+        "electives": [
+          "Security Monitoring and Threat Detection（官网模块领域用词；CCDS 页另作 security monitoring and operations）",
+          "Malware Analysis（官网模块领域用词）",
+          "Digital Forensics（官网模块领域用词）",
+          "Mobile App and Cloud Security and Zero Trust Architecture（官网模块领域用词）",
+          "AI and Cybersecurity（官网模块领域用词；主项目页另称 New modules such as AI in Cybersecurity）",
+          "Introduction to AI and Cyber Threat Intelligence（官网模块领域用词）"
+        ],
+        "tracks": []
+      },
+      "highlights": [
+        "官网标语 Secure today's systems. Protect tomorrow's digital world.",
+        "Cybersecurity is no longer confined to IT departments. It sits at the heart of business resilience, national security and digital innovation（CCDS 官方页原文）",
+        "Our new Master of Science in Cybersecurity (Applied Cybersecurity) builds on our established MSc Cybersecurity programme (launched in 2022-2023)（CCDS 官方页原文，说明改名/刷新而非停办）",
+        "This new program is designed for both midcareer professionals and also new university graduates（官网原文）；部分模块 Co-developed with experienced cybersecurity practitioners，由 industry experts 授课",
+        "students may also undertake an industrial attachment with companies；The programme culminates in a two-semester Capstone Project（官网主项目页原文）",
+        "Cybersecurity Meets AI / Built for an AI-Enabled Threat Landscape（官网原文）；官网列出 AI-driven threat detection、Threat intelligence、Adversarial machine learning、AI system security、AI supply chain risks 等方向",
+        "#4 in the world for Data Science and Artificial Intelligence, according to the 2026 QS World University Rankings by Subject（官网原文）"
+      ],
+      "career": [
+        "官网主项目页 Top 5 Careers in Cybersecurity：Security Consultant / Information Security Analyst / Security Architect / Chief Information Security Officer / Security Engineer",
+        "CCDS 官方页 Career Opportunities：Cybersecurity Consultant、Information Security Analyst、Security Engineer、Security Architect、Digital Forensics Specialist、Threat Intelligence Analyst、Security Operations Lead",
+        "官网称毕业生 ready to take on advanced roles as cybersecurity professionals, analysts, and leaders"
+      ],
+      "writing_hooks": [
+        "依据官网「designed for both midcareer professionals and also new university graduates」，在职与应届申请人应分别明确自身职业阶段与转型/入门动机。",
+        "依据官网「It sits at the heart of business resilience, national security and digital innovation」，文书可把技术兴趣上升到业务连续性与社会安全层面。",
+        "依据官网「Built for an AI-Enabled Threat Landscape」及 AI-driven threat detection / adversarial machine learning / AI system security 等表述，AI 与安全交叉是最适合作为「为何选此项目」论点的官网特色。",
+        "呼应官网申请门户必填项「reason for pursuing the programme」与「selection is competitive」，说明两学期 Capstone Project 或 industrial attachment 与自身职业目标的关联。"
+      ],
+      "verification": {
+        "status": "partial",
+        "conflicts": [
+          "官网主项目页写 August 2027 intake 申请期 1 October 2026 至 31 March 2027；官网 CCDS 学院页写 January 2027 intake 申请期 1 July 至 14 September 2026；两个窗口并存、指向不同入学批次，官网未解释。",
+          "官网 Admission Requirements 原文为「TOEFL (iBT ≥ 100/ ≥5.0) / IELTS (≥ 6.5)」，其中「/ ≥5.0」含义不明（疑似排版/编码错误）；本文件只采信 TOEFL iBT ≥ 100 与 IELTS ≥ 6.5。",
+          "官网主项目页标题为 Master of Science in Cybersecurity (Applied Cybersecurity)，CCDS 学院页 HTML title 作 Master of Science in Applied Cybersecurity；本文件以主项目页全称为准。"
+        ],
+        "unverified": [
+          "精确课程代码与正式课名、core/elective 官方划分（官网 Curriculum 仅给 View the Course Content Here 链接）",
+          "GMAT 要求（官网未提及）",
+          "两个申请窗口并存的原因与 2027/28 实际有效批次",
+          "TOEFL 原文中「/ ≥5.0」的含义",
+          "international / Singaporean 费率区分与具体先修课程名称"
+        ]
+      },
+      "sources": [
+        {
+          "url": "https://www.ntu.edu.sg/education/graduate-programme/master-of-science-in-cybersecurity-(applied-cybersecurity",
+          "supports": "官方名称与学院、New Programme 标注、August 2027 申请窗口、学制与 30 AUs、学费与 9% GST、语言与背景要求、Top 5 就业、Capstone Project"
+        },
+        {
+          "url": "https://www.ntu.edu.sg/computing/admissions/graduate-programmes/master-of-science-cybersecurity-(applied-cybersecurity",
+          "supports": "旧项目 MSc Cybersecurity (launched in 2022-2023) 的改名/刷新说明、January 2027 申请窗口、Why This Programme 模块领域、AI 交叉方向、Career Opportunities 岗位清单"
+        },
+        {
+          "url": "https://www.ntu.edu.sg/computing/admissions/graduate-programmes",
+          "supports": "CCDS 官方 Master's by Coursework 项目清单，佐证该项目归 CCDS 且为 New Programme"
+        },
+        {
+          "url": "https://www.ntu.edu.sg/admissions/graduate/cwadmissionguide",
+          "supports": "AY2027-28 中 CCDS / Semester Programmes / August Intake 的申请门户开放与关闭日期"
+        }
+      ]
+    },
+    {
+      "id": "ntu-msba",
+      "name_en": "Master of Science in Business Analytics (MSBA)",
+      "name_zh": "商业分析理学硕士（非官方译名）",
+      "aliases": [
+        "MSc Business Analytics（非官网全称的常见简写）"
+      ],
+      "degree_type": "授课型（coursework-based）",
+      "faculty": "Nanyang Business School (NBS)",
+      "department": "待核实（官网标注 Provided by Nanyang Business School (NBS)；另提及结合 College of Computing and Data Science 与 School of Physical and Mathematical Sciences 的教学资源，未单列系）",
+      "official_urls": [
+        "https://www.ntu.edu.sg/business/admissions/graduate-studies/msc-business-analytics/admissions",
+        "https://www.ntu.edu.sg/business/admissions/graduate-studies/msc-business-analytics/programme-overview",
+        "https://www.ntu.edu.sg/spms/admissions/grad/detail/master-of-science-in-business-analytics"
+      ],
+      "duration_ft": "1 年（one-year full-time；7 月开学，官网：The MSBA programme will start in July）",
+      "duration_pt": "待核实（官网各页均只列 Full-time，未列兼读制）",
+      "credits": "待核实（官网未列总学分数；结构为核心课 + 选修课 + 三个 concentrations，含两个 projects；官网注明 modules might be subject to changes）",
+      "tuition": {
+        "amount": "S$75,210.00（含 9% GST 及 enrolment fee）",
+        "intake": "2027 Intake / AY2027（July 2027 Intake；官网 spms 镜像页写 Programme Fee (2027 Intake)）",
+        "applies_to": "待核实（官网仅列单一 Full-Time 费率，未分列 international / Singaporean 适用对象；另列 Singapore Citizen & Singapore PR Grant 与 NTU Alumni Grant）",
+        "note": "Enrolment Fee S$21,800.00（含 GST，即 S$20,000 exclusive of GST；接受录取时缴、可抵扣全额学费）；Application Fee S$100；一次性 miscellaneous fee S$610.00（including GST）；费用表分 Aug / Oct / Jan 三期缴纳；官网注明 The current GST rate in Singapore is 9%。资助：Singapore Citizen & Singapore PR Grant $5,000、NTU Alumni Grant 10% of the tuition fees、MSBA Merit Scholarship、ASEAN Development Scholarship、Diversity Scholarship、SG Digital Scholarship (IMDA)、SkillsFuture Credit。奖学金须在 Round 1 截止前完成申请并附 scholarship essay。"
+      },
+      "application": {
+        "open": "September 2026（官网 NBS admissions：The application for the July 2027 intake will start in September 2026）",
+        "deadlines": [
+          "Round 1: 30 November 2026（对应 July 2027 intake）",
+          "Round 2: 31 January 2027（对应 July 2027 intake）",
+          "Round 3: 31 March 2027（对应 July 2027 intake）"
+        ],
+        "note": "Applications are reviewed on a rolling basis, and early application improves your chances of being shortlisted sooner（官网原文）；NBS 项目独立申请流程（官方 Admission Guide）；面试为邀请制（by invitation only），录制的面试为选拔环节之一；申请费 S$100；需 2 位推荐人在线提交 referee reports（须来自机构/组织邮箱）；CV 不超过 3 页。spms 镜像页另列 Round 1: 30 November / Round 2: 31 January / Round 3: 31 March（未标年份）。"
+      },
+      "english": "TOEFL score ≥ 100 iBT or IELTS score ≥ 6.5（官网原文），仅在本科阶段非英语授课时需要（if English is not the medium of instruction at the undergraduate level）；机构代码 GMAT V24-ZV-70 / GRE 3123 / TOEFL 9705；官网声明 We no longer accept GMAT/GRE and TOEFL/IELTS online test scores taken after 31 December 2023，仅认可 2024-01-01 起的线下考试成绩。",
+      "admission": {
+        "background": "A good bachelor's degree in any discipline（官网原文，不限专业背景）；Typical Class Profile（NBS Postgraduate Fair 2026 页）：平均年龄 23、国际生 90%+、班级规模 140、本科前三类专业为 Business / STEM / Economics & Social Sciences。",
+        "prerequisites": "待核实（官网未列先修课；仅要求 any discipline 的良好学士学位）",
+        "gre_gmat": "GMAT or GRE score is optional（官网原文）；机构代码 GMAT V24-ZV-70 / GRE 3123 / TOEFL 9705",
+        "work_experience": "Work experience is not required（官网原文：Applicants with no work experience are welcome to apply）"
+      },
+      "curriculum": {
+        "structure": "核心课 + 选修课，设三个 specialised concentrations：Finance / Marketing / Technology & Operations；采用 hands-on 方式，含两个 projects 把课堂知识用于真实商业情境；课程与行业伙伴共同设计，可接触 real data 与 practicum / internship；官网注明 The programme undergoes continuous improvement. As such, modules might be subject to changes；总学分数待核实。",
+        "core": [
+          "AI and Big Data in Business",
+          "Advanced Database Management",
+          "Advanced Programming",
+          "Analytics and Machine Learning in Business",
+          "Analytics Strategy",
+          "Applications of Statistics",
+          "Data Management and Visualisation",
+          "Design Thinking & Technology Management",
+          "Programming Essentials",
+          "Strategies for Digital Transformation in Business"
+        ],
+        "electives": [
+          "Time Series for Business Analytics",
+          "AI with Advanced Predictive Techniques in Finance",
+          "Data Analytics for Credit and Related Risk",
+          "Information Systems & ERP (SAP)",
+          "Causal Inference",
+          "Digital Marketing in the Age of AI",
+          "Advanced Prescriptive Analytics with Generative AI",
+          "Introduction to Cyber Security",
+          "Leading Business Analytics Projects",
+          "Machine Learning Methodology",
+          "Office Process Automation with Python",
+          "Robotic Process Automation (RPA) for Analytics"
+        ],
+        "tracks": [
+          "Finance",
+          "Marketing",
+          "Technology & Operations"
+        ]
+      },
+      "highlights": [
+        "designed to bridge the gap between business strategy and data technology（官网原文）",
+        "By leveraging data, you will redefine customer experiences, guide organisations through digital disruptions and drive profitable digital transformations（官网原文）",
+        "Your journey begins with future-ready modules like Analytics and Machine Learning in Business, followed by the opportunity to build deep expertise in your chosen field through three specialised concentrations（官网原文）",
+        "The learning for this programme adopts a very hands-on approach, with two projects allowing participants to apply classroom knowledge to real-world business situations（官网原文）",
+        "Our curriculum is designed alongside industry partners to meet evolving business demands. You will gain access to real data and internship opportunities through a practicum（官网原文）",
+        "Leverage the combined prestige and technical expertise of NTU's College of Computing and Data Science and the School of Physical and Mathematical Sciences（官网原文；学位仍由 NBS 提供）"
+      ],
+      "career": [
+        "官网：Graduates from the programme are typically considered in business analyst roles",
+        "官网点名实习/雇主：internship opportunities with industry leaders such as DBS, KPMG and GE Digital",
+        "官网 programme-overview：You will be able to lead analytics projects, both as the head of a business unit and analytics business lead, or as a professional consultant with business domain expertise"
+      ],
+      "writing_hooks": [
+        "依据官网申请页「Your application should demonstrate: Strong intellectual capability / Solid career progression / Professional achievements / Leadership potential / Cultural sensitivity」，essay 可据此五项搭建结构。",
+        "依据官网「The essay questions are compulsory and you should articulate your thoughts clearly, using good judgement with respect to the word limit」，文书须为强制提交项并严格守字数。",
+        "依据官网「bridge the gap between business strategy and data technology」与三个 concentrations（Finance / Marketing / Technology & Operations），须说明选择哪一方向及其动机。",
+        "依据官网奖学金要求「complete the scholarship part of the online application, including the scholarship essay」且须在 Round 1 截止前完成，申请策略与文书排期应据此安排。"
+      ],
+      "verification": {
+        "status": "partial",
+        "conflicts": [],
+        "unverified": [
+          "是否设兼读制（part-time）",
+          "总学分数 / 学分结构",
+          "international / Singaporean 费率区分（applies_to）",
+          "具体先修课程名称"
+        ]
+      },
+      "sources": [
+        {
+          "url": "https://www.ntu.edu.sg/business/admissions/graduate-studies/msc-business-analytics/admissions",
+          "supports": "AY2027 (July 2027 Intake) 学费与 GST、Enrolment/Application/Miscellaneous 费用、三轮截止与 2026 年 9 月开放、语言与 GRE/GMAT、背景与工作经验、essay 五项特质、面试与推荐人要求、奖学金"
+        },
+        {
+          "url": "https://www.ntu.edu.sg/business/admissions/graduate-studies/msc-business-analytics/programme-overview",
+          "supports": "one-year full-time 学制、核心课官方名称与课程描述、培养目标与就业表述"
+        },
+        {
+          "url": "https://www.ntu.edu.sg/spms/admissions/grad/detail/master-of-science-in-business-analytics",
+          "supports": "官方名称与 Nanyang Business School (NBS) 归属、Programme Fee (2027 Intake) S$75,210、申请轮次、核心/选修课程名与三个 concentrations、Unique Features、就业与实习雇主"
+        },
+        {
+          "url": "https://www.ntu.edu.sg/business/events/nbsgradfair/graduate-programmes/msc-business-analytics",
+          "supports": "Typical Class Profile、one-year full-time、GMAT/GRE optional、TOEFL ≥ 100 iBT / IELTS ≥ 6.5、Work experience is not required、三个 concentrations"
+        },
+        {
+          "url": "https://www.ntu.edu.sg/admissions/graduate/cwadmissionguide",
+          "supports": "NBS 项目独立申请流程的官方说明"
+        }
+      ]
+    },
+    {
+      "id": "ntu-mfe",
+      "name_en": "Master of Science in Financial Engineering (MFE)",
+      "name_zh": "金融工程理学硕士（非官方译名）",
+      "aliases": [
+        "MSc Financial Engineering（非官网全称的常见简写）"
+      ],
+      "degree_type": "授课型（coursework-based）",
+      "faculty": "Nanyang Business School (NBS)",
+      "department": "待核实（官网标注 Provided by Nanyang Business School (NBS)；与 School of Physical and Mathematical Sciences (SPMS) 有 Direct Admission To MFE For SPMS Students 合作，未单列系。第三方称「NBS 与 SPMS 联合授课」，官网未核实到，未采信）",
+      "official_urls": [
+        "https://www.ntu.edu.sg/education/graduate-programme/master-of-science-in-financial-engineering2",
+        "https://www.ntu.edu.sg/business/admissions/graduate-studies/msc-financial-engineering/admissions",
+        "https://www.ntu.edu.sg/business/admissions/graduate-studies/msc-financial-engineering/programme-overview"
+      ],
+      "duration_ft": "1 年（3 trimesters；最短/最长 candidature 12 / 24 个月）",
+      "duration_pt": "2 年（6 trimesters；最短/最长 candidature 24 / 48 个月）",
+      "credits": "20 core courses + 4 elective courses（官网 programme-overview）；总 AU 数待核实",
+      "tuition": {
+        "amount": "S$73,030.00（Non-CMU Track，全日制与兼读制同价，含 9% GST 及 enrolment fee）/ S$78,480.00（CMU Track，全日制与兼读制同价，含 9% GST 及 enrolment fee）",
+        "intake": "2027 Intake（官网 education 页 Programme Fee (2027 Intake)；NBS admissions 费用表标题为 August 2027 Intake，与正文 July 2027 intake 冲突，见 verification.conflicts）",
+        "applies_to": "待核实（官网仅列单一费率，未分列 international / Singaporean 适用对象；另列 Singapore Citizen & Singapore PR Grant 与 NTU Alumni Grant）",
+        "note": "Enrolment Fee S$21,800.00（含 GST，接受录取时缴、可抵扣全额学费）；Application Fee S$100；全日制一次性 miscellaneous fee S$610.00（including GST）；CMU 段 travel and living expenses 估计 S$8,000 与 S$10,000 由学生自理；费用表按 Aug / Oct / Jan 等分期缴纳；官网注明 The current GST rate in Singapore is 9%。资助：Singapore Citizen & Singapore PR Grant $5,000、NTU Alumni Grant 10%、MFE Merit Scholarship、ASEAN Development Scholarship、Diversity Scholarship。SPMS 应届生经 NBS 网站直接申请并于 2 月底前提交可获申请费豁免。"
+      },
+      "application": {
+        "open": "September 2026（官网 NBS admissions：The application for the July 2027 intake will start in September 2026）",
+        "deadlines": [
+          "Round 1: 30 November 2026（对应 July 2027 intake）",
+          "Round 2: 31 January 2027（对应 July 2027 intake）",
+          "Round 3: 31 March 2027（对应 July 2027 intake）"
+        ],
+        "note": "Applications are reviewed on a rolling basis, and early application improves your chances of being shortlisted sooner（官网原文）；education 页另列 Round 1: 30 November / Round 2: 31 January / Round 3: 31 March（未标年份）；申请费 S$100；需 2 位推荐人在线提交 referee reports；MFE Merit Scholarship 需额外 scholarship essay 并在 Round 1 截止前随申请一并提交。"
+      },
+      "english": "TOEFL score ≥ 100 iBT or IELTS score ≥ 6.5（官网原文），仅在本科阶段非英语授课时需要；机构代码 GMAT V24-ZV-17 / GRE 3123 / TOEFL 9705；官网声明 We no longer accept GMAT/GRE and TOEFL/IELTS online test scores taken after 31 December 2023，仅认可 2024-01-01 起的线下考试成绩。",
+      "admission": {
+        "background": "A good undergraduate degree in applied mathematics, applied science, statistics, computer science, engineering, economics, or other quantitative fields（官网 NBS admissions）；官网并写 We will also consider applicants from other disciplines；education 页表述为 A good bachelor's degree with a strong background in mathematics, statistics, or computer programming。另设 Direct Admission To MFE For SPMS Students（NTU SPMS 的 MATH / MAFI / MACS / MAEO / MADA / MAET / MASN / PHMS 三、四年级成绩优异者）。",
+        "prerequisites": "官网要求 strong background in mathematics, statistics, or computer programming（education 页原文）；具体先修课程名称待核实。",
+        "gre_gmat": "A good GMAT or GRE score（官网要求；GRE 须 General Test，成绩须在提交申请前 5 年内）；例外：GMAT/GRE scores are optional for NTU's SPMS graduates with Honours (Distinction) degree and above；机构代码 GMAT V24-ZV-17 / GRE 3123 / TOEFL 9705",
+        "work_experience": "Work experience is preferred but not required（官网 NBS admissions 原文）；education 页写 Work experience is not required —— 两处表述不同，见 verification.conflicts"
+      },
+      "curriculum": {
+        "structure": "20 core courses + 4 elective courses；课程分三组：Financial, Mathematics & Statistics / Finance / Computing；3 trimesters（全日制 1 年）或 6 trimesters（兼读制 2 年），每 trimester 分 2 个 7 周 mini-term；可选 CMU Track（最后 7 周、4 门课，完成获 Certificate in Computational Finance by CMU）；官网注明 Elective courses are changed from time to time、Courses offered in CMU are subject to changes；课程在 NTU 主校区、工作日晚间及部分周六授课；总 AU 数待核实。",
+        "core": [
+          "Calculus & Linear Algebra",
+          "Stochastic Modeling in Asset Pricing",
+          "Stochastic Calculus for Finance",
+          "Probability & Statistics",
+          "Linear Financial Models",
+          "Financial Time Series Analysis",
+          "Corporate Finance",
+          "Asset Pricing Theory",
+          "Bond Portfolio Management",
+          "Equity Portfolio Management",
+          "Derivative Securities",
+          "Interest Rate Derivatives",
+          "Financial Risk Management",
+          "Object Oriented Programming I",
+          "Object Oriented Programming II"
+        ],
+        "electives": [
+          "Numerical Methods for Financial Instrument Pricing (E)",
+          "Simulation Methods for Option Pricing (CMU)",
+          "Advanced Statistical Modeling (E)",
+          "Optimization in Finance (E)",
+          "Advanced Risk Management (CMU)",
+          "Exotic Options & Structured Products (E)",
+          "Credit Risk - Measurement & Management (E)",
+          "Programming Web Applications in Finance (E)",
+          "Artificial Intelligence Techniques in Finance (E)",
+          "Financial Computing (CMU)",
+          "Financial Engineering Project (CMU)"
+        ],
+        "tracks": [
+          "CMU Track",
+          "Non-CMU Track"
+        ]
+      },
+      "highlights": [
+        "With over 20 years of history, MSc Financial Engineering is one of the most established programmes in the region（官网原文）",
+        "A unique graduate programme, the Master of Science in Financial Engineering (MFE) empowers you to succeed as a dynamic professional in the world of high technology finance（官网原文）",
+        "equip you with concepts and techniques in Finance, Computer Science and Mathematics；apply sophisticated engineering tools to financial problems（官网原文）",
+        "Have the option to spend a seven-week term studying at Carnegie Mellon University (CMU), USA（官网原文）；合作自 1999 年项目创立起，完成 4 门课获 Certificate in Computational Finance by CMU",
+        "Industry experts from the Speaker Series, exclusively organised for our MFE participants（官网原文）",
+        "NTU-SJTU Double Master's Programme: Graduate with 2 degrees in 24 months（官网原文）"
+      ],
+      "career": [
+        "官网：Our MSc Financial Engineering graduates work primarily in the financial services industry",
+        "官网 programme-overview 列岗位方向：risk management、quantitative asset management、product structuring、quantitative trading、quantitative research、financial information technology 等 high-technology finance 领域",
+        "官网点名招聘机构：DBS (Development Bank of Singapore)、Standard Chartered、JPMorgan Chase & Co.、Goldman Sachs"
+      ],
+      "writing_hooks": [
+        "依据官网「concepts and techniques in Finance, Computer Science and Mathematics」与「apply sophisticated engineering tools to financial problems」，文书应体现金融、计算与数学三学科交叉及量化工具应用。",
+        "依据官网「We will also consider applicants from other disciplines」但要求 strong background in mathematics, statistics, or computer programming，非量化背景申请人须在文书中论证量化与编程准备。",
+        "依据官网「Work experience is preferred but not required」及强制 A good GMAT or GRE score，需交代标化成绩、成绩时效（5 年内）与（如有）职业进阶。",
+        "依据官网 CMU Track「seven-week term studying at Carnegie Mellon University」与 MFE Merit Scholarship 的 scholarship essay 要求，可说明是否选 CMU 轨道及申请奖学金的动机。"
+      ],
+      "verification": {
+        "status": "partial",
+        "conflicts": [
+          "官网 NBS admissions 页正文写 the application for the July 2027 intake will start in September 2026，同页 Fee Schedule 表格标题却写 August 2027 Intake；实际开学月份待核实。",
+          "工作经验表述不一致：NBS admissions 页写 Work experience is preferred but not required，education 页写 Work experience is not required。",
+          "education 页申请轮次仅写 Round 1: 30 November / Round 2: 31 January / Round 3: 31 March（未标年份），NBS admissions 页写明 2026 / 2027 年份；本文件采用带年份的 admissions 页口径。"
+        ],
+        "unverified": [
+          "实际开学月份（July 2027 或 August 2027）",
+          "总 AU 数 / 学分结构",
+          "international / Singaporean 费率区分（applies_to）",
+          "具体先修课程名称",
+          "第三方所称「NBS 与 SPMS 联合授课」（官网未核实到）"
+        ]
+      },
+      "sources": [
+        {
+          "url": "https://www.ntu.edu.sg/business/admissions/graduate-studies/msc-financial-engineering/admissions",
+          "supports": "July 2027 intake 申请开放与三轮截止、语言与 GMAT/GRE、背景与工作经验、Fee Schedule（含 9% GST 与 enrolment fee）、推荐人与奖学金要求"
+        },
+        {
+          "url": "https://www.ntu.edu.sg/education/graduate-programme/master-of-science-in-financial-engineering2",
+          "supports": "官方名称与 Nanyang Business School (NBS) 归属、Programme Fee (2027 Intake) 两种 Track 金额、课程三组清单、Unique Features、就业与招聘机构、NTU-SJTU 双硕士"
+        },
+        {
+          "url": "https://www.ntu.edu.sg/business/admissions/graduate-studies/msc-financial-engineering/programme-overview",
+          "supports": "20 core courses + 4 elective courses、3 / 6 trimesters 与 min/max candidature、CMU term 与 Certificate in Computational Finance、细分就业岗位方向"
+        },
+        {
+          "url": "https://www.ntu.edu.sg/admissions/graduate/cwadmissionguide",
+          "supports": "NBS 项目独立申请流程的官方说明"
+        }
+      ]
+    },
+    {
+      "id": "ntu-msis",
+      "name_en": "Master of Science in Information Systems (MSIS)",
+      "name_zh": "信息系统理学硕士（非官方译名）",
+      "aliases": [
+        "MSc Information Systems（非官网全称的常见简写）",
+        "M.Sc.(Information Systems)（官网表格写法，Programme Code 294）",
+        "Nanyang Business School 的 MSc in Information Systems（初始清单中的错误归属；官方 Provided by 为 WKWSCI）",
+        "MSc in Information Studies（WKWSCI 另一个不同项目，勿混淆）"
+      ],
+      "degree_type": "授课型（coursework-based）",
+      "faculty": "Wee Kim Wee School of Communication and Information (WKWSCI)",
+      "department": "待核实（官网未单列系/开办单位；项目页标注 WKWSCI Graduate Coursework，联系邮箱 wkwsci_coursework@ntu.edu.sg）",
+      "official_urls": [
+        "https://www.ntu.edu.sg/education/graduate-programme/master-in-science-in-information-systems",
+        "https://www.ntu.edu.sg/engineering/coe-programmes/graduate/coe-programme-detail/master-in-science-in-information-systems"
+      ],
+      "duration_ft": "1 年（最短 2 学期；最长 4 学期；依据官网 MSIS FAQ 2022 PDF）",
+      "duration_pt": "2 年（最短 4 学期；最长 8 学期；依据官网 MSIS FAQ 2022 PDF）；FAQ 2022 注明 part-time 仅适用于 Singaporeans、Singapore Permanent Residents 及持 Employment Pass / Dependent Pass 者，其他国际申请人须申全日制并办 Student Pass",
+      "credits": "30 AUs（毕业要求）；每门课 3 AUs（39 contact hours），Dissertation 6 AUs；毕业须 CGPA 不低于 2.50",
+      "tuition": {
+        "amount": "S$47,044.40（含 prevailing GST；官网未列 GST 具体税率，待核实）",
+        "intake": "AY2026-2027（【注意】官网最新学费表仅到 AY2026-2027，适用 2026/27 入学季，并非 2027/28；AY2027-2028 学费待核实）",
+        "applies_to": "不区分国籍（all nationalities），且适用于全日制与兼读制申请人（官网原文：Tuition and Miscellaneous Fees are applicable to both full-time and part-time applicants of all nationalities）",
+        "note": "Per Course S$4,704.44；Dissertation S$9,408.88；Deposit Fee S$5,000.00（接受录取时缴、抵扣学费、不可退不可转）；Application Fee S$50.00（不可退）；按每学期注册课程数的 AU 计费；Incentives：Singapore Citizens (SC) / Singapore Permanent Residents (SPR) 享 S$5,000 tuition fee subsidy rebate，NTU/NIE Alumni（不限国籍）享 10% tuition fee rebate；官网另列 AY2025-2026 学费 S$45,235.00。自 AY2025-2026 intake 起为 self-financed programme，申请人不符合 Tuition Fee Loan、Service Obligation 或 MOE Subsidies 等资助资格；学费不含交通/机票与住宿；官网注明 The University reserves the right to revise its fees every academic year without notice。"
+      },
+      "application": {
+        "open": "1 November（官网项目页表格 Application Period: 1 November to 15 February）；1 October（官方 Coursework Programmes Admission Guide，AY2027-28 / Semester Programmes / August Intake / Wee Kim Wee School of Communication & Information - Applies to all other programmes）——两处开放日不一致，见 verification.conflicts",
+        "deadlines": [
+          "15 February（官网项目页，对应每年 8 月唯一入学批次；官网未标年份、未分轮次）",
+          "15 February（官方 Admission Guide，AY2027-28 / August Intake / WKWSCI Applies to all other programmes 的 Closing of Application Portal）"
+        ],
+        "note": "官网项目页：There is only one intake in August. Applications for August admission will be open in November and close in mid February；结果自 end May-June 起线上公布；Programme Code 294；申请费 S$50.00；Submission of personal statement and referee letters are not compulsory；官网称 We have no restrictions to the number of referee letters submitted, though applicants can limit them to two (2) or three (3) letters。FAQ 2022 旧版写 early November to end January，与现行页不符（见 conflicts）。"
+      },
+      "english": "TOEFL iBT 100 (internet-based) / IELTS (Academic) 6.5；官网原文 The IELTS sub-scores should not be less than 6.0；成绩有效期 2 年（at the point of application）；only TOEFL or IELTS test scores will be accepted；适用于本科非英语-medium 大学、或英语-medium 大学但授课语言非英语者。",
+      "admission": {
+        "background": "A Bachelor's degree in areas such as Computer Science, Information Systems, Information Technology；或 A Bachelor's degree with a strong information technology-related component such as those in Engineering or the Sciences；或 A Bachelor's degree plus relevant working experience；学位等级 second class lower / Honours (Merit) and above or equivalent。",
+        "prerequisites": "待核实（官网未单列先修课程；仅列学位背景、学位等级要求与 recommended one-year full-time working experience）",
+        "gre_gmat": "官网明确：we do not require the submission of GRE or GMAT test scores（不要求提交 GRE/GMAT）",
+        "work_experience": "官网原文：Internships are not counted towards working experience, and it is recommended for applicants to have at least a minimum of one-year of full-time working experience in relevant fields（推荐至少 1 年相关领域全职经验，实习不计入）"
+      },
+      "curriculum": {
+        "structure": "毕业需 30 AUs；每门课 3 AUs（39 contact hours），Dissertation 项目 6 AUs；官网 Curriculum 按四大领域组织：Software Development and Infrastructure / Human Computer Interaction / Management of Systems and Services / Data Analytics and Artificial Intelligence；另有 Research Project（Dissertation / Critical Inquiry / IN6299）与 Cross-listed Courses from Other Programmes；官网注明 Not all courses listed in the curriculum will be offered in a semester、Courses offered are subjected to availability of instructors and resources，且官网未把课程标注为 core / elective（划分待核实）；以下 core / electives 数组按官网所列课程与 Cross-listed 分组整理，非官网 core/elective 判定。",
+        "core": [
+          "IN6203 Information Systems Analysis and Design",
+          "IN6205 Database Systems",
+          "IN6206 Internet and Web Applications Development",
+          "IN6222 Mobile and Ubiquitous Applications Development",
+          "IN6230 Information Systems Security",
+          "IN6236 Blockchain System Software Engineering",
+          "IN6237 Cloud Computing and Infrastructure",
+          "IN6207 Human-Computer Interaction",
+          "IN6221 Principles of Data Visualisation",
+          "IN6238 Human-AI Interaction",
+          "IN6243 Algorithms and Society: The Ethical Development and Use of Technology",
+          "IN6202 Information Architecture and Usability",
+          "IN6204 Information Systems Project Management",
+          "IN6228 Information Systems Management",
+          "IN6233 Information Systems Leadership",
+          "IN6239 Digital Transformation",
+          "IN6240 Information Futures",
+          "IN6208 Research Methods for Information Professionals",
+          "IN6226 Information Retrieval and Analysis",
+          "IN6227 Data Mining",
+          "IN6241 Generative AI Applications",
+          "IN6242 Deep Learning Foundations",
+          "IN6244 Graph Analysis, Learning, and Applications"
+        ],
+        "electives": [
+          "IS6751 Text & Web Mining（官网 Cross-listed Courses from Other Programmes）",
+          "IS6752 Data Extraction Techniques（同上）",
+          "IS6754 Disinformation and the Information Professions（同上）",
+          "CI7104 Network Analysis: Theory and Methods（同上）",
+          "CI7017 Advanced Quantitative Analysis for Communication and Information Research（同上）",
+          "IN6299 Critical Inquiry in Information Systems（官网 Research Project 部分）",
+          "Dissertation（官网 Research Project，6 AUs）",
+          "Critical Inquiry（官网 Research Project）"
+        ],
+        "tracks": []
+      },
+      "highlights": [
+        "The MSc in Information Systems (MSIS) programme blends theory and practice to equip students with cutting-edge knowledge necessary for the design, development, maintenance, and management of information systems to provide better user experience（官网原文）",
+        "Broad-based perspective of information systems education from experienced, multi-disciplinary faculty and industrial practitioners（官网原文）",
+        "Offers a strong emphasis in users and management through theory and practice-based experiential learning（官网原文）",
+        "Provides a solid foundation for mid-career professionals wanting to establish themselves in the industry（官网原文）",
+        "官网 Curriculum 四大领域：Software Development and Infrastructure / Human Computer Interaction / Management of Systems and Services / Data Analytics and Artificial Intelligence",
+        "MSIS students select them based on their individual learning goals and career objectives（官网 Curriculum 原文）；官网另设 MSIS Scholarship，标榜 Kickstart your career in technology and data!"
+      ],
+      "career": [
+        "待核实（官网项目页无 Top careers / Career Prospects 列表；已查首页、Curriculum、Additional Information 标签及官方 Admission Guide。仅 IN6228 课程描述提及 better prepared to take on management or consulting roles in IT，奖学金页有 Kickstart your career in technology and data! 宣传语）"
+      ],
+      "writing_hooks": [
+        "依据官网「Submission of personal statement and referee letters are not compulsory, however, applicants may submit them if it is a value-add to their application」，PS 非强制但应主动作为加分项提交。",
+        "依据官网「MSIS students select them based on their individual learning goals and career objectives」，文书宜明确个人学习目标与职业目标，并对应到四大课程领域中的具体选课逻辑。",
+        "依据官网「it is recommended for applicants to have at least a minimum of one-year of full-time working experience in relevant fields」且「Internships are not counted towards working experience」，需正面说明相关全职经历，勿以实习替代。",
+        "依据官网「Provides a solid foundation for mid-career professionals wanting to establish themselves in the industry」与「a strong emphasis in users and management」，中期转型者应突出用户视角与管理维度的实践。"
+      ],
+      "verification": {
+        "status": "pending",
+        "conflicts": [
+          "官网项目页写申请期 1 November to 15 February，官方 Coursework Programmes Admission Guide（AY2027-28）对 WKWSCI「Applies to all other programmes」写 1 October to 15 February；截止日一致、开放日不一致。",
+          "官网 MSIS FAQ 2022 PDF 写 the application for the yearly August intake will open in early November and close in end January，与现行项目页 1 November to 15 February 不一致（旧版口径）。",
+          "官网存在 /education/graduate-programme/ 与 /engineering/coe-programmes/ 两套页面，前者 Provided by 为 Wee Kim Wee School of Communication and Information (WKWSCI)，后者为旧镜像路径；据后者易误判学院归属，且初始清单误记为 Nanyang Business School。"
+        ],
+        "unverified": [
+          "AY2027-2028 学费（官网最新表仅到 AY2026-2027）",
+          "GST 具体税率（官网只写 inclusive of prevailing Goods and Services Tax (GST)）",
+          "官网当前版 Programme Structure & Duration 的 min/max candidature（本次抓取未返回完整面板，现填数据来自 FAQ 2022）",
+          "core / elective 官方划分（官网 Curriculum 未标注）",
+          "Career Prospects / Top careers 列表",
+          "申请起止日期的年份（官网表格未标年份）",
+          "2027/28 是否沿用同一申请窗口",
+          "具体先修课程名称"
+        ]
+      },
+      "sources": [
+        {
+          "url": "https://www.ntu.edu.sg/education/graduate-programme/master-in-science-in-information-systems",
+          "supports": "官方名称与 WKWSCI 归属、AY2026-2027 学费表与 incentives、self-financed 政策、申请期与 Programme Code 294、语言分数与 IELTS 单项、背景与 GRE/GMAT/工作经验、Curriculum 全部课程原名与代码、PS 非强制说明、四大培养领域"
+        },
+        {
+          "url": "https://www.ntu.edu.sg/engineering/coe-programmes/graduate/coe-programme-detail/master-in-science-in-information-systems",
+          "supports": "旧镜像页的 30 AUs 毕业要求、语言分数、申请期 1 November to 15 February、个人陈述与推荐信非强制、四大课程领域"
+        },
+        {
+          "url": "https://www.ntu.edu.sg/media/docs/librariesprovider143/pg/msc-in-information-systems_faqs_2022.pdf?sfvrsn=1673e508_3",
+          "supports": "FAQ 2022 的全/兼读 min/max candidature（2/4 与 4/8 学期）、part-time 国籍限制、一年一次 8 月入学、旧版申请期口径"
+        },
+        {
+          "url": "https://www.ntu.edu.sg/media/docs/librariesprovider143/pg/msc-in-information-systems_faqs_2025.pdf?sfvrsn=8ce41800_1",
+          "supports": "官网当前页所链的 2025 版 FAQ（可访问；本次未逐字提取，仅作后续复核入口）"
+        },
+        {
+          "url": "https://www.ntu.edu.sg/admissions/graduate/cwadmissionguide",
+          "supports": "AY2027-28 中 WKWSCI「Applies to all other programmes」的 1 October 开放 / 15 February 关闭日期，及 NBS 独立申请流程说明"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+<view class="page">
+  <view class="page-head">
+    <text class="eyebrow">GENERATED DOCUMENTS</text>
+    <text class="page-title">我的文书</text>
+    <text class="muted head-sub">每份文书保留历史版本与事实校验轨迹，提交前请人工核对。</text>
+    <view class="head-accent"></view>
+  </view>
+
+  <view class="card filter-card" wx:if="{{state !== 'error'}}">
+    <text class="field-label">按档案筛选</text>
+    <picker range="{{filterLabels}}" value="{{filterIndex}}" bindchange="onFilterChange">
+      <view class="picker-value">{{filterLabels[filterIndex]}}</view>
+    </picker>
+    <text class="muted filter-hint">默认显示当前档案；选「全部档案」可查看已删除档案遗留的文书。</text>
+  </view>
+
+  <view class="state-box" wx:if="{{state === 'loading'}}">
+    <text class="state-title">正在加载文书…</text>
+  </view>
+  <view class="state-box" wx:if="{{state === 'error'}}">
+    <text class="state-title">加载失败</text>
+    <text class="state-desc">{{error}}</text>
+    <button class="state-action" bindtap="load">重新加载</button>
+  </view>
+  <view class="state-box" wx:if="{{state === 'empty'}}">
+    <text class="state-title">暂无文书</text>
+    <text class="state-desc">{{filterIndex === 0 ? '所有档案下都还没有文书，去生成第一份 CV、个人陈述或推荐信。' : '这份档案下还没有文书；也可以切换为「全部档案」查看其他档案的文书。'}}</text>
+    <button class="state-action" bindtap="goGenerate">去生成文书</button>
+  </view>
+
+  <block wx:if="{{state === 'ready'}}">
+    <view class="card doc-card" wx:for="{{items}}" wx:key="id">
+      <view class="doc-head" data-id="{{item.id}}" bindtap="openDocument">
+        <view class="doc-main">
+          <text class="doc-title">{{item.title}}</text>
+          <view class="doc-tags">
+            <text class="tag">{{item.typeLabel}}</text>
+            <text class="tag {{item.verified ? 'tag-ok' : 'tag-warn'}}">{{item.verified ? '校验通过' : '待核对 ' + item.issueCount + ' 条'}}</text>
+          </view>
+        </view>
+        <text class="doc-arrow">›</text>
+      </view>
+      <view class="doc-foot">
+        <text class="muted">{{item.dateText}} · {{item.wordCount}} 词 · v{{item.version}}</text>
+        <text class="delete-link" data-id="{{item.id}}" data-title="{{item.title}}" catchtap="removeDocument">删除</text>
+      </view>
+    </view>
+    <text class="muted list-note">「待核对」记录的是修订前的首轮校验意见，正文已按意见自动修订过一次，仍建议人工复核。</text>
+  </block>
+</view>

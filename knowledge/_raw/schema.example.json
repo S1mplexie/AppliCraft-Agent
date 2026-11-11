@@ -1,0 +1,68 @@
+{
+  "school_id": "SCHOOL_ID（大写缩写，如 HKU / CUHK / HKUST / NUS / NTU）",
+  "school_name_zh": "学校中文名",
+  "school_name_en": "官方英文校名",
+  "region": "HK 或 SG",
+  "snapshot_date": "2026-11-09",
+  "intake_target": "本批资料主要对应的入学季，如 2027/28 或 2027 Intake",
+  "general": {
+    "english_requirement": "校级/院级统一语言要求；无则写 待核实",
+    "application_open": "统一申请开放日期；无则写 待核实",
+    "notes": ["需要全库注意的命名陷阱、学院调整、官网口径冲突等"]
+  },
+  "programs": [
+    {
+      "id": "稳定小写英文 ID，格式 学校缩写-项目简称，如 hku-mdata-science",
+      "name_en": "官方英文全称（必须与官网一致）",
+      "name_zh": "中文译名（标注为非官方，格式：中文名（非官方译名））",
+      "aliases": ["易混淆的旧名 / 第三方错误叫法；没有则空数组"],
+      "degree_type": "授课型（coursework-based）或 授课型（含可选 dissertation/project 路径）",
+      "faculty": "所属学院（英文官方名）",
+      "department": "所属系 / 开办单位（英文官方名）",
+      "official_urls": ["官网项目页 URL"],
+      "duration_ft": "全日制时长，如 1 年 / 1.5 年 / 13 个月",
+      "duration_pt": "兼读制时长；不设则写 不设 / 待核实",
+      "credits": "总学分与结构，如 40 Units（5 核心 + 5 选修）；无则写 待核实",
+      "tuition": {
+        "amount": "金额与币种，如 HK$300,000 或 S$67,144（含 9% GST）",
+        "intake": "该金额对应入学季，如 2027/28",
+        "applies_to": "适用对象，如 不区分 local / non-local；未区分写 待核实",
+        "note": "分期、申请费、回扣、奖学金等补充；无则空字符串"
+      },
+      "application": {
+        "open": "申请开放日期；未列写 待核实",
+        "deadlines": ["各轮次截止日期，每条注明轮次与对应入学季"],
+        "note": "rolling basis、早申、面试等补充；无则空字符串"
+      },
+      "english": "该项目语言要求；只援引校级要求时写明「项目页未单列，援引校级要求」",
+      "admission": {
+        "background": "本科背景 / 学位要求",
+        "prerequisites": "先修课 / 编程或数学要求；无则写 待核实",
+        "gre_gmat": "GRE/GMAT 要求；官网未提写 官网未提及（不推断为明确不要求）",
+        "work_experience": "工作经验要求；无则写 待核实"
+      },
+      "curriculum": {
+        "structure": "课程结构说明，如 30 学分 = 核心 16 + 选修 14",
+        "core": ["核心课官方课程名（含课程代码，如 CS5228 Knowledge Discovery and Data Mining）"],
+        "electives": ["选修课 / 方向官方名称"],
+        "tracks": ["track / specialisation / concentration 名称；无则空数组"]
+      },
+      "highlights": ["项目特色、培养目标（依据官网原文，可摘英文短语）"],
+      "career": ["官网明确的就业岗位 / 行业 / 雇主；无系统性数据写 待核实"],
+      "writing_hooks": [
+        "PS/SOP 写作参考要点（简体中文），每条注明依据的官网原文短语，如：呼应官网「xxx」，用具体项目说明……"
+      ],
+      "verification": {
+        "status": "verified（官网明确）/ partial（部分待核实）/ pending（多处待核实）",
+        "conflicts": ["官网不同页面数值/日期不一致的地方；无则空数组"],
+        "unverified": ["待核实字段清单；无则空数组"]
+      },
+      "sources": [
+        {
+          "url": "官方 URL",
+          "supports": "该 URL 支撑了哪些字段（简短中文）"
+        }
+      ]
+    }
+  ]
+}
