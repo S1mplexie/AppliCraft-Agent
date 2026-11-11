@@ -1,7 +1,7 @@
 export type DocType = 'cv' | 'ps' | 'recommendation'
 export type Language = 'en' | 'zh'
 /** 一级导航分区；与 URL hash 同步，刷新后仍能回到原来的工作台。 */
-export type TabKey = 'profile' | 'match' | 'generate' | 'library' | 'skills' | 'documents' | 'settings'
+export type TabKey = 'profile' | 'match' | 'projects' | 'generate' | 'library' | 'skills' | 'documents' | 'settings'
 /** 档案表单的二级分区。 */
 export type ProfileSection =
   'basics' | 'education' | 'experience' | 'credentials' | 'programs' | 'recommenders' | 'goals'
@@ -41,11 +41,23 @@ export interface ApplicantProfile {
   career_goal: string; additional_notes: string; writing_constraints: string
 }
 export interface ProfileSummary { id: string; label: string; updated_at: string; name: string }
+/** 申请项目：挂在档案之下，从知识库导入（imported）或自定义新建（custom）；
+ *  生成的文书通过 project_id 归入项目，未归组文书在项目管理里标「未分组」。 */
+export interface ApplicationProject {
+  id: string; profile_id: string; name: string
+  source: 'imported' | 'custom'
+  system_program_id: string
+  university: string; program: string; program_name_en: string; faculty: string
+  degree_type: string; region: string; intake: string; notes: string
+  official_urls: string[]
+  created_at: string; updated_at: string; document_count: number
+}
 export interface DocumentMeta {
   id: string; profile_id: string; doc_type: DocType; doc_type_label: string
   title: string; created_at: string; updated_at: string; version: number
   model: string; language: string; word_count: number
   passed_verification: boolean; issue_count: number
+  project_id?: string
 }
 export interface Issue {
   quote: string; type: string; reason: string; fix: string

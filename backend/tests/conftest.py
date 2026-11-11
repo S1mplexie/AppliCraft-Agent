@@ -10,6 +10,9 @@ _DATA = _TMP / "data"
 _DATA.mkdir(parents=True, exist_ok=True)
 os.environ["APPLICRAFT_DATA_DIR"] = str(_DATA)
 os.environ["APPLICRAFT_DATABASE_URL"] = "sqlite:///" + (_DATA / "test.db").as_posix()
+# 既有用例按多租户语义编写（register 建号、登录态调 API），standalone 分支无 auth 路由；
+# 测试环境统一关闭 standalone，走与网页版一致的 auth 挂载分支。
+os.environ["APPLICRAFT_STANDALONE"] = "false"
 # 业务默认关闭开放注册；既有隔离测试需要反复注册多个账号，故测试环境显式开放。
 # 注册策略本身由 test_security.py 单独验证。
 os.environ["APPLICRAFT_ALLOW_REGISTRATION"] = "true"

@@ -19,6 +19,7 @@ from app.api import (
     routes_llm,
     routes_match,
     routes_profile,
+    routes_projects,
     routes_settings,
     routes_skills,
 )
@@ -125,6 +126,7 @@ app.include_router(routes_library.router, prefix="/api")
 app.include_router(routes_llm.router, prefix="/api")
 app.include_router(routes_skills.router, prefix="/api")
 app.include_router(routes_match.router, prefix="/api")
+app.include_router(routes_projects.router, prefix="/api")
 
 
 @app.get("/api/health", tags=["system"])

@@ -55,6 +55,32 @@ class SkillUpdate(BaseModel):
     description: str = Field(default="", max_length=300)
 
 
+class ApplicationProjectCreate(BaseModel):
+    """新建申请项目：system_program_id 给定时从知识库导入官方数据快照，否则按自定义字段创建。"""
+
+    name: str = Field(min_length=1, max_length=120)
+    system_program_id: str = Field(default="", max_length=120)
+    university: str = Field(default="", max_length=120)
+    program: str = Field(default="", max_length=120)
+    degree_type: str = Field(default="", max_length=60)
+    region: str = Field(default="", max_length=60)
+    intake: str = Field(default="", max_length=60)
+    notes: str = Field(default="", max_length=500)
+
+
+class ApplicationProjectPatch(BaseModel):
+    """修改申请项目的名称与备注；留空字段不修改。"""
+
+    name: str = Field(default="", max_length=120)
+    notes: str = Field(default="", max_length=500)
+
+
+class DocumentAssign(BaseModel):
+    """文书归组请求：把一篇已生成的文书归入某个申请项目。"""
+
+    doc_id: str = Field(min_length=1, max_length=80)
+
+
 class DocumentMeta(BaseModel):
     id: str
     profile_id: str
@@ -69,6 +95,7 @@ class DocumentMeta(BaseModel):
     word_count: int
     passed_verification: bool
     issue_count: int
+    project_id: str | None = None
 
 
 class DocumentDetail(BaseModel):

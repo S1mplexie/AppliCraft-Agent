@@ -2,6 +2,7 @@
 
 data_dir 下的目录结构：
     profiles/{profile_id}.json
+    projects/{project_id}.json
     documents/{doc_id}/meta.json
     documents/{doc_id}/current.md
     documents/{doc_id}/trace.json
@@ -42,9 +43,10 @@ class FileStore:
     def __init__(self, root: Path):
         self.root = Path(root).resolve()
         self.profiles_dir = self.root / "profiles"
+        self.projects_dir = self.root / "projects"
         self.documents_dir = self.root / "documents"
         self.exports_dir = self.root / "exports"
-        for directory in (self.profiles_dir, self.documents_dir, self.exports_dir):
+        for directory in (self.profiles_dir, self.projects_dir, self.documents_dir, self.exports_dir):
             directory.mkdir(parents=True, exist_ok=True)
 
     def for_user(self, user_id: str) -> "FileStore":
@@ -191,13 +193,22 @@ class FileStore:
             "versions": versions,
         }
 
-    def list_documents(self, profile_id: str | None = None) -> list[dict[str, Any]]:
+    def list_documents(
+        self, profile_id: str | None = None, project_id: str | None = None
+    ) -> list[dict[str, Any]]:
+        """文书列表：profile_id 按档案过滤；project_id 再按申请项目过滤（None=不过滤，
+        "ungrouped"=只看未归组文书）。"""
         items = []
         for path in self.documents_dir.glob("*/meta.json"):
             meta = self._read_json(path)
             if not meta:
                 continue
             if profile_id and meta.get("profile_id") != profile_id:
+                continue
+            if project_id == "ungrouped":
+                if meta.get("project_id"):
+                    continue
+            elif project_id and meta.get("project_id") != project_id:
                 continue
             items.append(meta)
         return sorted(items, key=lambda item: item.get("updated_at", ""), reverse=True)
@@ -221,6 +232,66 @@ class FileStore:
 
     def export_dir(self) -> Path:
         return self.exports_dir
+
+    # ----------------------------------------------------------------- 申请项目
+    def save_project(self, project: dict[str, Any]) -> dict[str, Any]:
+        pid = self.check_id(project.get("id", ""))
+        project["id"] = pid
+        project["updated_at"] = _now()
+        self._write_json(self.projects_dir / f"{pid}.json", project)
+        return project
+
+    def get_project(self, project_id: str) -> dict[str, Any] | None:
+        return self._read_json(self.projects_dir / f"{self.check_id(project_id)}.json")
+
+    def list_projects(self, profile_id: str | None = None) -> list[dict[str, Any]]:
+        """按更新时间倒序列出申请项目；profile_id 给定时只返回该档案的项目。
+
+        一并统计各项目名下文书数，供项目卡片直接展示。
+        """
+        counts: dict[str, int] = {}
+        for path in self.documents_dir.glob("*/meta.json"):
+            meta = self._read_json(path)
+            if meta and meta.get("project_id"):
+                counts[meta["project_id"]] = counts.get(meta["project_id"], 0) + 1
+        items = []
+        for path in self.projects_dir.glob("*.json"):
+            data = self._read_json(path)
+            if not data:
+                continue
+            if profile_id and data.get("profile_id") != profile_id:
+                continue
+            item = dict(data)
+            item["document_count"] = counts.get(item["id"], 0)
+            items.append(item)
+        return sorted(items, key=lambda item: item.get("updated_at", ""), reverse=True)
+
+    def delete_project(self, project_id: str) -> bool:
+        path = self.projects_dir / f"{self.check_id(project_id)}.json"
+        if not path.is_file():
+            return False
+        path.unlink()
+        return True
+
+    def set_document_project(
+        self, doc_id: str, project_id: str | None
+    ) -> dict[str, Any] | None:
+        """把文书归入项目（project_id 为 None 表示移出，回到未分组）。
+
+        项目存在性与档案归属校验由路由层完成；这里只负责安全写入 meta.json
+        并返回更新后的 meta，文书不存在返回 None。
+        """
+        doc_dir = self._doc_dir(doc_id)
+        meta = self._read_json(doc_dir / "meta.json")
+        if not meta:
+            return None
+        meta = dict(meta)
+        if project_id is None:
+            meta.pop("project_id", None)
+        else:
+            meta["project_id"] = self.check_id(project_id)
+        self._write_json(doc_dir / "meta.json", meta)
+        return meta
 
     # ----------------------------------------------------- 参考文档库（用户上传）
     def _references_dir(self) -> Path:

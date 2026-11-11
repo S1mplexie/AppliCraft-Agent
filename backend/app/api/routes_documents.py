@@ -24,8 +24,13 @@ logger = logging.getLogger(__name__)
 
 
 @router.get("")
-def list_documents(profile_id: str | None = None, store: FileStore = Depends(get_user_store)):
-    return {"items": store.list_documents(profile_id)}
+def list_documents(
+    profile_id: str | None = None,
+    project_id: str | None = None,
+    store: FileStore = Depends(get_user_store),
+):
+    """文书列表：profile_id 按档案分域；project_id 再按申请项目过滤（项目管理 tab 用）。"""
+    return {"items": store.list_documents(profile_id, project_id=project_id)}
 
 
 @router.get("/{doc_id}")

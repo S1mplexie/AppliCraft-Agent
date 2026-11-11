@@ -1,5 +1,5 @@
 import type {
-  ApplicantProfile, AppConfig, AuthResponse, DocumentDetail, DocumentMeta,
+  ApplicantProfile, ApplicationProject, AppConfig, AuthResponse, DocumentDetail, DocumentMeta,
   GeneratePayload, LLMTestResult, LocalLLMConfig, LocalLLMPayload, MatchResult, ProfileSummary, RegenPayload, ReferenceDoc,
   ResumeParseResult, SkillDetail, SkillInfo, StreamEnvelope, SystemProgram,
   UserLLMConfig, UserLLMPayload,
@@ -167,6 +167,34 @@ export const api = {
     request<ApplicantProfile>(`/profiles/${id}`, { method: 'PUT', body: JSON.stringify(profile) }),
   deleteProfile: (id: string) =>
     request<{ deleted: boolean }>(`/profiles/${id}`, { method: 'DELETE' }),
+
+  // ------------------------------------------------------------- 申请项目
+  listProjects: (profileId: string) =>
+    request<{ items: ApplicationProject[] }>(`/profiles/${profileId}/projects`),
+  createProject: (
+    profileId: string,
+    payload: {
+      name: string; system_program_id?: string; university?: string; program?: string
+      degree_type?: string; region?: string; intake?: string; notes?: string
+    },
+  ) =>
+    request<ApplicationProject>(`/profiles/${profileId}/projects`, {
+      method: 'POST', body: JSON.stringify(payload),
+    }),
+  updateProject: (profileId: string, projectId: string, payload: { name?: string; notes?: string }) =>
+    request<ApplicationProject>(`/profiles/${profileId}/projects/${projectId}`, {
+      method: 'PATCH', body: JSON.stringify(payload),
+    }),
+  deleteProject: (profileId: string, projectId: string) =>
+    request<{ deleted: boolean }>(`/profiles/${profileId}/projects/${projectId}`, { method: 'DELETE' }),
+  assignDocument: (profileId: string, projectId: string, docId: string) =>
+    request<DocumentMeta>(`/profiles/${profileId}/projects/${projectId}/assign`, {
+      method: 'POST', body: JSON.stringify({ doc_id: docId }),
+    }),
+  unassignDocument: (profileId: string, projectId: string, docId: string) =>
+    request<DocumentMeta>(`/profiles/${profileId}/projects/${projectId}/unassign`, {
+      method: 'POST', body: JSON.stringify({ doc_id: docId }),
+    }),
 
   /** 上传简历（PDF/DOCX/TXT/MD），由后端解析后以覆盖语义合并进档案。 */
   parseResume: (profileId: string, file: File): Promise<ResumeParseResult> =>

@@ -5,6 +5,7 @@ import GeneratePanel from './components/GeneratePanel.vue'
 import DocumentLibrary from './components/DocumentLibrary.vue'
 import LibraryPanel from './components/LibraryPanel.vue'
 import SkillMarketPanel from './components/SkillMarketPanel.vue'
+import ProjectsPanel from './components/ProjectsPanel.vue'
 import SettingsView from './components/SettingsView.vue'
 import MatchPanel from './components/MatchPanel.vue'
 import AuthView from './components/AuthView.vue'
@@ -12,7 +13,7 @@ import ProfileSwitcher from './components/ProfileSwitcher.vue'
 import { api, onUnauthorized } from './api/client'
 import {
   demoProfile, emptyProfile,
-  type AppConfig, type ApplicantProfile, type AuthResponse, type AuthUser,
+  type AppConfig, type ApplicantProfile, type ApplicationProject, type AuthResponse, type AuthUser,
   type DocumentDetail, type DocumentMeta, type GeneratePayload, type Issue,
   type KnowledgeRef, type LocalLLMConfig, type NodeEvent, type ProfileSection, type ProfileSummary, type QuotaInfo,
   type RegenPayload, type ReferenceDoc, type ResumeParseResult, type SkillInfo,
@@ -23,6 +24,7 @@ import {
 const TABS: { key: TabKey; label: string }[] = [
   { key: 'profile', label: '申请人档案' },
   { key: 'match', label: '选校评估' },
+  { key: 'projects', label: '项目管理' },
   { key: 'generate', label: '生成文书' },
   { key: 'library', label: '参考文档库' },
   { key: 'skills', label: 'Skill 市场' },
@@ -83,6 +85,8 @@ const activeDoc = ref<DocumentDetail | null>(null)
 const references = ref<ReferenceDoc[]>([])
 const selectedReferenceIds = ref<string[]>([])
 const systemPrograms = ref<SystemProgram[]>([])
+// 项目管理：当前档案的申请项目列表（切档案时刷新，未归组文书标「未分组」）。
+const projects = ref<ApplicationProject[]>([])
 // Skill 市场：内置 + 本人导入的技能，勾选后在生成时作为写法约束注入。
 const skills = ref<SkillInfo[]>([])
 const selectedSkillIds = ref<string[]>([])
@@ -153,6 +157,7 @@ function resetWorkspace() {
   profile.value = emptyProfile()
   currentProfileId.value = ''
   documents.value = []
+  projects.value = []
   activeDoc.value = null
   events.value = []; issues.value = []; outline.value = []; warnings.value = []
   numericWarnings.value = []
@@ -196,6 +201,11 @@ async function loadSystemPrograms() {
 }
 async function loadSkills() {
   try { skills.value = (await api.listSkills()).items } catch { skills.value = [] }
+}
+async function loadProjects() {
+  // 项目挂在档案之下：没有当前档案时清空即可，不发请求。
+  try { projects.value = currentProfileId.value ? (await api.listProjects(currentProfileId.value)).items : [] }
+  catch { projects.value = [] }
 }
 async function loadMyLlm() {
   try { myLlm.value = await api.getMyLlm() } catch { myLlm.value = null }
@@ -320,6 +330,7 @@ async function selectProfile(id: string) {
     events.value = []; issues.value = []; outline.value = []; warnings.value = []
     saveState.value = '已载入档案'
     await loadDocuments()
+    await loadProjects()
     await nextTick()
   } catch (error) {
     toast((error as Error).message, true)
@@ -716,6 +727,14 @@ onUnmounted(() => window.removeEventListener('hashchange', onHashChange))
             :profile-id="currentProfileId" :profile="profile" :standalone="standalone"
             :llm-configured="llmConfigured"
             @quota-changed="refreshQuota" @toast="(m) => toast(m, false)"
+          />
+        </div>
+
+        <!-- 项目管理 -->
+        <div v-show="activeTab === 'projects'" class="page-view">
+          <ProjectsPanel
+            :profile-id="currentProfileId" :documents="documents" :system-programs="systemPrograms"
+            @go="goTab" @refresh-docs="loadDocuments"
           />
         </div>
 
