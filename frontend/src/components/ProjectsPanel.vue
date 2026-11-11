@@ -28,6 +28,15 @@ const regionFilters = [
 const form = ref({ name: '', university: '', program: '', degree_type: '', region: '', intake: '', notes: '' })
 const editingName = ref(false)
 const nameDraft = ref('')
+// 列表页视图状态：搜索 / 来源筛选 / 排序（纯前端，不改动数据）
+const listSearch = ref('')
+const listSource = ref<'all' | 'imported' | 'custom'>('all')
+const listSort = ref<'updated' | 'name'>('updated')
+const sourceFilters = [
+  { key: 'all', label: '全部项目' },
+  { key: 'imported', label: '知识库导入' },
+  { key: 'custom', label: '自定义' },
+] as const
 
 const detail = computed(() => projects.value.find(p => p.id === detailId.value) || null)
 const profileDocs = computed(() => props.documents.filter(d => d.profile_id === props.profileId))
@@ -123,6 +132,39 @@ function typeBreakdown(id: string) {
     .filter(t => m[t])
     .map(t => ({ type: t, label: docTypeShort[t], count: m[t] }))
 }
+// 材料齐备度：CV / PS / 推荐信三类各至少一篇即算齐备
+function readiness(id: string) {
+  const m = projectsWithDocs.value.get(id) || ({} as Record<string, number>)
+  const have = (['cv', 'ps', 'recommendation'] as const).filter(t => m[t]).length
+  return { have, total: 3, pct: Math.round(have / 3 * 100) }
+}
+const sourceCounts = computed(() => ({
+  all: projects.value.length,
+  imported: projects.value.filter(p => p.source === 'imported').length,
+  custom: projects.value.filter(p => p.source === 'custom').length,
+}))
+const groupedDocCount = computed(() => profileDocs.value.filter(d => d.project_id).length)
+const groupProgress = computed(() => profileDocs.value.length
+  ? Math.round(groupedDocCount.value / profileDocs.value.length * 100) : 0)
+const readyProjectCount = computed(() => projects.value.filter(p => readiness(p.id).have === 3).length)
+const visibleProjects = computed(() => {
+  const kw = listSearch.value.trim().toLowerCase()
+  const list = projects.value.filter(p => {
+    if (listSource.value !== 'all' && p.source !== listSource.value) return false
+    if (!kw) return true
+    return `${p.name}${p.university}${p.program}${p.program_name_en}${p.intake}${p.region}`
+      .toLowerCase().includes(kw)
+  })
+  return [...list].sort((a, b) => listSort.value === 'name'
+    ? a.name.localeCompare(b.name, 'zh-Hans-CN')
+    : b.updated_at.localeCompare(a.updated_at))
+})
+function shortRegion(r: string) {
+  if (r === 'HK' || r === '香港') return '香港'
+  if (r === 'SG' || r === '新加坡') return '新加坡'
+  return r || ''
+}
+function formatDate(s: string) { return s ? s.slice(0, 10) : '—' }
 function docStatusText(doc: DocumentMeta) {
   if (doc.passed_verification) return '已校验'
   if (doc.issue_count > 0) return `${doc.issue_count} 处待核`
@@ -342,68 +384,152 @@ function sourceLabel(p: ApplicationProject) { return p.source === 'imported' ? '
       </section>
     </template>
 
-    <!-- 项目列表 -->
+    <!-- 项目列表主页面 -->
     <template v-else>
-      <div class="page-head">
-        <div>
+      <div class="pl-head">
+        <div class="pl-head-main">
+          <span class="pl-eyebrow">APPLICATION PROJECTS · 申请清单</span>
           <h1>项目管理</h1>
-          <p>把文书按申请项目归类，跟踪每个项目的准备进度。</p>
+          <p>按申请项目归类文书，一眼看清每所学校的材料准备进度。</p>
         </div>
-        <div class="head-actions">
-          <button class="btn primary" @click="modal = 'import'">从知识库导入</button>
+        <div class="pl-head-actions">
+          <button class="btn primary" @click="modal = 'import'">＋ 从知识库导入</button>
           <button class="btn" @click="modal = 'create'">新建项目</button>
         </div>
       </div>
 
-      <p v-if="loading" class="hint">正在加载项目…</p>
+      <p v-if="loading" class="pl-loading"><span class="pl-loading-dot"></span>正在加载项目…</p>
 
       <template v-else>
-        <!-- 概览 -->
-        <div v-if="projects.length" class="proj-overview">
-          <div class="ov-stat"><span class="ov-num">{{ projects.length }}</span><span class="ov-lab">申请项目</span></div>
-          <div class="ov-stat"><span class="ov-num">{{ profileDocs.length }}</span><span class="ov-lab">文书总数</span></div>
-          <div class="ov-stat" :class="{ alert: ungroupedDocs.length }">
-            <span class="ov-num">{{ ungroupedDocs.length }}</span><span class="ov-lab">未分组</span>
+        <!-- 准备概览：四项指标 + 文书归组进度 -->
+        <div v-if="projects.length" class="pl-stats">
+          <div class="pl-stats-row">
+            <div class="pl-stat">
+              <span class="pl-stat-lab">申请项目</span>
+              <span class="pl-stat-num">{{ projects.length }}<i>所</i></span>
+              <span class="pl-stat-note">知识库 {{ sourceCounts.imported }} · 自定义 {{ sourceCounts.custom }}</span>
+            </div>
+            <div class="pl-stat">
+              <span class="pl-stat-lab">已归入文书</span>
+              <span class="pl-stat-num">{{ groupedDocCount }}<i>篇</i></span>
+              <span class="pl-stat-note">共 {{ profileDocs.length }} 篇文书</span>
+            </div>
+            <div class="pl-stat" :class="{ alert: ungroupedDocs.length }">
+              <span class="pl-stat-lab">未分组文书</span>
+              <span class="pl-stat-num">{{ ungroupedDocs.length }}<i>篇</i></span>
+              <span class="pl-stat-note">需在项目中归入</span>
+            </div>
+            <div class="pl-stat">
+              <span class="pl-stat-lab">材料齐备项目</span>
+              <span class="pl-stat-num ok">{{ readyProjectCount }}<i>/ {{ projects.length }}</i></span>
+              <span class="pl-stat-note">CV · PS · 推荐信齐全</span>
+            </div>
           </div>
-          <p class="ov-tip">未分组的文书不属于任何项目；打开任一项目即可归入对应申请。</p>
+          <div class="pl-progress">
+            <div class="pl-progress-top">
+              <span>文书归组进度</span>
+              <b>{{ groupedDocCount }} / {{ profileDocs.length }} 篇 · {{ groupProgress }}%</b>
+            </div>
+            <div class="progress-track"><div class="progress-fill" :class="{ done: groupProgress === 100 }" :style="{ width: `${groupProgress}%` }"></div></div>
+          </div>
         </div>
 
         <!-- 未分组引导 -->
-        <div v-if="ungroupedDocs.length" class="proj-ungrouped-card">
-          <div>
-            <strong>有 {{ ungroupedDocs.length }} 篇文书尚未归入任何项目</strong>
-            <span class="hint">打开任一项目，即可把它们归入对应申请。</span>
+        <div v-if="ungroupedDocs.length" class="pl-notice">
+          <span class="pl-notice-mark" aria-hidden="true">!</span>
+          <div class="pl-notice-text">
+            <strong>{{ ungroupedDocs.length }} 篇文书尚未归入任何项目</strong>
+            <span>打开任一项目，在「可归入本项目」里把它们归入对应申请。</span>
           </div>
-          <button v-if="projects.length" class="btn small" @click="detailId = projects[0].id">去归入</button>
+          <button v-if="projects.length" class="btn small" @click="detailId = projects[0].id">去归入 →</button>
         </div>
 
-        <!-- 空状态 -->
-        <div v-if="!projects.length" class="empty-lead">
-          还没有申请项目。从知识库导入目标院校项目，或自定义新建：
-          <div class="proj-actions">
-            <button class="btn primary" @click="modal = 'import'">从知识库导入</button>
-            <button class="btn" @click="modal = 'create'">新建项目</button>
+        <!-- 首次使用的空状态 -->
+        <div v-if="!projects.length" class="pl-empty">
+          <span class="pl-empty-mark" aria-hidden="true">◇</span>
+          <h2>开始建立你的申请清单</h2>
+          <p>从知识库导入目标院校的官方项目资料，或手动新建自定义项目。<br />此后生成的文书都能按项目归类，逐项跟踪准备进度。</p>
+          <div class="pl-empty-actions">
+            <button class="btn primary" @click="modal = 'import'">＋ 从知识库导入</button>
+            <button class="btn" @click="modal = 'create'">新建自定义项目</button>
           </div>
         </div>
 
-        <!-- 卡片网格 -->
-        <div v-else class="proj-grid">
-          <button v-for="p in projects" :key="p.id" class="proj-card" @click="detailId = p.id">
-            <div class="proj-card-top">
-              <span class="proj-badge" :class="p.source">{{ sourceLabel(p) }}</span>
-              <strong>{{ p.name }}</strong>
+        <template v-else>
+          <!-- 搜索 / 来源筛选 / 排序 -->
+          <div class="pl-toolbar">
+            <div class="pl-search">
+              <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5" /><path d="M12.6 12.6 17 17" /></svg>
+              <input v-model="listSearch" placeholder="搜索项目 / 学校 / 专业 / 入学季…" aria-label="搜索申请项目" />
+              <button v-if="listSearch" class="pl-search-clear" aria-label="清空搜索" @click="listSearch = ''">×</button>
             </div>
-            <span class="proj-card-sub">{{ p.university || '未填学校' }}{{ p.program ? ` · ${p.program}` : '' }}</span>
-            <div class="proj-card-types">
-              <span v-for="t in typeBreakdown(p.id)" :key="t.type" class="tag" :class="t.type">{{ t.label }} {{ t.count }}</span>
-              <span v-if="!p.document_count" class="proj-card-empty">暂无文书</span>
+            <div class="pl-filters">
+              <button
+                v-for="f in sourceFilters" :key="f.key"
+                class="pl-filter" :class="{ on: listSource === f.key }"
+                @click="listSource = f.key"
+              >{{ f.label }} <em>{{ sourceCounts[f.key] }}</em></button>
             </div>
-            <div class="proj-card-foot">
-              <span class="proj-card-intake">{{ p.intake || '未设入学季' }}</span>
-              <span class="proj-card-meta">{{ p.document_count }} 篇 · {{ p.updated_at.slice(0, 10) }}</span>
-            </div>
-          </button>
-        </div>
+            <label class="pl-sort">
+              <span>排序</span>
+              <select v-model="listSort">
+                <option value="updated">最近更新</option>
+                <option value="name">项目名称</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="pl-status">
+            <span>显示 <b>{{ visibleProjects.length }}</b> / {{ projects.length }} 个项目</span>
+            <span class="hint">点击卡片查看项目档案与名下文书</span>
+          </div>
+
+          <!-- 筛选无结果 -->
+          <div v-if="!visibleProjects.length" class="pl-noresult">
+            <strong>没有匹配的项目</strong>
+            <span class="hint">换个关键词，或切换来源筛选试试。</span>
+            <button class="link" @click="listSearch = ''; listSource = 'all'">重置筛选</button>
+          </div>
+
+          <!-- 项目卡片 -->
+          <div v-else class="pl-grid">
+            <button
+              v-for="(p, idx) in visibleProjects" :key="p.id"
+              class="pl-card" :class="p.source" @click="detailId = p.id"
+            >
+              <span class="pl-card-top">
+                <span class="pl-card-idx">{{ String(idx + 1).padStart(2, '0') }}</span>
+                <span class="proj-badge" :class="p.source">{{ sourceLabel(p) }}</span>
+                <span v-if="shortRegion(p.region)" class="pl-region" :class="shortRegion(p.region) === '香港' ? 'hk' : 'sg'">{{ shortRegion(p.region) }}</span>
+                <span class="pl-card-go" aria-hidden="true">↗</span>
+              </span>
+              <span class="pl-card-title">
+                <span class="pl-card-school">{{ p.university || '未填写学校' }}</span>
+                <span class="pl-card-name">{{ p.name }}</span>
+                <span class="pl-card-program">{{ p.program || p.program_name_en || '未填写专业' }}</span>
+              </span>
+              <span class="pl-card-facts">
+                <span><i>学位</i>{{ p.degree_type || '—' }}</span>
+                <span><i>入学季</i>{{ p.intake || '待设置' }}</span>
+              </span>
+              <span class="pl-card-ready">
+                <span class="pl-ready-top">
+                  <span>材料准备</span>
+                  <b :class="{ done: readiness(p.id).have === 3 }">{{ readiness(p.id).have }}/3 类齐备</b>
+                </span>
+                <span class="pl-ready-track"><span class="pl-ready-fill" :class="{ done: readiness(p.id).have === 3 }" :style="{ width: `${readiness(p.id).pct}%` }"></span></span>
+                <span class="pl-card-types">
+                  <span v-for="t in typeBreakdown(p.id)" :key="t.type" class="tag" :class="t.type">{{ t.label }} {{ t.count }}</span>
+                  <span v-if="!p.document_count" class="pl-card-empty">暂无文书</span>
+                </span>
+              </span>
+              <span class="pl-card-foot">
+                <span>{{ p.document_count }} 篇文书 · 更新 {{ formatDate(p.updated_at) }}</span>
+                <span class="pl-card-open">查看项目 →</span>
+              </span>
+            </button>
+          </div>
+        </template>
       </template>
     </template>
 
