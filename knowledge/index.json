@@ -1,24 +1,43 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-11-09T15:54:08+08:00",
-  "snapshot_date": "2026-11-09",
+  "generated_at": "2026-11-11T15:54:24+08:00",
+  "snapshot_date": "2026-11-09 / 2026-11-11",
   "scope": {
     "regions": [
       "HK",
       "SG"
     ],
     "schools": [
+      "CITYU",
       "CUHK",
       "HKU",
       "HKUST",
       "NTU",
-      "NUS"
+      "NUS",
+      "POLYU"
     ],
     "discipline": "CS / 数据科学 / AI 及相关商业分析、金融科技授课型硕士",
     "degree_type": "taught / coursework-based master"
   },
   "disclaimer": "全部事实字段来自各校官网公开页面；学费、截止日期、语言分数随入学季更新，官网页面之间存在口径冲突时已在各卡片列明。标注「待核实」的字段不得推断或补写数字，提交申请前以官网实时页面为准。",
   "schools": [
+    {
+      "school_id": "CITYU",
+      "school_name_zh": "香港城市大学",
+      "school_name_en": "City University of Hong Kong",
+      "region": "HK",
+      "intake_target": "2027/28",
+      "program_count": 4,
+      "general": {
+        "english_requirement": "CS 系 MSc 项目页明列（四个项目口径一致）：TOEFL iBT 79（2026-01-21 前考试）或 4（2026-01-21 起考试）；或 IELTS 总分 6.0；或 CET-6 450。IELTS 6.0 或 TOEFL 4 者需通过英语面试（TOEFL 79 以上可豁免）。不接受 Duolingo、GMAT、GRE、IELTS Indicator、TOEFL iBT Home Edition、TOEIC；TOEFL/IELTS 成绩两年内有效。",
+        "application_open": "待核实",
+        "notes": [
+          "CityU CS 系官网为 www.cs.cityu.edu.hk（department.cs.cityu.edu.hk 结构）；系项目页与研究生院通用要求并存，四项目语言口径一致。",
+          "学费：CS 项目页与研究生院实时页列 HK$300,000（全日制分 2 期）/ HK$260,000（兼读制分 4 期），为 MSc Computer Science 口径；其余三个 MSc 项目的学费未在抓取页确认，标注待核实。"
+        ]
+      },
+      "raw_file": "_raw/cityu.json"
+    },
     {
       "school_id": "CUHK",
       "school_name_zh": "香港中文大学",
@@ -157,9 +176,114 @@
         ]
       },
       "raw_file": "_raw/nus.json"
+    },
+    {
+      "school_id": "POLYU",
+      "school_name_zh": "香港理工大学",
+      "school_name_en": "The Hong Kong Polytechnic University",
+      "region": "HK",
+      "intake_target": "2027 SEP Intake（COMP 系官网：2027 SEP Intake Now Open for Applications）",
+      "program_count": 5,
+      "general": {
+        "english_requirement": "待核实（COMP 系 TPg 项目页未单列统一语言要求，须查理大研究生院实时页面）",
+        "application_open": "已开放（COMP 官网 2026-11 抓取确认：2027 SEP Intake Now Open for Applications）",
+        "notes": [
+          "PolyU COMP 官网首页确认：2027 SEP Intake 申请截止 25 February 2027（COMP 系五个 MSc 统一口径）。",
+          "PolyU COMP 官网抓取时项目详情子页路径与预期不同（mscit/admission-requirements 404），语言与学费细项须人工到各项目页核对。"
+        ]
+      },
+      "raw_file": "_raw/polyu.json"
     }
   ],
   "programs": [
+    {
+      "id": "cityu-msc-artificial-intelligence",
+      "school_id": "CITYU",
+      "school_name_zh": "香港城市大学",
+      "region": "HK",
+      "name_en": "MSc in Artificial Intelligence",
+      "name_zh": "人工智能理学硕士（非官方译名）",
+      "aliases": [],
+      "faculty": "College of Engineering",
+      "degree_type": "授课型（coursework-based）",
+      "duration_ft": "待核实",
+      "tuition_amount": "待核实（CS 项目页未列本项目学费；MSc Computer Science 口径为 HK$300,000 全日制）",
+      "tuition_intake": "2027/28",
+      "deadlines": [
+        "待核实（admissions 页未列；参考 MSc Computer Science 口径 31 January 2027）"
+      ],
+      "verification_status": "partial",
+      "official_urls": [
+        "https://www.cs.cityu.edu.hk/en/academic-programmes/msc-artificial-intelligence/admissions"
+      ],
+      "card_path": "programs/cityu/cityu-msc-artificial-intelligence.md"
+    },
+    {
+      "id": "cityu-msc-computer-science",
+      "school_id": "CITYU",
+      "school_name_zh": "香港城市大学",
+      "region": "HK",
+      "name_en": "MSc in Computer Science",
+      "name_zh": "计算机科学理学硕士（非官方译名）",
+      "aliases": [],
+      "faculty": "College of Engineering",
+      "degree_type": "授课型（coursework-based）",
+      "duration_ft": "待核实（CS 系首页列 Full-time 1 year / Part-time 2 years，为 MSc CS 口径）",
+      "tuition_amount": "HK$300,000（全日制，分 2 期）/ HK$260,000（兼读制，分 4 期）",
+      "tuition_intake": "2027/28",
+      "deadlines": [
+        "31 January 2027（2027/28 入学，单一截止，无分轮）"
+      ],
+      "verification_status": "partial",
+      "official_urls": [
+        "https://www.cs.cityu.edu.hk/en/academic-programmes/msc-computer-science/admissions"
+      ],
+      "card_path": "programs/cityu/cityu-msc-computer-science.md"
+    },
+    {
+      "id": "cityu-msc-cybersecurity",
+      "school_id": "CITYU",
+      "school_name_zh": "香港城市大学",
+      "region": "HK",
+      "name_en": "MSc in Cybersecurity",
+      "name_zh": "网络安全理学硕士（非官方译名）",
+      "aliases": [],
+      "faculty": "College of Engineering",
+      "degree_type": "授课型（coursework-based）",
+      "duration_ft": "待核实",
+      "tuition_amount": "待核实（CS 项目页未列本项目学费）",
+      "tuition_intake": "2027/28",
+      "deadlines": [
+        "待核实（admissions 页未列；参考 MSc Computer Science 口径 31 January 2027）"
+      ],
+      "verification_status": "partial",
+      "official_urls": [
+        "https://www.cs.cityu.edu.hk/en/academic-programmes/msc-cybersecurity/admissions"
+      ],
+      "card_path": "programs/cityu/cityu-msc-cybersecurity.md"
+    },
+    {
+      "id": "cityu-msc-digital-commerce-and-computing",
+      "school_id": "CITYU",
+      "school_name_zh": "香港城市大学",
+      "region": "HK",
+      "name_en": "MSc in Digital Commerce and Computing",
+      "name_zh": "数字商业与计算理学硕士（非官方译名）",
+      "aliases": [],
+      "faculty": "College of Engineering",
+      "degree_type": "授课型（coursework-based）",
+      "duration_ft": "待核实",
+      "tuition_amount": "待核实（CS 项目页未列本项目学费）",
+      "tuition_intake": "2027/28",
+      "deadlines": [
+        "待核实（admissions 页未列；开学日期须查询 CityU ARRO 学期日历）"
+      ],
+      "verification_status": "partial",
+      "official_urls": [
+        "https://www.cs.cityu.edu.hk/en/academic-programmes/msc-digital-commerce-and-computing/admissions"
+      ],
+      "card_path": "programs/cityu/cityu-msc-digital-commerce-and-computing.md"
+    },
     {
       "id": "cuhk-msc-computer-science",
       "school_id": "CUHK",
@@ -1047,14 +1171,124 @@
         "https://www.comp.nus.edu.sg/wp-content/uploads/2026/06/MSc-DFinTech-Annex-A-Aug-2026-Intake_v202606.pdf"
       ],
       "card_path": "programs/nus/nus-msc-dfintech.md"
+    },
+    {
+      "id": "polyu-msc-agentic-ai-systems",
+      "school_id": "POLYU",
+      "school_name_zh": "香港理工大学",
+      "region": "HK",
+      "name_en": "Master of Science in Agentic AI Systems",
+      "name_zh": "智能体人工智能系统理学硕士（非官方译名）",
+      "aliases": [],
+      "faculty": "Faculty of Computer and Mathematical Sciences",
+      "degree_type": "授课型（coursework-based）",
+      "duration_ft": "待核实",
+      "tuition_amount": "待核实",
+      "tuition_intake": "2027 SEP",
+      "deadlines": [
+        "25 February 2027（2027 SEP Intake，COMP 系五个 MSc 统一口径）"
+      ],
+      "verification_status": "pending",
+      "official_urls": [
+        "https://www.polyu.edu.hk/comp/study/taught-postgraduate-programme/mscas/"
+      ],
+      "card_path": "programs/polyu/polyu-msc-agentic-ai-systems.md"
+    },
+    {
+      "id": "polyu-msc-blockchain-technology",
+      "school_id": "POLYU",
+      "school_name_zh": "香港理工大学",
+      "region": "HK",
+      "name_en": "Master of Science in Blockchain Technology",
+      "name_zh": "区块链技术理学硕士（非官方译名）",
+      "aliases": [],
+      "faculty": "Faculty of Computer and Mathematical Sciences",
+      "degree_type": "授课型（coursework-based）",
+      "duration_ft": "待核实",
+      "tuition_amount": "待核实",
+      "tuition_intake": "2027 SEP",
+      "deadlines": [
+        "25 February 2027（2027 SEP Intake，COMP 系五个 MSc 统一口径）"
+      ],
+      "verification_status": "pending",
+      "official_urls": [
+        "https://www.polyu.edu.hk/comp/study/taught-postgraduate-programme/msc-bt/"
+      ],
+      "card_path": "programs/polyu/polyu-msc-blockchain-technology.md"
+    },
+    {
+      "id": "polyu-msc-cybersecurity",
+      "school_id": "POLYU",
+      "school_name_zh": "香港理工大学",
+      "region": "HK",
+      "name_en": "Master of Science in Cybersecurity",
+      "name_zh": "网络安全理学硕士（非官方译名）",
+      "aliases": [],
+      "faculty": "Faculty of Computer and Mathematical Sciences",
+      "degree_type": "授课型（coursework-based）",
+      "duration_ft": "待核实",
+      "tuition_amount": "待核实",
+      "tuition_intake": "2027 SEP",
+      "deadlines": [
+        "25 February 2027（2027 SEP Intake，COMP 系五个 MSc 统一口径）"
+      ],
+      "verification_status": "pending",
+      "official_urls": [
+        "https://www.polyu.edu.hk/comp/study/taught-postgraduate-programme/msccys/"
+      ],
+      "card_path": "programs/polyu/polyu-msc-cybersecurity.md"
+    },
+    {
+      "id": "polyu-msc-information-technology",
+      "school_id": "POLYU",
+      "school_name_zh": "香港理工大学",
+      "region": "HK",
+      "name_en": "Master of Science in Information Technology",
+      "name_zh": "信息技术理学硕士（非官方译名）",
+      "aliases": [],
+      "faculty": "Faculty of Computer and Mathematical Sciences",
+      "degree_type": "授课型（coursework-based）",
+      "duration_ft": "待核实",
+      "tuition_amount": "待核实",
+      "tuition_intake": "2027 SEP",
+      "deadlines": [
+        "25 February 2027（2027 SEP Intake，COMP 系五个 MSc 统一口径）"
+      ],
+      "verification_status": "pending",
+      "official_urls": [
+        "https://www.polyu.edu.hk/comp/study/taught-postgraduate-programme/mscit/"
+      ],
+      "card_path": "programs/polyu/polyu-msc-information-technology.md"
+    },
+    {
+      "id": "polyu-msc-metaverse-technology",
+      "school_id": "POLYU",
+      "school_name_zh": "香港理工大学",
+      "region": "HK",
+      "name_en": "Master of Science in Metaverse Technology",
+      "name_zh": "元宇宙技术理学硕士（非官方译名）",
+      "aliases": [],
+      "faculty": "Faculty of Computer and Mathematical Sciences",
+      "degree_type": "授课型（coursework-based）",
+      "duration_ft": "待核实",
+      "tuition_amount": "待核实",
+      "tuition_intake": "2027 SEP",
+      "deadlines": [
+        "25 February 2027（2027 SEP Intake，COMP 系五个 MSc 统一口径）"
+      ],
+      "verification_status": "pending",
+      "official_urls": [
+        "https://www.polyu.edu.hk/comp/study/taught-postgraduate-programme/mscmt/"
+      ],
+      "card_path": "programs/polyu/polyu-msc-metaverse-technology.md"
     }
   ],
   "stats": {
-    "snapshot_date": "2026-11-09",
-    "school_count": 5,
-    "program_count": 30,
-    "chunk_count": 215,
-    "writing_chunk_count": 120,
-    "generated_at": "2026-11-09T15:54:08+08:00"
+    "snapshot_date": "2026-11-09 / 2026-11-11",
+    "school_count": 7,
+    "program_count": 39,
+    "chunk_count": 280,
+    "writing_chunk_count": 156,
+    "generated_at": "2026-11-11T15:54:24+08:00"
   }
 }

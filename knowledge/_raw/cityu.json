@@ -1,0 +1,231 @@
+{
+  "school_id": "CITYU",
+  "school_name_zh": "香港城市大学",
+  "school_name_en": "City University of Hong Kong",
+  "region": "HK",
+  "snapshot_date": "2026-11-11",
+  "intake_target": "2027/28",
+  "general": {
+    "english_requirement": "CS 系 MSc 项目页明列（四个项目口径一致）：TOEFL iBT 79（2026-01-21 前考试）或 4（2026-01-21 起考试）；或 IELTS 总分 6.0；或 CET-6 450。IELTS 6.0 或 TOEFL 4 者需通过英语面试（TOEFL 79 以上可豁免）。不接受 Duolingo、GMAT、GRE、IELTS Indicator、TOEFL iBT Home Edition、TOEIC；TOEFL/IELTS 成绩两年内有效。",
+    "application_open": "待核实",
+    "notes": ["CityU CS 系官网为 www.cs.cityu.edu.hk（department.cs.cityu.edu.hk 结构）；系项目页与研究生院通用要求并存，四项目语言口径一致。", "学费：CS 项目页与研究生院实时页列 HK$300,000（全日制分 2 期）/ HK$260,000（兼读制分 4 期），为 MSc Computer Science 口径；其余三个 MSc 项目的学费未在抓取页确认，标注待核实。"]
+  },
+  "programs": [
+    {
+      "id": "cityu-msc-artificial-intelligence",
+      "name_en": "MSc in Artificial Intelligence",
+      "name_zh": "人工智能理学硕士（非官方译名）",
+      "aliases": [],
+      "degree_type": "授课型（coursework-based）",
+      "faculty": "College of Engineering",
+      "department": "Department of Computer Science（Programme Code P75）",
+      "official_urls": ["https://www.cs.cityu.edu.hk/en/academic-programmes/msc-artificial-intelligence/admissions"],
+      "duration_ft": "待核实",
+      "duration_pt": "待核实",
+      "credits": "待核实",
+      "tuition": {
+        "amount": "待核实（CS 项目页未列本项目学费；MSc Computer Science 口径为 HK$300,000 全日制）",
+        "intake": "2027/28",
+        "applies_to": "待核实",
+        "note": ""
+      },
+      "application": {
+        "open": "待核实",
+        "deadlines": ["待核实（admissions 页未列；参考 MSc Computer Science 口径 31 January 2027）"],
+        "note": ""
+      },
+      "english": "TOEFL iBT 79（2026-01-21 前考试）或 4（2026-01-21 起考试）；或 IELTS 总分 6.0；或 CET-6 450。IELTS 6.0 或 TOEFL 4 者需通过英语面试（TOEFL 79 以上豁免）。不接受 Duolingo、GMAT、GRE、IELTS Indicator、TOEFL iBT Home Edition、TOEIC；成绩两年内有效。",
+      "admission": {
+        "background": "计算机学科（Computer Studies、Information Technology、Computer Engineering、Information Systems 等）认可学士学位；或相关学科（Electronic Engineering、Applied Mathematics、Manufacturing Engineering、Quantitative Analysis 等）认可学士学位并具备相应 IT 工作经验；或认可学士学位且具备大量信息技术知识/背景",
+        "prerequisites": "待核实",
+        "gre_gmat": "不接受 GMAT/GRE",
+        "work_experience": "相关学科背景者需具备相应 IT 工作经验"
+      },
+      "curriculum": {
+        "structure": "待核实",
+        "core": [],
+        "electives": [],
+        "tracks": []
+      },
+      "highlights": ["项目页官网原文：AI 方向硕士，面向计算机与相关学科背景申请人"],
+      "career": ["待核实"],
+      "writing_hooks": [
+        "呼应官网「MSc in Artificial Intelligence」项目名与 CS 系研究方向（Machine Learning、Computer Vision、Data Science），用具体项目说明 AI 技术兴趣与准备"
+      ],
+      "verification": {
+        "status": "partial",
+        "conflicts": [],
+        "unverified": ["学费", "申请截止日期", "课程结构", "学制"]
+      },
+      "sources": [
+        {
+          "url": "https://www.cs.cityu.edu.hk/en/academic-programmes/msc-artificial-intelligence/admissions",
+          "date": "2026-11-11",
+          "fields": ["admission.background", "english", "verification"]
+        }
+      ]
+    },
+    {
+      "id": "cityu-msc-computer-science",
+      "name_en": "MSc in Computer Science",
+      "name_zh": "计算机科学理学硕士（非官方译名）",
+      "aliases": [],
+      "degree_type": "授课型（coursework-based）",
+      "faculty": "College of Engineering",
+      "department": "Department of Computer Science（Programme Code P53）",
+      "official_urls": ["https://www.cs.cityu.edu.hk/en/academic-programmes/msc-computer-science/admissions"],
+      "duration_ft": "待核实（CS 系首页列 Full-time 1 year / Part-time 2 years，为 MSc CS 口径）",
+      "duration_pt": "2 年（CS 系首页口径）",
+      "credits": "待核实",
+      "tuition": {
+        "amount": "HK$300,000（全日制，分 2 期）/ HK$260,000（兼读制，分 4 期）",
+        "intake": "2027/28",
+        "applies_to": "待核实（官网未区分 local / non-local）",
+        "note": "Funding Nature: Self-financed。金额与研究生院实时页一致。"
+      },
+      "application": {
+        "open": "待核实",
+        "deadlines": ["31 January 2027（2027/28 入学，单一截止，无分轮）"],
+        "note": "申请费一经缴交不设退还或转让；非本地生注册前须取得有效签证 / 进入许可（签证手续费 HK$450）。"
+      },
+      "english": "TOEFL iBT 79（2026-01-21 前考试）或 4（2026-01-21 起考试）；或 IELTS 总分 6.0；或 CET-6 450。IELTS 6.0 或 TOEFL 4 者需通过英语面试（TOEFL 79 以上豁免）。不接受 Duolingo、GMAT、GRE、IELTS Indicator、TOEFL iBT Home Edition、TOEIC；成绩两年内有效。",
+      "admission": {
+        "background": "计算机学科（Computer Science、Information Technology、Computer Engineering、Information Systems 等）认可学士学位；或相关学科（Electronic Engineering、Applied Mathematics、Manufacturing Engineering、Quantitative Analysis 等）认可学士学位并具备相应 IT 工作经验",
+        "prerequisites": "待核实",
+        "gre_gmat": "不接受 GMAT/GRE",
+        "work_experience": "相关学科背景者需具备相应 IT 工作经验"
+      },
+      "curriculum": {
+        "structure": "待核实",
+        "core": [],
+        "electives": [],
+        "tracks": []
+      },
+      "highlights": ["项目页官网原文：CS 方向硕士，面向计算机与相关学科背景申请人"],
+      "career": ["待核实"],
+      "writing_hooks": [
+        "呼应官网「MSc in Computer Science」项目名与 CS 系研究方向（Software Engineering、Distributed Systems、Multimedia Computing），用具体项目说明软件与系统能力"
+      ],
+      "verification": {
+        "status": "partial",
+        "conflicts": [],
+        "unverified": ["课程结构", "credits", "duration_ft 精确口径"]
+      },
+      "sources": [
+        {
+          "url": "https://www.cs.cityu.edu.hk/en/academic-programmes/msc-computer-science/admissions",
+          "date": "2026-11-11",
+          "fields": ["admission.background", "english", "verification"]
+        }
+      ]
+    },
+    {
+      "id": "cityu-msc-cybersecurity",
+      "name_en": "MSc in Cybersecurity",
+      "name_zh": "网络安全理学硕士（非官方译名）",
+      "aliases": [],
+      "degree_type": "授课型（coursework-based）",
+      "faculty": "College of Engineering",
+      "department": "Department of Computer Science（Programme Code P91）",
+      "official_urls": ["https://www.cs.cityu.edu.hk/en/academic-programmes/msc-cybersecurity/admissions"],
+      "duration_ft": "待核实",
+      "duration_pt": "待核实",
+      "credits": "待核实",
+      "tuition": {
+        "amount": "待核实（CS 项目页未列本项目学费）",
+        "intake": "2027/28",
+        "applies_to": "待核实",
+        "note": ""
+      },
+      "application": {
+        "open": "待核实",
+        "deadlines": ["待核实（admissions 页未列；参考 MSc Computer Science 口径 31 January 2027）"],
+        "note": ""
+      },
+      "english": "TOEFL iBT 79（2026-01-21 前考试）或 4（2026-01-21 起考试）；或 IELTS 总分 6.0；或 CET-6 450。IELTS 6.0 或 TOEFL 4 者需通过英语面试（TOEFL 79 以上豁免），强调英语读写听说能力。不接受 Duolingo、GMAT、GRE、IELTS Indicator、TOEFL iBT Home Edition、TOEIC；成绩两年内有效。",
+      "admission": {
+        "background": "计算机学科（Computer Science、Information Technology、Computer Engineering、Information Systems 等）认可学士学位；或相关学科（Electronic Engineering、Applied Mathematics、Manufacturing Engineering、Quantitative Analysis 等）认可学士学位并具备相应 IT 工作经验",
+        "prerequisites": "待核实",
+        "gre_gmat": "不接受 GMAT/GRE",
+        "work_experience": "相关学科背景者需具备相应 IT 工作经验"
+      },
+      "curriculum": {
+        "structure": "待核实",
+        "core": [],
+        "electives": [],
+        "tracks": []
+      },
+      "highlights": ["项目页官网原文：网络安全方向硕士，强调英语读写听说能力"],
+      "career": ["待核实"],
+      "writing_hooks": [
+        "呼应官网「MSc in Cybersecurity」项目名与 CS 系研究方向（Information Security），用具体项目说明安全方向兴趣与准备"
+      ],
+      "verification": {
+        "status": "partial",
+        "conflicts": [],
+        "unverified": ["学费", "申请截止日期", "课程结构", "学制"]
+      },
+      "sources": [
+        {
+          "url": "https://www.cs.cityu.edu.hk/en/academic-programmes/msc-cybersecurity/admissions",
+          "date": "2026-11-11",
+          "fields": ["admission.background", "english", "verification"]
+        }
+      ]
+    },
+    {
+      "id": "cityu-msc-digital-commerce-and-computing",
+      "name_en": "MSc in Digital Commerce and Computing",
+      "name_zh": "数字商业与计算理学硕士（非官方译名）",
+      "aliases": [],
+      "degree_type": "授课型（coursework-based）",
+      "faculty": "College of Engineering",
+      "department": "Department of Computer Science（与 Department of Management Sciences 联合）",
+      "official_urls": ["https://www.cs.cityu.edu.hk/en/academic-programmes/msc-digital-commerce-and-computing/admissions"],
+      "duration_ft": "待核实",
+      "duration_pt": "待核实（上课时间：工作日晚 7:00pm-10:00pm 或周六下午）",
+      "credits": "待核实",
+      "tuition": {
+        "amount": "待核实（CS 项目页未列本项目学费）",
+        "intake": "2027/28",
+        "applies_to": "待核实",
+        "note": ""
+      },
+      "application": {
+        "open": "待核实",
+        "deadlines": ["待核实（admissions 页未列；开学日期须查询 CityU ARRO 学期日历）"],
+        "note": "上课时间为工作日晚间或周六下午。"
+      },
+      "english": "仅要求 sufficient command of the English Language（良好英语能力），未见具体 TOEFL/IELTS/CET-6 分数——该项目语言门槛口径与系内其他 MSc 不同，待核实。",
+      "admission": {
+        "background": "计算机学科（Computer Science、Information Systems、Information Technology 等）认可学士学位；或相关学科（Electronic Engineering、Economics and Finance、Applied Mathematics、Manufacturing Engineering、Business Information Technology 等）认可学士学位（最好有 IT 经验）；或大学认可的同等资格并具备大量 IT 专业经验",
+        "prerequisites": "待核实",
+        "gre_gmat": "待核实",
+        "work_experience": "同等资格者需具备大量 IT 专业经验"
+      },
+      "curriculum": {
+        "structure": "待核实",
+        "core": [],
+        "electives": [],
+        "tracks": []
+      },
+      "highlights": ["项目页官网原文：数字商业与计算方向硕士，与 Management Sciences 系联合，面向计算机与商科交叉背景申请人"],
+      "career": ["待核实"],
+      "writing_hooks": [
+        "呼应官网「MSc in Digital Commerce and Computing」项目名（数字商业 + 计算交叉），用具体项目说明商业与技术的交叉兴趣"
+      ],
+      "verification": {
+        "status": "partial",
+        "conflicts": [],
+        "unverified": ["学费", "申请截止日期", "语言具体分数", "课程结构", "学制"]
+      },
+      "sources": [
+        {
+          "url": "https://www.cs.cityu.edu.hk/en/academic-programmes/msc-digital-commerce-and-computing/admissions",
+          "date": "2026-11-11",
+          "fields": ["admission.background", "english", "verification"]
+        }
+      ]
+    }
+  ]
+}

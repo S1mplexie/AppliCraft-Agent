@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "note": "选校评估用结构化要求。整理自 knowledge/programs 各卡片「语言要求」行（2026-11-09 快照）；语言分数随入学季更新，评估结果仅供参考，提交申请前以官网实时页面为准。gpa_reference 为 null 表示该项目未公布 GPA/均分硬线。",
+  "note": "选校评估用结构化要求。整理自 knowledge/programs 各卡片「语言要求」行（2026-11-09 快照，cityu/polyu 为 2026-11-11 扩展快照）；语言分数随入学季更新，评估结果仅供参考，提交申请前以官网实时页面为准。gpa_reference 为 null 表示该项目未公布 GPA/均分硬线。",
   "programs": {
     "cuhk-msc-artificial-intelligence": {
       "ielts_total_min": 6.5, "ielts_subtest_min": null, "toefl_min": 79,
@@ -181,6 +181,60 @@
       "language_note": "NUS 官网原文 TOEFL 最低 85（2026-01-21 前考试口径）或 IELTS 最低 6.0（仅非英语授课背景者需提交）",
       "gpa_reference": null, "gpa_reference_scale": null,
       "preferred_background": ["数据", "data", "机器学习", "machine learning", "统计", "statistic", "计算机"]
+    },
+    "cityu-msc-artificial-intelligence": {
+      "ielts_total_min": 6.0, "ielts_subtest_min": null, "toefl_min": 79,
+      "language_note": "CityU CS 系官网（2026-11-11 快照）：TOEFL iBT 79（2026-01-21 前考试）或 4（之后）/ IELTS 6.0 / CET-6 450；IELTS 6.0 或 TOEFL 4 者需英语面试；不接受 Duolingo/GMAT/GRE，成绩两年有效",
+      "gpa_reference": null, "gpa_reference_scale": null,
+      "preferred_background": ["人工智能", "AI", "计算机", "computer", "机器学习", "machine learning"]
+    },
+    "cityu-msc-computer-science": {
+      "ielts_total_min": 6.0, "ielts_subtest_min": null, "toefl_min": 79,
+      "language_note": "CityU CS 系官网同系通用口径（2026-11-11 快照）：TOEFL iBT 79 / IELTS 6.0 / CET-6 450，IELTS 6.0 或 TOEFL 4 者需英语面试；该项目学费 HK$300,000，截止 2027-01-31",
+      "gpa_reference": null, "gpa_reference_scale": null,
+      "preferred_background": ["计算机", "computer", "软件", "software", "信息", "information"]
+    },
+    "cityu-msc-cybersecurity": {
+      "ielts_total_min": 6.0, "ielts_subtest_min": null, "toefl_min": 79,
+      "language_note": "CityU CS 系官网同系通用口径（2026-11-11 快照）：TOEFL iBT 79 / IELTS 6.0 / CET-6 450，IELTS 6.0 或 TOEFL 4 者需英语面试",
+      "gpa_reference": null, "gpa_reference_scale": null,
+      "preferred_background": ["网络安全", "security", "计算机", "computer", "信息", "information"]
+    },
+    "cityu-msc-digital-commerce-and-computing": {
+      "ielts_total_min": null, "ielts_subtest_min": null, "toefl_min": null,
+      "language_note": "CityU 官网仅要求 sufficient command of the English Language，未公布具体分数（待核实）",
+      "gpa_reference": null, "gpa_reference_scale": null,
+      "preferred_background": ["计算机", "computer", "数字", "digital", "商业", "business", "数据"]
+    },
+    "polyu-msc-agentic-ai-systems": {
+      "ielts_total_min": null, "ielts_subtest_min": null, "toefl_min": null,
+      "language_note": "PolyU COMP 官网确认 2027 SEP intake 已开放，截止 2027-02-25（ Programme Code 61040）；语言要求待核实（COMP 页未单列）",
+      "gpa_reference": null, "gpa_reference_scale": null,
+      "preferred_background": ["人工智能", "AI", "智能体", "agent", "计算机", "computer", "机器学习"]
+    },
+    "polyu-msc-blockchain-technology": {
+      "ielts_total_min": null, "ielts_subtest_min": null, "toefl_min": null,
+      "language_note": "PolyU COMP 官网确认 2027 SEP intake 已开放，截止 2027-02-25（Programme Code 61036）；语言要求待核实（COMP 页未单列）",
+      "gpa_reference": null, "gpa_reference_scale": null,
+      "preferred_background": ["区块链", "blockchain", "计算机", "computer", "金融", "fintech"]
+    },
+    "polyu-msc-cybersecurity": {
+      "ielts_total_min": null, "ielts_subtest_min": null, "toefl_min": null,
+      "language_note": "PolyU COMP 官网确认 2027 SEP intake 已开放，截止 2027-02-25（Programme Code 61039）；语言要求待核实（COMP 页未单列）",
+      "gpa_reference": null, "gpa_reference_scale": null,
+      "preferred_background": ["网络安全", "security", "计算机", "computer", "信息"]
+    },
+    "polyu-msc-information-technology": {
+      "ielts_total_min": null, "ielts_subtest_min": null, "toefl_min": null,
+      "language_note": "PolyU COMP 官网确认 2027 SEP intake 已开放，截止 2027-02-25（Programme Code 61030）；语言要求待核实（COMP 页未单列）",
+      "gpa_reference": null, "gpa_reference_scale": null,
+      "preferred_background": ["信息技术", "IT", "计算机", "computer", "软件", "software"]
+    },
+    "polyu-msc-metaverse-technology": {
+      "ielts_total_min": null, "ielts_subtest_min": null, "toefl_min": null,
+      "language_note": "PolyU COMP 官网确认 2027 SEP intake 已开放，截止 2027-02-25（Programme Code 61038）；语言要求待核实（COMP 页未单列）",
+      "gpa_reference": null, "gpa_reference_scale": null,
+      "preferred_background": ["元宇宙", "metaverse", "计算机", "computer", "数字", "digital"]
     }
   }
 }

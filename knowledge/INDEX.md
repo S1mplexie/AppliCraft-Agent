@@ -1,10 +1,10 @@
 # AppliCraft 初始知识库 · 港新 CS / 数据科学 / AI 授课型硕士
 
-- **数据快照**：2026-11-09
-- **覆盖范围**：5 所学校 / 30 个项目；香港 3 所（HKU / CUHK / HKUST）+ 新加坡 2 所（NUS / NTU）
+- **数据快照**：2026-11-09 / 2026-11-11
+- **覆盖范围**：7 所学校 / 39 个项目；香港 3 所（HKU / CUHK / HKUST）+ 新加坡 2 所（NUS / NTU）
 - **方向**：计算机科学、数据科学、人工智能、商业分析、金融科技等授课型硕士
-- **分块数**：215（其中适合喂给文书生成的 120 块）
-- **编译时间**：2026-11-09T15:54:08+08:00
+- **分块数**：280（其中适合喂给文书生成的 156 块）
+- **编译时间**：2026-11-11T15:54:24+08:00
 
 > ⚠️ **免责声明**：本库全部事实字段来自各校官网公开页面，学费、申请截止日期、语言分数会随入学季滚动更新，且部分官网页面之间存在口径冲突（已在各卡片「核实状态与来源」列明）。字段值为「待核实」表示官网未列或页面访问受阻，**不得据此推断或补写数字**。提交申请前请以官网实时页面为最终准绳；生成文书时不得把本库内容当作个人经历。
 
@@ -12,6 +12,10 @@
 
 | 学校 | 项目 | 官方英文名 | 学院 | 核实状态 | 卡片 |
 | --- | --- | --- | --- | --- | --- |
+| 香港城市大学 | 人工智能理学硕士（非官方译名） | MSc in Artificial Intelligence | College of Engineering | `partial` | [cityu-msc-artificial-intelligence](programs/cityu/cityu-msc-artificial-intelligence.md) |
+| 香港城市大学 | 计算机科学理学硕士（非官方译名） | MSc in Computer Science | College of Engineering | `partial` | [cityu-msc-computer-science](programs/cityu/cityu-msc-computer-science.md) |
+| 香港城市大学 | 网络安全理学硕士（非官方译名） | MSc in Cybersecurity | College of Engineering | `partial` | [cityu-msc-cybersecurity](programs/cityu/cityu-msc-cybersecurity.md) |
+| 香港城市大学 | 数字商业与计算理学硕士（非官方译名） | MSc in Digital Commerce and Computing | College of Engineering | `partial` | [cityu-msc-digital-commerce-and-computing](programs/cityu/cityu-msc-digital-commerce-and-computing.md) |
 | 香港中文大学 | 计算机科学理学硕士（非官方译名） | MSc in Computer Science | Faculty of Engineering | `partial` | [cuhk-msc-computer-science](programs/cuhk/cuhk-msc-computer-science.md) |
 | 香港中文大学 | 数据科学与商业统计理学硕士（非官方译名） | MSc in Data Science and Business Statistics | Faculty of Science | `partial` | [cuhk-msc-data-science-and-business-statistics](programs/cuhk/cuhk-msc-data-science-and-business-statistics.md) |
 | 香港中文大学 | 人工智能理学硕士（非官方译名） | MSc in Artificial Intelligence | Faculty of Engineering | `partial` | [cuhk-msc-artificial-intelligence](programs/cuhk/cuhk-msc-artificial-intelligence.md) |
@@ -42,6 +46,11 @@
 | 新加坡国立大学 | 数据科学与机器学习理学硕士（非官方译名） | Master of Science in Data Science and Machine Learning | Faculty of Science | `partial` | [nus-msc-dsml](programs/nus/nus-msc-dsml.md) |
 | 新加坡国立大学 | 商业分析理学硕士（非官方译名） | Master of Science in Business Analytics | NUS Business Analytics Centre (BAC)（项目由 NUS Business School 与 NUS Computing 共同设计并授课；NUS Bulletin AY2026/27 的 Degrees Offered 另写『jointly with the NUS School of Business』） | `partial` | [nus-msba](programs/nus/nus-msba.md) |
 | 新加坡国立大学 | 数字金融技术理学硕士（非官方译名） | Master of Science in Digital Financial Technology | School of Computing | `partial` | [nus-msc-dfintech](programs/nus/nus-msc-dfintech.md) |
+| 香港理工大学 | 智能体人工智能系统理学硕士（非官方译名） | Master of Science in Agentic AI Systems | Faculty of Computer and Mathematical Sciences | `pending` | [polyu-msc-agentic-ai-systems](programs/polyu/polyu-msc-agentic-ai-systems.md) |
+| 香港理工大学 | 区块链技术理学硕士（非官方译名） | Master of Science in Blockchain Technology | Faculty of Computer and Mathematical Sciences | `pending` | [polyu-msc-blockchain-technology](programs/polyu/polyu-msc-blockchain-technology.md) |
+| 香港理工大学 | 网络安全理学硕士（非官方译名） | Master of Science in Cybersecurity | Faculty of Computer and Mathematical Sciences | `pending` | [polyu-msc-cybersecurity](programs/polyu/polyu-msc-cybersecurity.md) |
+| 香港理工大学 | 信息技术理学硕士（非官方译名） | Master of Science in Information Technology | Faculty of Computer and Mathematical Sciences | `pending` | [polyu-msc-information-technology](programs/polyu/polyu-msc-information-technology.md) |
+| 香港理工大学 | 元宇宙技术理学硕士（非官方译名） | Master of Science in Metaverse Technology | Faculty of Computer and Mathematical Sciences | `pending` | [polyu-msc-metaverse-technology](programs/polyu/polyu-msc-metaverse-technology.md) |
 
 ## 目录结构
 

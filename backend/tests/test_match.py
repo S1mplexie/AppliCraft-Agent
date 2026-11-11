@@ -95,7 +95,7 @@ def test_match_response_structure():
     resp = client.post(f"/api/match/{pid}")
     assert resp.status_code == 200, resp.text
     data = resp.json()
-    assert len(data["results"]) == 30
+    assert len(data["results"]) == 39
     item = data["results"][0]
     assert {"tier", "tier_label", "reasons", "gaps", "in_target", "program_id"} <= set(item.keys())
     assert item["tier"] in {"gap", "reach", "match", "safety"}
