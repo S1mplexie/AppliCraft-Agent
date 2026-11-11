@@ -1,29 +1,72 @@
 #!/usr/bin/env bash
-# AppliCraft 本地部署版 —— 纯 Python 启动，无需 Docker / 容器。
-# 用法：  bash start.sh   （或 chmod +x start.sh 后 ./start.sh）
+# AppliCraft local edition - one-click start (no Docker).
+# Usage: bash start.sh   (or chmod +x start.sh && ./start.sh)
 set -e
 
-# 切换到后端目录，保证 `uvicorn app.main:app` 能找到 app 包，
-# 且配置里的相对路径（knowledge/、data/、frontend/dist）都能正确解析。
+# Work from backend/ so `uvicorn app.main:app` and relative paths
+# (knowledge/, data/, frontend/dist) resolve correctly.
 cd "$(dirname "$0")/backend"
 
-# 首次运行创建虚拟环境（已存在则跳过）。
-if [ ! -d ".venv" ]; then
-  echo "创建虚拟环境 .venv ..."
-  python3 -m venv .venv
-fi
-# shellcheck disable=SC1091
-source .venv/bin/activate
+# Find a real Python 3.10+ interpreter (not just a name on PATH).
+PY=""
+for c in python3 python; do
+  if command -v "$c" >/dev/null 2>&1; then
+    if "$c" -c 'import sys; raise SystemExit(0 if sys.version_info >= (3, 10) else 1)' >/dev/null 2>&1; then
+      PY="$c"
+      break
+    fi
+  fi
+done
 
-echo "安装依赖（首次较慢，之后会走缓存）..."
-pip install -q -r requirements.txt
+if [ -z "$PY" ]; then
+  echo ""
+  echo "[ERROR] Python 3.10 or newer is required but was not found."
+  echo "        Ubuntu/Debian: sudo apt install python3 python3-venv python3-pip"
+  echo "        macOS:         brew install python@3.12"
+  echo "        Or download:   https://www.python.org/downloads/"
+  exit 1
+fi
+
+echo "Using Python: $("$PY" --version 2>&1) ($(command -v "$PY"))"
+
+VPY=".venv/bin/python"
+# An existing .venv created on another machine (or a failed run) is unusable.
+if [ ! -x "$VPY" ] || ! "$VPY" -c 'import sys' >/dev/null 2>&1; then
+  if [ -d ".venv" ]; then
+    echo "Removing an incomplete or unusable .venv ..."
+    rm -rf ".venv"
+  fi
+  echo "Creating virtual environment .venv ..."
+  if ! "$PY" -m venv .venv; then
+    echo ""
+    echo "[ERROR] Failed to create the virtual environment."
+    echo "        On Debian/Ubuntu this usually means python3-venv is missing:"
+    echo "          sudo apt install python3-venv python3-pip"
+    echo "        Then run this script again."
+    rm -rf ".venv"
+    exit 1
+  fi
+fi
+
+if [ ! -x "$VPY" ]; then
+  echo "[ERROR] .venv/bin/python is missing; delete .venv and retry."
+  exit 1
+fi
+
+echo "Installing dependencies (first run is slower; later runs use cache)..."
+if ! "$VPY" -m pip install -q -r requirements.txt; then
+  echo ""
+  echo "[ERROR] Dependency installation failed (no internet / proxy / disk full?)."
+  echo "        Check the error above, then run this script again."
+  exit 1
+fi
 
 echo ""
 echo "==================================================="
-echo "  AppliCraft 本地版已启动"
-echo "  浏览器打开：  http://localhost:8000"
-echo "  首次使用：  设置 → 我的大模型 API，填入你自己的 Key"
-echo "  数据位置：  本机 backend/data/（请自行备份）"
-echo "  停止服务：  在终端按 Ctrl+C"
+echo "  AppliCraft local edition is starting"
+echo "  Open in browser:  http://localhost:8000"
+echo "  First time:  Settings - My LLM API, enter your own Key"
+echo "  Data location:  backend/data/ on this machine (back it up)"
+echo "  Stop server:  press Ctrl+C"
 echo "==================================================="
-exec uvicorn app.main:app --host 0.0.0.0 --port 8000
+exec "$VPY" -m uvicorn app.main:app --host 0.0.0.0 --port 8000

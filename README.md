@@ -8,7 +8,16 @@
 
 ---
 
-## 一、快速开始（一键启动）
+## 一、运行前提与快速开始（一键启动）
+
+**唯一需要自己安装的是 Python 3.10 或更新版本**（首次启动还需联网装依赖）。其余都不需要：无 Docker、无数据库、无 Node。
+
+### 安装 Python 的注意事项（Windows 必看）
+
+- 从 https://www.python.org/downloads/ 下载，**安装时务必勾选 `Add python.exe to PATH`**。
+- 建议关闭 Microsoft Store 的 Python「应用执行别名」：设置 → 应用 → 高级应用设置 → 应用执行别名 → 关掉 `python.exe` / `python3.exe`。这个系统自带的 0 字节快捷方式会被系统误判为 Python，但它根本不能执行 —— 表现就是 `Using Python:` 后面空白、紧接着 `Failed to create the virtual environment`。启动脚本已能自动识别并跳过它，只要装了真 Python 就能正常启动。
+- **macOS**：`brew install python@3.12`，或从 python.org 下载安装包。
+- **Ubuntu / Debian**：`sudo apt install python3 python3-venv python3-pip`（缺 `python3-venv` 时 `python3 -m venv` 会直接失败）。
 
 ### Windows
 双击 `start.bat`，或在命令行运行：
@@ -94,6 +103,8 @@ AppliCraftLocal/
 
 ## 六、常见问题
 
+- **`Using Python:` 后面空白 / `Failed to create the virtual environment.`**：说明这台电脑没有真正可用的 Python（最常见是只有 Microsoft Store 的 `python.exe` 别名）。按上面「安装 Python 的注意事项」装好 Python 3.10+ 并勾选 `Add python.exe to PATH`，重新打开一个窗口再双击 `start.bat` 即可。脚本会自动清掉不完整的 `.venv` 并重建，不需要手动删东西；报错时窗口里会打印所选解释器路径和手动排查命令。
+- **Linux 上 `python3 -m venv` 失败**：安装 `python3-venv`（`sudo apt install python3-venv python3-pip`），再运行 `bash start.sh`。
 - **端口被占用**：编辑 `start.sh` / `start.bat` 里的 `--port 8000` 换成别的端口，访问对应地址。
 - **想改前端界面**：`cd frontend && npm install && npm run build`，产物写入 `frontend/dist/`，重启服务即可。无需重新编译后端。
 - **清掉所有本地数据**：停止服务后删除 `backend/data/` 目录，下次启动会重新初始化（档案 / 文书会丢失，请先备份）。

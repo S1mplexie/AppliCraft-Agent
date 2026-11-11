@@ -1,5 +1,9 @@
 # 统一使用 LF：避免 Windows 把 Dockerfile 等文件检出成 CRLF，导致 Linux 上构建失败。
 * text=auto eol=lf
+# 例外：Windows 批处理脚本必须是 CRLF（GitHub 下载 ZIP 时同样生效），
+# 否则部分 Windows 版本解析 label / goto 会异常。
+*.bat text eol=crlf
+*.cmd text eol=crlf
 *.png binary
 *.jpg binary
 *.jpeg binary
