@@ -44,17 +44,33 @@ async function runMatch() {
 const tierOrder = computed(() => result.value?.tier_order || ['gap', 'reach', 'match', 'safety'])
 const tierLabels = computed(() => result.value?.tier_labels || {})
 
-const groups = computed(() => {
-  const byTier = new Map<string, MatchItem[]>()
+// 展示顺序：先呈现录取机会（冲刺 / 稳妥 / 保底），最后单列硬性缺口，更符合阅读习惯。
+const tierDisplayOrder = ['reach', 'match', 'safety', 'gap']
+
+const byTierMap = computed(() => {
+  const map = new Map<string, MatchItem[]>()
   for (const item of result.value?.results || []) {
-    const list = byTier.get(item.tier) || []
+    const list = map.get(item.tier) || []
     list.push(item)
-    byTier.set(item.tier, list)
+    map.set(item.tier, list)
   }
-  return tierOrder.value
-    .filter(t => byTier.has(t))
-    .map(t => ({ tier: t, label: tierLabels.value[t] || t, items: byTier.get(t) as MatchItem[] }))
+  return map
 })
+
+const groups = computed(() =>
+  tierDisplayOrder
+    .filter(t => byTierMap.value.has(t))
+    .map(t => ({ tier: t, label: tierLabels.value[t] || t, items: byTierMap.value.get(t) as MatchItem[] }))
+)
+
+// 顶部概览：四档计数（含 0 档），一眼看清机会分布。
+const summary = computed(() =>
+  tierDisplayOrder.map(t => ({
+    tier: t,
+    label: tierLabels.value[t] || t,
+    count: byTierMap.value.get(t)?.length || 0,
+  }))
+)
 
 function alreadyIn(item: MatchItem): boolean {
   return item.in_target || addedIds.value.has(item.program_id)
@@ -130,44 +146,59 @@ async function addToTargets(item: MatchItem) {
     </div>
 
     <template v-else-if="result">
-      <div class="card">
-        <div class="card-head"><h2>档案硬指标</h2><span class="hint">评估输入</span></div>
-        <div class="match-snapshot">
-          <span>GPA <b>{{ result.profile_snapshot.gpa || '—' }}</b></span>
-          <span>均分 <b>{{ result.profile_snapshot.gpa_average || '—' }}</b></span>
-          <span>IELTS <b>{{ result.profile_snapshot.ielts_total ?? '—' }}</b></span>
-          <span>TOEFL <b>{{ result.profile_snapshot.toefl_total ?? '—' }}</b></span>
+      <div class="match-summary">
+        <div v-for="s in summary" :key="s.tier" class="match-stat" :class="s.tier">
+          <span class="match-stat-num">{{ s.count }}</span>
+          <span class="match-stat-label">{{ s.label }}</span>
         </div>
-        <p v-if="result.profile_snapshot.notes.length" class="hint" style="margin: 0;">{{ result.profile_snapshot.notes[0] }}</p>
-        <p class="hint" style="margin: 8px 0 0;">{{ result.profile_snapshot.watermark_note }}</p>
       </div>
 
-      <div v-for="group in groups" :key="group.tier" style="margin-top: 16px;">
-        <div class="match-tier-head">
-          <span class="tier-badge" :class="group.tier">{{ group.label }}</span>
-          <span class="hint">{{ group.items.length }} 个项目</span>
+      <div class="card match-snapshot-card">
+        <div class="card-head"><h2>档案硬指标</h2><span class="hint">评估输入</span></div>
+        <div class="match-snapshot">
+          <div class="ms-item"><span class="ms-k">GPA</span><span class="ms-v">{{ result.profile_snapshot.gpa || '—' }}</span></div>
+          <div class="ms-item"><span class="ms-k">均分</span><span class="ms-v">{{ result.profile_snapshot.gpa_average || '—' }}</span></div>
+          <div class="ms-item"><span class="ms-k">IELTS</span><span class="ms-v">{{ result.profile_snapshot.ielts_total ?? '—' }}</span></div>
+          <div class="ms-item"><span class="ms-k">TOEFL</span><span class="ms-v">{{ result.profile_snapshot.toefl_total ?? '—' }}</span></div>
         </div>
-        <div v-for="item in group.items" :key="item.program_id" class="match-card">
-          <div class="match-card-top">
-            <strong>{{ item.school_name_zh }} · {{ item.name_en }}</strong>
-            <span class="tier-badge" :class="item.tier">{{ item.tier_label }}</span>
-            <span class="hint">{{ item.name_zh }}</span>
-          </div>
-          <ul class="match-list">
-            <li v-for="(reason, i) in item.reasons" :key="'r' + i">{{ reason }}</li>
-          </ul>
-          <ul v-if="item.gaps.length" class="match-list match-gaps">
-            <li v-for="(gap, i) in item.gaps" :key="'g' + i">{{ gap }}</li>
-          </ul>
-          <small v-if="item.language_note" class="hint">口径：{{ item.language_note }}</small>
-          <div class="match-foot">
-            <span class="hint">{{ item.intake }}{{ item.deadline ? ` · 截止 ${item.deadline}` : '' }}</span>
-            <button class="btn small primary" :disabled="alreadyIn(item)" @click="addToTargets(item)">
-              {{ alreadyIn(item) ? '已在档案' : '加入档案' }}
-            </button>
-          </div>
-        </div>
+        <p v-if="result.profile_snapshot.notes.length" class="hint" style="margin: 10px 0 0;">{{ result.profile_snapshot.notes[0] }}</p>
+        <p class="hint watermark" style="margin: 6px 0 0;">{{ result.profile_snapshot.watermark_note }}</p>
       </div>
+
+      <section v-for="group in groups" :key="group.tier" class="tier-section" :class="group.tier">
+        <header class="tier-section-head">
+          <span class="tier-badge lg" :class="group.tier">{{ group.label }}</span>
+          <span class="tier-section-count">{{ group.items.length }} 个项目</span>
+        </header>
+        <div class="tier-section-body">
+          <article v-for="item in group.items" :key="item.program_id" class="match-card">
+            <div class="match-card-head">
+              <div class="match-card-title">
+                <strong>{{ item.school_name_zh }} · {{ item.name_en }}</strong>
+                <span class="match-card-sub">{{ item.name_zh }}</span>
+              </div>
+              <span class="tier-badge" :class="item.tier">{{ item.tier_label }}</span>
+            </div>
+            <div class="match-detail">
+              <div v-if="item.reasons.length" class="match-block reasons">
+                <div class="match-block-title">判断依据</div>
+                <ul><li v-for="(r, i) in item.reasons" :key="'r' + i">{{ r }}</li></ul>
+              </div>
+              <div v-if="item.gaps.length" class="match-block gaps">
+                <div class="match-block-title">短板 / 缺口</div>
+                <ul><li v-for="(g, i) in item.gaps" :key="'g' + i">{{ g }}</li></ul>
+              </div>
+              <small v-if="item.language_note" class="hint match-note">口径：{{ item.language_note }}</small>
+            </div>
+            <div class="match-card-foot">
+              <span class="hint">{{ item.intake }}{{ item.deadline ? ' · 截止 ' + item.deadline : '' }}</span>
+              <button class="btn small primary" :disabled="alreadyIn(item)" @click="addToTargets(item)">
+                {{ alreadyIn(item) ? '已在档案' : '加入档案' }}
+              </button>
+            </div>
+          </article>
+        </div>
+      </section>
     </template>
   </div>
 </template>

@@ -879,3 +879,74 @@ select { appearance: auto; cursor: pointer; }
   .skill-grid { grid-template-columns: 1fr; }
   .ref-doc-item { flex-direction: column; align-items: flex-start; }
 }
+
+/* ================= 选校评估（MatchPanel） ================= */
+.match-summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.match-stat {
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  padding: 12px 8px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface);
+  border-top: 3px solid var(--line-strong);
+}
+.match-stat-num { font-family: var(--serif); font-size: 27px; font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums; }
+.match-stat-label { font-size: 11px; color: var(--muted); font-weight: 600; }
+.match-stat.reach { border-top-color: var(--warn); }
+.match-stat.reach .match-stat-num { color: var(--warn); }
+.match-stat.match { border-top-color: var(--accent); }
+.match-stat.match .match-stat-num { color: var(--accent); }
+.match-stat.safety { border-top-color: var(--ok); }
+.match-stat.safety .match-stat-num { color: var(--ok); }
+.match-stat.gap { border-top-color: var(--danger); }
+.match-stat.gap .match-stat-num { color: var(--danger); }
+
+.match-snapshot-card { margin-top: 14px; }
+.match-snapshot { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.ms-item { display: flex; flex-direction: column; gap: 2px; padding: 8px 11px; background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px; }
+.ms-k { font-size: 10.5px; color: var(--muted); font-weight: 600; letter-spacing: .3px; }
+.ms-v { font-size: 15px; font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; }
+.match-snapshot-card .watermark { line-height: 1.6; }
+
+/* 各档分区：配色头部 + 淡色背景，强区隔 */
+.tier-section { margin-top: 16px; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--surface); }
+.tier-section-head { display: flex; align-items: center; gap: 10px; padding: 9px 14px; border-bottom: 1px solid var(--line); }
+.tier-section-count { font-size: 11.5px; color: var(--muted); }
+.tier-section-body { padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; }
+.tier-section.reach { border-color: #e7d8b4; }
+.tier-section.reach > .tier-section-head { background: var(--warn-soft); }
+.tier-section.match { border-color: #cdd9e8; }
+.tier-section.match > .tier-section-head { background: var(--accent-soft); }
+.tier-section.safety { border-color: #cfe2d6; }
+.tier-section.safety > .tier-section-head { background: var(--ok-soft); }
+.tier-section.gap { border-color: #ecd2cf; }
+.tier-section.gap > .tier-section-head { background: var(--danger-soft); }
+
+/* 单个项目卡 */
+.match-card { border: 1px solid var(--line); border-radius: 10px; background: var(--surface); padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; }
+.match-card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+.match-card-title { min-width: 0; }
+.match-card-title strong { display: block; font-size: 13.5px; font-family: var(--serif); font-weight: 700; color: var(--ink); line-height: 1.4; }
+.match-card-sub { font-size: 11px; color: var(--muted); }
+.match-card-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding-top: 8px; border-top: 1px dashed var(--line); }
+.match-detail { display: flex; flex-direction: column; gap: 8px; }
+.match-block { border-radius: 8px; padding: 8px 11px; }
+.match-block-title { font-size: 10.5px; font-weight: 700; letter-spacing: .4px; margin-bottom: 4px; }
+.match-block ul { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 3px; font-size: 12px; line-height: 1.55; }
+.match-block.reasons { background: var(--surface-2); border: 1px solid var(--line); }
+.match-block.reasons .match-block-title { color: var(--accent); }
+.match-block.reasons li::marker { color: var(--accent); }
+.match-block.gaps { background: var(--danger-soft); border: 1px solid #ecd2cf; }
+.match-block.gaps .match-block-title { color: var(--danger); }
+.match-block.gaps li::marker { color: var(--danger); }
+.match-note { display: block; margin-top: 2px; }
+.match-idle-list { margin: 0 0 4px; padding-left: 18px; display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--muted); }
+
+/* 等级徽章（四档统一配色；lg 用于分区标题） */
+.tier-badge { display: inline-flex; align-items: center; padding: 2px 10px; border-radius: 999px; font-size: 10.5px; font-weight: 700; border: 1px solid transparent; white-space: nowrap; }
+.tier-badge.lg { font-size: 12.5px; padding: 4px 14px; }
+.tier-badge.reach { background: var(--warn-soft); color: var(--warn); border-color: #e8dcb8; }
+.tier-badge.match { background: var(--accent-soft); color: var(--accent); border-color: #cdd9e8; }
+.tier-badge.safety { background: var(--ok-soft); color: var(--ok); border-color: #cfe2d6; }
+.tier-badge.gap { background: var(--danger-soft); color: var(--danger); border-color: #ecd2cf; }
+
+@media (max-width: 760px) {
+  .match-summary, .match-snapshot { grid-template-columns: 1fr 1fr; }
+}
