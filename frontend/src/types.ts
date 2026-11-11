@@ -1,7 +1,7 @@
 export type DocType = 'cv' | 'ps' | 'recommendation'
 export type Language = 'en' | 'zh'
 /** 一级导航分区；与 URL hash 同步，刷新后仍能回到原来的工作台。 */
-export type TabKey = 'profile' | 'match' | 'projects' | 'generate' | 'library' | 'skills' | 'documents' | 'settings'
+export type TabKey = 'profile' | 'match' | 'projects' | 'board' | 'generate' | 'library' | 'skills' | 'documents' | 'settings'
 /** 档案表单的二级分区。 */
 export type ProfileSection =
   'basics' | 'education' | 'experience' | 'credentials' | 'programs' | 'recommenders' | 'goals'
@@ -48,8 +48,12 @@ export interface ApplicationProject {
   source: 'imported' | 'custom'
   system_program_id: string
   university: string; program: string; program_name_en: string; faculty: string
-  degree_type: string; region: string; intake: string; notes: string
+  degree_type: string;   region: string; intake: string; notes: string
   official_urls: string[]
+  /** 申请截止日期（YYYY-MM-DD），留空表示未设置；申请看板据此做倒计时。 */
+  deadline?: string
+  /** 手动勾选的材料清单（成绩单 / 语言成绩 / 申请费）；PS/CV/推荐信由文书自动派生。 */
+  materials?: Record<string, boolean>
   created_at: string; updated_at: string; document_count: number
 }
 export interface DocumentMeta {

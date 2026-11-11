@@ -6,6 +6,7 @@ import DocumentLibrary from './components/DocumentLibrary.vue'
 import LibraryPanel from './components/LibraryPanel.vue'
 import SkillMarketPanel from './components/SkillMarketPanel.vue'
 import ProjectsPanel from './components/ProjectsPanel.vue'
+import BoardPanel from './components/BoardPanel.vue'
 import SettingsView from './components/SettingsView.vue'
 import MatchPanel from './components/MatchPanel.vue'
 import AuthView from './components/AuthView.vue'
@@ -25,6 +26,7 @@ const TABS: { key: TabKey; label: string }[] = [
   { key: 'profile', label: '申请人档案' },
   { key: 'match', label: '选校评估' },
   { key: 'projects', label: '项目管理' },
+  { key: 'board', label: '申请看板' },
   { key: 'generate', label: '生成文书' },
   { key: 'library', label: '参考文档库' },
   { key: 'skills', label: 'Skill 市场' },
@@ -733,6 +735,14 @@ onUnmounted(() => window.removeEventListener('hashchange', onHashChange))
         <!-- 项目管理 -->
         <div v-show="activeTab === 'projects'" class="page-view">
           <ProjectsPanel
+            :profile-id="currentProfileId" :documents="documents" :system-programs="systemPrograms"
+            @go="goTab" @refresh-docs="loadDocuments"
+          />
+        </div>
+
+        <!-- 申请看板 -->
+        <div v-show="activeTab === 'board'" class="page-view">
+          <BoardPanel
             :profile-id="currentProfileId" :documents="documents" :system-programs="systemPrograms"
             @go="goTab" @refresh-docs="loadDocuments"
           />

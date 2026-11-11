@@ -69,10 +69,17 @@ class ApplicationProjectCreate(BaseModel):
 
 
 class ApplicationProjectPatch(BaseModel):
-    """修改申请项目的名称与备注；留空字段不修改。"""
+    """修改申请项目：名称、备注、截止日期与材料清单；留空字段不修改。
+
+    - deadline：截止日期（建议 YYYY-MM-DD）。null=不修改；""=清空。
+    - materials：手动勾选的材料清单（成绩单 / 语言成绩 / 申请费），与已有值合并；
+      PS/CV/推荐信由文书自动派生，不在此存储。null=不修改。
+    """
 
     name: str = Field(default="", max_length=120)
     notes: str = Field(default="", max_length=500)
+    deadline: str | None = Field(default=None, max_length=40)
+    materials: dict[str, bool] | None = Field(default=None)
 
 
 class DocumentAssign(BaseModel):

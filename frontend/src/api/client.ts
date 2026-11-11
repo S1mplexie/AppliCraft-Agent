@@ -181,7 +181,11 @@ export const api = {
     request<ApplicationProject>(`/profiles/${profileId}/projects`, {
       method: 'POST', body: JSON.stringify(payload),
     }),
-  updateProject: (profileId: string, projectId: string, payload: { name?: string; notes?: string }) =>
+  updateProject: (
+    profileId: string,
+    projectId: string,
+    payload: { name?: string; notes?: string; deadline?: string | null; materials?: Record<string, boolean> | null },
+  ) =>
     request<ApplicationProject>(`/profiles/${profileId}/projects/${projectId}`, {
       method: 'PATCH', body: JSON.stringify(payload),
     }),

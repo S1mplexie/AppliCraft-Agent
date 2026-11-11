@@ -70,6 +70,8 @@ def create_project(
         "intake": payload.intake.strip(),
         "notes": payload.notes.strip(),
         "official_urls": [],
+        "deadline": "",
+        "materials": {},
         "created_at": now,
         "updated_at": now,
     }
@@ -113,6 +115,14 @@ def update_project(
         project["name"] = payload.name.strip()
     if payload.notes.strip():
         project["notes"] = payload.notes.strip()
+    # 截止日期：null=不修改；""=清空；其余按原样保存（前端统一用 YYYY-MM-DD）。
+    if payload.deadline is not None:
+        project["deadline"] = payload.deadline.strip()
+    # 材料清单：与已有值合并（只覆盖本次提交的键），保留其它键的勾选状态。
+    if payload.materials is not None:
+        existing = dict(project.get("materials") or {})
+        existing.update(payload.materials)
+        project["materials"] = existing
     try:
         return store.save_project(project)
     except StorageError as exc:
