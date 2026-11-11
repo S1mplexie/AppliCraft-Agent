@@ -4,7 +4,7 @@ import { api } from '../api/client'
 import { uid } from '../types'
 import type { ApplicantProfile, MatchItem, MatchResult } from '../types'
 
-const props = defineProps<{ profileId: string; profile: ApplicantProfile }>()
+const props = defineProps<{ profileId: string; profile: ApplicantProfile; standalone?: boolean }>()
 const emit = defineEmits<{ toast: [message: string]; quotaChanged: [] }>()
 
 // 评估是显式扣费动作（系统 Key 用户扣 1 次免费额度），由用户点「开始评估」触发；
@@ -102,8 +102,14 @@ async function addToTargets(item: MatchItem) {
         <li>一键把项目加入目标项目列表</li>
       </ul>
       <p class="hint" style="margin: 10px 0 14px;">
-        每次评估消耗 1 次免费额度（与文书生成共用每日配额；管理员与自有 Key 用户不占用）。
-        评估为规则比对、结果仅供参考：语言分数随入学季更新，提交申请前以官网为准。
+        <template v-if="props.standalone">
+          本地部署版评估不消耗任何额度，可随时重新评估。
+          评估为规则比对、结果仅供参考：语言分数随入学季更新，提交申请前以官网为准。
+        </template>
+        <template v-else>
+          每次评估消耗 1 次免费额度（与文书生成共用每日配额；管理员与自有 Key 用户不占用）。
+          评估为规则比对、结果仅供参考：语言分数随入学季更新，提交申请前以官网为准。
+        </template>
       </p>
       <button class="btn primary" :disabled="state === 'loading'" @click="runMatch">开始评估</button>
     </div>

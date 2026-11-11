@@ -26,6 +26,8 @@ const props = defineProps<{
   selectedReferenceIds: string[]
   skills: SkillInfo[]
   selectedSkillIds: string[]
+  /** 本地部署版（免登录、单用户）为 true：计费口径显示为本地 API Key。 */
+  standalone: boolean
 }>()
 const emit = defineEmits<{
   generate: [payload: GeneratePayload]
@@ -115,6 +117,7 @@ const freeExhausted = computed(() =>
   !billingUnlimited.value && freeRemaining.value !== null && freeRemaining.value <= 0,
 )
 const billingLabel = computed(() => {
+  if (props.standalone) return '本地 API Key · 不限次数'
   if (props.myLlm?.is_admin || props.quota?.source === 'admin') return '系统共享 Key · 管理员不限次数'
   if (props.myLlm?.effective_source === 'personal') return '你的 Key，不占系统额度'
   if (billingUnlimited.value) return '不限次数'

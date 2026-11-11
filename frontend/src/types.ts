@@ -107,6 +107,8 @@ export interface AppConfig {
   require_personal_llm_key?: boolean
   /** 非管理员每天可免费使用系统默认 Key 的次数；管理员 / 自带 Key 不受限。 */
   system_key_daily_limit?: number
+  /** 本地部署版（免登录、单用户、用自己的 Key）为 true；网页版多租户为 false/缺失。 */
+  standalone?: boolean
 }
 /** 用户自带大模型 Key（BYOK）：接口只返回脱敏信息，永不返回完整 Key。 */
 export interface UserLLMConfig {
@@ -128,6 +130,15 @@ export interface UserLLMConfig {
   system_key_remaining?: number
 }
 export interface UserLLMPayload { base_url: string; model: string; api_key: string }
+/** 本地部署版（standalone）的「我的大模型 API」配置：GET 返回脱敏信息，永不回传完整 Key。 */
+export interface LocalLLMConfig {
+  base_url: string
+  api_key_hint: string
+  model: string
+  configured: boolean
+}
+/** 本地部署版保存 / 测试大模型配置时的请求体；api_key 留空表示沿用已保存的 Key。 */
+export interface LocalLLMPayload { base_url: string; model: string; api_key: string }
 export interface LLMTestResult { ok: boolean; message: string; model: string }
 /** 常见 OpenAI 兼容端点预设：只帮用户填地址与模型名，Key 始终由本人输入。 */
 export interface LLMProvider {

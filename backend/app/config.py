@@ -104,7 +104,8 @@ class Settings(BaseSettings):
     # 设为 true 时：跳过登录/注册与一切按用户隔离的数据库逻辑，所有档案/文书/参考/技能
     # 落在固定的本地目录，模型配置直接读本机 .env 与 data/local_llm.json（应用内「设置」可改）。
     # 网页版（多租户 SaaS）保持 false；本地版与网页版共用同一份代码，仅此开关不同。
-    standalone: bool = False
+    # 本目录（D:\AppliCraftLocal）是「本地部署版」独立项目，开箱即免登录、单用户、用自己的 Key。
+    standalone: bool = True
 
     # --- 存储与静态资源 ---
     data_dir: Path = BACKEND_DIR / "data"

@@ -1,6 +1,6 @@
 import type {
   ApplicantProfile, AppConfig, AuthResponse, DocumentDetail, DocumentMeta,
-  FeedbackItem, GeneratePayload, LLMTestResult, MatchResult, ProfileSummary, RegenPayload, ReferenceDoc,
+  FeedbackItem, GeneratePayload, LLMTestResult, LocalLLMConfig, LocalLLMPayload, MatchResult, ProfileSummary, RegenPayload, ReferenceDoc,
   ResumeParseResult, SkillDetail, SkillInfo, StreamEnvelope, SystemProgram,
   UserLLMConfig, UserLLMPayload,
 } from '../types'
@@ -136,6 +136,15 @@ export const api = {
     request<{ deleted: boolean } & UserLLMConfig>('/me/llm', { method: 'DELETE' }),
   testMyLlm: (payload: UserLLMPayload) =>
     request<LLMTestResult>('/me/llm/test', { method: 'POST', body: JSON.stringify(payload) }),
+
+  // ------------------------------------------------ 本地部署版：我的大模型 API（落盘 data/local_llm.json）
+  /** 返回脱敏的本地大模型配置（standalone 模式下代替 /me/llm）。 */
+  getLocalLlm: () => request<LocalLLMConfig>('/settings/llm'),
+  /** api_key 留空表示沿用已保存的 Key，只改地址或模型名。 */
+  saveLocalLlm: (payload: LocalLLMPayload) =>
+    request<LocalLLMConfig>('/settings/llm', { method: 'PUT', body: JSON.stringify(payload) }),
+  testLocalLlm: (payload: LocalLLMPayload) =>
+    request<LLMTestResult>('/settings/llm/test', { method: 'POST', body: JSON.stringify(payload) }),
 
   register: (email: string, password: string, displayName: string) =>
     request<AuthResponse>('/auth/register', {

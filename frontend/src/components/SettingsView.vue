@@ -1,16 +1,19 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import LlmSettingsCard from './LlmSettingsCard.vue'
+import LocalLlmCard from './LocalLlmCard.vue'
 import type { AppConfig, AuthUser, ProfileSummary, QuotaInfo, UserLLMConfig } from '../types'
 
 const props = defineProps<{
-  user: AuthUser
+  user: AuthUser | null
   quota: QuotaInfo | null
   config: AppConfig | null
   myLlm: UserLLMConfig | null
   profiles: ProfileSummary[]
   currentProfileId: string
   saveState: string
+  /** 本地部署版（免登录）为 true：隐藏账号卡片与退出按钮，改用本地 LLM 配置卡。 */
+  standalone: boolean
 }>()
 const emit = defineEmits<{
   manage: []
@@ -35,7 +38,7 @@ const quotaText = computed(() => {
   const limit = props.myLlm?.system_key_daily_limit
     ?? props.quota?.system_key_limit ?? props.config?.system_key_daily_limit ?? 3
   const remaining = props.myLlm?.system_key_remaining ?? props.quota?.system_key_remaining
-  if (remaining == null) return `${props.user.daily_quota} 次/天`
+  if (remaining == null) return `${props.user?.daily_quota ?? 0} 次/天`
   return `今日免费 ${Math.max(0, limit - remaining)} / ${limit} 次（剩 ${remaining}）`
 })
 
@@ -52,17 +55,18 @@ function fmtDate(value: string): string {
     <div class="page-head">
       <div><h1>设置</h1><p>账号、服务状态与使用提示</p></div>
       <div class="head-actions">
-        <button class="btn" @click="emit('logout')">退出登录</button>
+        <span v-if="standalone" class="badge ok">本地部署版</span>
+        <button v-else class="btn" @click="emit('logout')">退出登录</button>
       </div>
     </div>
 
     <div class="settings-grid">
-      <section class="card">
+      <section v-if="!standalone" class="card">
         <div class="card-head"><h2>账号与服务</h2><span class="badge ok">已登录</span></div>
         <div class="kv-list">
-          <div><span>邮箱</span><b>{{ user.email }}</b></div>
-          <div><span>显示名称</span><b>{{ user.display_name || '未设置' }}</b></div>
-          <div><span>注册时间</span><b>{{ fmtDate(user.created_at) }}</b></div>
+          <div><span>邮箱</span><b>{{ user?.email }}</b></div>
+          <div><span>显示名称</span><b>{{ user?.display_name || '未设置' }}</b></div>
+          <div><span>注册时间</span><b>{{ fmtDate(user?.created_at || '') }}</b></div>
           <div><span>今日配额</span><b>{{ quotaText }}</b></div>
           <div><span>计费方式</span><b :class="myLlm?.effective_source === 'personal' ? 'ok-text' : ''">{{ billingText }}</b></div>
           <div><span>当前模型</span><b>{{ myLlm?.effective_model || config?.llm_model || '—' }}</b></div>
@@ -72,6 +76,17 @@ function fmtDate(value: string): string {
           <div><span>微信登录</span><b>{{ config?.wechat_login_enabled ? '已启用' : '未启用' }}</b></div>
         </div>
         <p class="hint card-note">系统 Key 由服务端 .env 保管，不会下发到浏览器；你也可以在下方配置自己的 Key。</p>
+      </section>
+
+      <section v-else class="card">
+        <div class="card-head"><h2>本地部署版</h2><span class="badge ok">免登录</span></div>
+        <div class="kv-list">
+          <div><span>运行模式</span><b>本地部署 · 单用户</b></div>
+          <div><span>当前模型</span><b>{{ myLlm?.effective_model || config?.llm_model || '—' }}</b></div>
+          <div><span>服务版本</span><b>{{ config?.version || '—' }}</b></div>
+          <div><span>数据存放</span><b class="wrap">本机 data/ 目录（档案、文书、参考文档、技能与 Key 均本地保存）</b></div>
+        </div>
+        <p class="hint card-note">本地部署版不连接任何服务器账号，所有数据与你的 API Key 仅保存在本机；更换电脑需自行备份 data/ 目录。</p>
       </section>
 
       <section class="card">
@@ -91,7 +106,8 @@ function fmtDate(value: string): string {
         <p class="hint card-note">切换、新建、改名与删除统一在顶栏「当前档案」入口完成；删除后会自动切换到剩余档案。</p>
       </section>
 
-      <LlmSettingsCard :llm="myLlm" @changed="emit('refreshLlm')" />
+      <LlmSettingsCard v-if="!standalone" :llm="myLlm" @changed="emit('refreshLlm')" />
+      <LocalLlmCard v-else @changed="emit('refreshLlm')" />
 
       <section class="card span-2">
 

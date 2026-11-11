@@ -14,7 +14,8 @@ __pycache__/
 *.pyc
 .pytest_cache/
 node_modules/
-frontend/dist/
+# 本地部署版：构建后的前端随仓库发布，开箱即跑，无需 Node。
+# frontend/dist/ 已不再忽略，会随源码提交。
 data/
 backend/data/
 *.log

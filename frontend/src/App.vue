@@ -15,7 +15,7 @@ import {
   demoProfile, emptyProfile,
   type AppConfig, type ApplicantProfile, type AuthResponse, type AuthUser,
   type DocumentDetail, type DocumentMeta, type GeneratePayload, type Issue,
-  type KnowledgeRef, type NodeEvent, type ProfileSection, type ProfileSummary, type QuotaInfo,
+  type KnowledgeRef, type LocalLLMConfig, type NodeEvent, type ProfileSection, type ProfileSummary, type QuotaInfo,
   type RegenPayload, type ReferenceDoc, type ResumeParseResult, type SkillInfo,
   type SystemProgram, type TabKey, type UserLLMConfig,
 } from './types'
@@ -58,11 +58,14 @@ const freeExhausted = computed(() =>
   !billingUnlimited.value && freeRemaining.value !== null && freeRemaining.value <= 0,
 )
 const quotaLabel = computed(() => {
+  if (standalone.value) return '本地部署 · 不限次数'
   if (myLlm.value?.is_admin || quota.value?.source === 'admin') return '管理员 · 不限次数'
   if (billingUnlimited.value) return '自有 Key · 不限次数'
   return `今日免费剩 ${freeRemaining.value ?? quota.value?.remaining ?? 0} 次`
 })
 const authReady = ref(false)
+/** 本地部署版（standalone）：免登录、单用户、用自己的 Key；由 /api/config 的 standalone 字段驱动。 */
+const standalone = computed(() => !!config.value?.standalone)
 const profiles = ref<ProfileSummary[]>([])
 const profile = ref<ApplicantProfile>(emptyProfile())
 const currentProfileId = ref('')
@@ -109,6 +112,7 @@ let toastTimer: number | undefined
 
 async function refreshQuota() {
   // 评估扣费后同步顶栏剩余次数；失败静默（下一次操作会再刷）。
+  if (standalone.value) { await loadLocalLlm(); return }
   try {
     quota.value = (await api.me()).quota
   } catch { /* 静默 */ }
@@ -189,8 +193,55 @@ async function loadMyLlm() {
   try { myLlm.value = await api.getMyLlm() } catch { myLlm.value = null }
 }
 
+/** 把后端 /settings/llm 的脱敏配置映射成 UserLLMConfig 形状，复用既有面板与顶栏逻辑。 */
+function localToUserLlm(local: LocalLLMConfig): UserLLMConfig {
+  return {
+    has_key: local.configured,
+    api_key_hint: local.api_key_hint,
+    base_url: local.base_url,
+    model: local.model,
+    updated_at: '',
+    effective_source: local.configured ? 'personal' : 'none',
+    effective_model: local.model,
+    effective_base_url: local.base_url,
+    allow_personal_llm_keys: true,
+    require_personal_llm_key: false,
+    system_llm_configured: local.configured,
+    unlimited: true,
+    system_key_daily_limit: 0,
+    system_key_remaining: null,
+  }
+}
+async function loadLocalLlm() {
+  // 本地版走 /settings/llm（落盘 data/local_llm.json），不依赖登录态。
+  try {
+    myLlm.value = localToUserLlm(await api.getLocalLlm())
+  } catch {
+    myLlm.value = localToUserLlm({ base_url: '', api_key_hint: '', model: '', configured: false })
+  }
+}
+
+/** 设置页「我的大模型 API」改动后刷新顶栏生效模型：本地版与网页版走不同接口。 */
+async function refreshLlmConfig() {
+  if (standalone.value) await loadLocalLlm()
+  else await loadMyLlm()
+}
+
+/** 本地版没有「登录」概念：直接加载全站列表与本地 LLM 配置，再进入档案。 */
+async function enterWorkspaceLocal() {
+  await Promise.all([loadReferences(), loadSystemPrograms(), loadSkills(), loadLocalLlm()])
+  await loadProfiles()
+  const remembered = localStorage.getItem(rememberKey()) || ''
+  const target = profiles.value.some(p => p.id === remembered)
+    ? remembered
+    : profiles.value[0]?.id || ''
+  if (target) await selectProfile(target)
+  else await createProfile({ switchToProfile: false })
+}
+
 /** 生成完成后同时刷新配额与个人配置：免费次数是服务端按当日日志算出来的。 */
 async function refreshBilling() {
+  if (standalone.value) { await loadLocalLlm(); return }
   try { quota.value = (await api.me()).quota } catch { /* 刷新失败不打断流程 */ }
   await loadMyLlm()
 }
@@ -530,31 +581,40 @@ onMounted(async () => {
   } catch (error) {
     toast(`无法连接后端：${(error as Error).message}`, true)
   }
-  try {
-    const me = await api.me()
-    user.value = me.user
-    quota.value = me.quota
-    await enterWorkspace()
-  } catch {
-    user.value = null
-  } finally {
-    authReady.value = true
+  if (standalone.value) {
+    // 本地版免登录：以虚拟单用户直接进工作区，不调 /auth/me，也不渲染登录页。
+    try {
+      await enterWorkspaceLocal()
+    } catch (error) {
+      toast(`载入工作区失败：${(error as Error).message}`, true)
+    }
+  } else {
+    try {
+      const me = await api.me()
+      user.value = me.user
+      quota.value = me.quota
+      await enterWorkspace()
+    } catch {
+      user.value = null
+    }
   }
+  authReady.value = true
 })
 onUnmounted(() => window.removeEventListener('hashchange', onHashChange))
 </script>
 
 <template>
-  <!-- 首次访问（含会话检查中）直接渲染登录页，不再白屏等待 /api/auth/me 返回。 -->
+  <!-- 首次访问（含会话检查中）直接渲染登录页，不再白屏等待 /api/auth/me 返回。
+       本地部署版（standalone）免登录，跳过 AuthView，配置就绪后直接渲染工作区。 -->
   <AuthView
-    v-if="!authReady || !user"
+    v-if="!standalone && (!authReady || !user)"
     :allow-registration="config?.allow_registration ?? true"
     :system-key-limit="config?.system_key_daily_limit ?? 3"
     :checking="!authReady"
     @authed="onAuthed"
   />
 
-  <div v-else class="app-shell">
+  <div v-else-if="config" class="app-shell">
     <aside class="sidebar">
       <div class="brand">
         <span class="brand-mark">A</span>
@@ -591,11 +651,17 @@ onUnmounted(() => window.removeEventListener('hashchange', onHashChange))
           <span class="dot" :class="llmReady ? 'ok' : 'off'"></span>
           <span v-if="llmReady" class="model-name">{{ effectiveModel }}</span>
           <span v-else class="warn-text">未配置 API Key</span>
-          <span v-if="myLlm?.is_admin || quota?.source === 'admin'" class="badge ok byok-chip">管理员</span>
-          <span v-else-if="myLlm?.effective_source === 'personal'" class="badge ok byok-chip">自有 Key</span>
-          <span v-if="quota" class="hint">{{ quotaLabel }}</span>
-          <span class="hint user-name">{{ user.display_name || user.email }}</span>
-          <button class="btn small" @click="logout">退出</button>
+          <template v-if="standalone">
+            <span class="badge ok byok-chip">本地部署版</span>
+            <span class="hint">{{ quotaLabel }}</span>
+          </template>
+          <template v-else>
+            <span v-if="myLlm?.is_admin || quota?.source === 'admin'" class="badge ok byok-chip">管理员</span>
+            <span v-else-if="myLlm?.effective_source === 'personal'" class="badge ok byok-chip">自有 Key</span>
+            <span v-if="quota" class="hint">{{ quotaLabel }}</span>
+            <span class="hint user-name">{{ user.display_name || user.email }}</span>
+            <button class="btn small" @click="logout">退出</button>
+          </template>
         </div>
       </header>
 
@@ -608,7 +674,7 @@ onUnmounted(() => window.removeEventListener('hashchange', onHashChange))
         在「设置 → 我的大模型 API」填入自己的 Key 后即可继续不限次数生成，也可以明天再试。
         <button class="btn small" @click="goTab('settings')">去配置</button>
       </div>
-      <div v-else-if="config && !config.llm_configured && myLlm?.effective_source !== 'personal'" class="banner">
+      <div v-else-if="config && !standalone && !config.llm_configured && myLlm?.effective_source !== 'personal'" class="banner">
         {{ config.message }}
       </div>
 
@@ -639,7 +705,7 @@ onUnmounted(() => window.removeEventListener('hashchange', onHashChange))
         <!-- 选校评估 -->
         <div v-show="activeTab === 'match'" class="page-view">
           <MatchPanel
-            :profile-id="currentProfileId" :profile="profile"
+            :profile-id="currentProfileId" :profile="profile" :standalone="standalone"
             @quota-changed="refreshQuota" @toast="(m) => toast(m, false)"
           />
         </div>
@@ -661,6 +727,7 @@ onUnmounted(() => window.removeEventListener('hashchange', onHashChange))
             <GeneratePanel
               :key="currentProfileId"
               :profile="profile" :profile-id="currentProfileId" :config="config" :my-llm="myLlm" :quota="quota"
+              :standalone="standalone"
               :generating="generating" :events="events" :issues="issues"
               :outline="outline" :warnings="warnings" :numeric-warnings="numericWarnings"
               :score="score" :dimensions="dimensions" :knowledge="knowledge"
@@ -708,15 +775,15 @@ onUnmounted(() => window.removeEventListener('hashchange', onHashChange))
         <div v-show="activeTab === 'settings'" class="page-view">
           <SettingsView
             :user="user" :quota="quota" :config="config" :my-llm="myLlm" :profiles="profiles"
-            :current-profile-id="currentProfileId" :save-state="saveState"
+            :current-profile-id="currentProfileId" :save-state="saveState" :standalone="standalone"
             @manage="switcherOpen = true" @save="saveProfile(false)" @logout="logout"
-            @refresh-llm="loadMyLlm"
+            @refresh-llm="refreshLlmConfig"
           />
         </div>
       </main>
     </div>
 
-    <FeedbackBubble v-if="user" :is-admin="isAdmin" />
+    <FeedbackBubble v-if="user || standalone" :is-admin="standalone ? false : isAdmin" />
 
 
     <div v-if="toastMsg" class="toast" :class="{ error: toastError }">{{ toastMsg }}</div>
