@@ -26,6 +26,7 @@ from app.api import (
 from app.auth.guards import SAFE_METHODS, count_users, registration_open, same_origin
 from app.config import get_settings
 from app.db.session import db_healthy, get_db, init_db
+from app.llm.client import LLMCallError, LLMNotConfiguredError
 from app.models.schemas import DOC_TYPE_LABELS, ConfigResponse
 
 logger = logging.getLogger(__name__)
@@ -64,6 +65,18 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+# LLM 相关错误统一转成友好 HTTP 错误：未配置 Key → 400，模型调用失败 → 502。
+# 这样选校评估 / 文书生成在未配 Key 或调用异常时，前端能直接拿到可读信息，而不是 500。
+@app.exception_handler(LLMNotConfiguredError)
+async def _llm_not_configured_handler(request: Request, exc: LLMNotConfiguredError):
+    return JSONResponse(status_code=400, content={"detail": str(exc)})
+
+
+@app.exception_handler(LLMCallError)
+async def _llm_call_error_handler(request: Request, exc: LLMCallError):
+    return JSONResponse(status_code=502, content={"detail": str(exc)})
 
 
 # 小程序 token 通道：凭据在请求体或 Authorization 头里显式提交，不依赖浏览器自动携带 Cookie。

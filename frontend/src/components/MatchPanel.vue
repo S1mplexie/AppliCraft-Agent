@@ -4,8 +4,11 @@ import { api } from '../api/client'
 import { uid } from '../types'
 import type { ApplicantProfile, MatchItem, MatchResult } from '../types'
 
-const props = defineProps<{ profileId: string; profile: ApplicantProfile; standalone?: boolean }>()
+const props = defineProps<{ profileId: string; profile: ApplicantProfile; standalone?: boolean; llmConfigured?: boolean }>()
 const emit = defineEmits<{ toast: [message: string]; quotaChanged: [] }>()
+
+// 本地部署版必须配置自己的大模型 API Key 才能做 AI 评估；未配置时禁用按钮并提示。
+const llmReady = computed(() => props.llmConfigured !== false)
 
 // 评估是显式扣费动作（系统 Key 用户扣 1 次免费额度），由用户点「开始评估」触发；
 // 切换档案后结果自动清空，提示重新评估（结果随档案分域）。
@@ -85,33 +88,36 @@ async function addToTargets(item: MatchItem) {
     <div class="page-head">
       <div>
         <h1>选校评估</h1>
-        <p>当前档案「{{ props.profile.label || '未命名档案' }}」的硬指标与 30 个港新项目要求的规则比对</p>
+        <p>大模型结合档案与 30 个港新项目官方要求，给出适配等级（保底 / 稳妥 / 冲刺 / 硬性缺口）</p>
       </div>
       <div v-if="state !== 'idle'" class="head-actions">
-        <button class="btn primary" :disabled="state === 'loading'" @click="runMatch">
+        <button class="btn primary" :disabled="state === 'loading' || !llmReady" @click="runMatch">
           {{ state === 'loading' ? '评估中…' : '重新评估' }}
         </button>
       </div>
     </div>
 
     <div v-if="state === 'idle'" class="card">
-      <p style="margin: 0 0 10px;">基于档案中的 GPA、均分、语言分（含单项）与专业课程，对 30 个港新项目做规则比对：</p>
+      <p style="margin: 0 0 10px;">由大模型综合档案中的 GPA / 均分、语言成绩（含单项）、专业与课程匹配度、科研 / 实习等背景，对 30 个港新项目评估适配等级：</p>
       <ul class="match-idle-list">
-        <li>匹配度分级（保底 / 稳妥 / 冲刺），每条附判断依据</li>
-        <li>硬性缺口清单（精确到语言单项分，例如「写作 5.0 不满足单项要求 5.5」）</li>
+        <li>适配等级分级（保底 / 稳妥 / 冲刺 / 硬性缺口），每条附判断依据</li>
+        <li>硬性缺口清单（语言未达标等明显不满足官方门槛的项目会被单独标出）</li>
         <li>一键把项目加入目标项目列表</li>
       </ul>
-      <p class="hint" style="margin: 10px 0 14px;">
+      <p v-if="props.standalone && !llmReady" class="banner" style="margin: 10px 0 14px;">
+        请先在「设置 → 我的大模型 API」填入你自己的 API Key，才能使用 AI 选校评估。
+      </p>
+      <p v-else class="hint" style="margin: 10px 0 14px;">
         <template v-if="props.standalone">
-          本地部署版评估不消耗任何额度，可随时重新评估。
-          评估为规则比对、结果仅供参考：语言分数随入学季更新，提交申请前以官网为准。
+          本地部署版用你自己的 Key 调用大模型，不消耗任何免费额度，可随时重新评估。
+          结果由 AI 结合官方要求给出，仅供参考：语言硬性门槛以官方要求为准，提交申请前请以官网最新信息为准。
         </template>
         <template v-else>
           每次评估消耗 1 次免费额度（与文书生成共用每日配额；管理员与自有 Key 用户不占用）。
-          评估为规则比对、结果仅供参考：语言分数随入学季更新，提交申请前以官网为准。
+          结果由 AI 结合官方要求给出，仅供参考：语言硬性门槛以官方要求为准，提交申请前请以官网最新信息为准。
         </template>
       </p>
-      <button class="btn primary" :disabled="state === 'loading'" @click="runMatch">开始评估</button>
+      <button class="btn primary" :disabled="state === 'loading' || !llmReady" @click="runMatch">开始评估</button>
     </div>
 
     <div v-else-if="state === 'loading'" class="card">

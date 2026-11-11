@@ -53,6 +53,15 @@ const freeRemaining = computed(() =>
 const billingUnlimited = computed(() => !!(myLlm.value?.unlimited ?? quota.value?.unlimited))
 // 悬浮球反馈弹窗形态：管理员查看全部反馈，普通用户提交建议。
 const isAdmin = computed(() => !!(myLlm.value?.is_admin || quota.value?.source === 'admin'))
+// 选校评估需要可用的大模型：本地版=已配本地 Key；网页版=系统 Key 已配或自有 Key/管理员。
+const llmConfigured = computed(() => {
+  if (standalone.value) return myLlm.value?.effective_source === 'personal'
+  return !!(
+    config.value?.llm_configured ||
+    myLlm.value?.effective_source === 'personal' ||
+    isAdmin.value
+  )
+})
 
 const freeExhausted = computed(() =>
   !billingUnlimited.value && freeRemaining.value !== null && freeRemaining.value <= 0,
@@ -706,6 +715,7 @@ onUnmounted(() => window.removeEventListener('hashchange', onHashChange))
         <div v-show="activeTab === 'match'" class="page-view">
           <MatchPanel
             :profile-id="currentProfileId" :profile="profile" :standalone="standalone"
+            :llm-configured="llmConfigured"
             @quota-changed="refreshQuota" @toast="(m) => toast(m, false)"
           />
         </div>
