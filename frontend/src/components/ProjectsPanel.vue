@@ -81,6 +81,11 @@ async function renameProject() {
   await loadProjects()
 }
 
+function startRename() {
+  editingName.value = true
+  nameDraft.value = detail.value?.name || ''
+}
+
 async function removeProject() {
   if (!detail.value || !window.confirm(`删除项目「${detail.value.name}」？名下文书会回到未分组，不会被删除。`)) return
   await api.deleteProject(props.profileId, detail.value.id)
@@ -111,21 +116,25 @@ function sourceLabel(p: ApplicationProject) { return p.source === 'imported' ? '
     <template v-if="detail">
       <div class="page-head">
         <div>
-          <button class="btn btn-ghost small" @click="detailId = ''">← 返回列表</button>
           <template v-if="editingName">
             <input v-model="nameDraft" class="proj-name-input" @keyup.enter="renameProject" />
-            <button class="btn small primary" @click="renameProject">保存</button>
-            <button class="btn small" @click="editingName = false">取消</button>
           </template>
           <h1 v-else>
             {{ detail.name }}
             <span class="proj-badge" :class="detail.source">{{ sourceLabel(detail) }}</span>
-            <button class="btn btn-ghost small" @click="editingName = true; nameDraft = detail.name">改名</button>
           </h1>
         </div>
         <div class="head-actions">
-          <button class="btn" @click="emit('go', 'generate')">生成新文书</button>
-          <button class="btn danger-ghost" @click="removeProject">删除项目</button>
+          <button class="btn" @click="detailId = ''">← 返回列表</button>
+          <template v-if="editingName">
+            <button class="btn primary" @click="renameProject">保存</button>
+            <button class="btn" @click="editingName = false">取消</button>
+          </template>
+          <template v-else>
+            <button class="btn" @click="emit('go', 'generate')">生成新文书</button>
+            <button class="btn" @click="startRename">改名</button>
+            <button class="btn" @click="removeProject">删除项目</button>
+          </template>
         </div>
       </div>
 
@@ -178,17 +187,19 @@ function sourceLabel(p: ApplicationProject) { return p.source === 'imported' ? '
           <h1>项目管理</h1>
           <p>把文书按申请项目组织：从知识库导入官方项目，或自定义新建。</p>
         </div>
-        <div class="head-actions">
+      </div>
+
+      <p v-if="loading" class="hint">正在加载项目…</p>
+      <div v-else class="proj-toolbar">
+        <p v-if="!projects.length" class="empty-lead">
+          还没有申请项目。从知识库导入目标院校项目，或自定义新建：
+        </p>
+        <div class="proj-actions">
           <button class="btn primary" @click="modal = 'import'">从知识库导入</button>
           <button class="btn" @click="modal = 'create'">新建项目</button>
         </div>
       </div>
-
-      <p v-if="loading" class="hint">正在加载项目…</p>
-      <p v-else-if="!projects.length" class="empty-lead">
-        还没有申请项目。点击「从知识库导入」挑选目标院校项目，或「新建项目」手动登记。
-      </p>
-      <div v-else class="proj-grid">
+      <div v-if="!loading && projects.length" class="proj-grid">
         <button v-for="p in projects" :key="p.id" class="proj-card" @click="detailId = p.id">
           <div class="proj-card-head">
             <strong>{{ p.name }}</strong>
