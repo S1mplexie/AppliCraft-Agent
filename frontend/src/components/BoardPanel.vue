@@ -100,7 +100,8 @@ const sortedProjects = computed(() => {
     const da = a.deadline ? new Date(`${a.deadline}T00:00:00`).getTime() : Infinity
     const db = b.deadline ? new Date(`${b.deadline}T00:00:00`).getTime() : Infinity
     if (da !== db) return da - db
-    return b.updated_at.localeCompare(a.updated_at)
+    // 稳定排序：截止日相同的项目按创建顺序（id）排列，避免打勾等编辑改动 updated_at 后卡片乱跳。
+    return a.id.localeCompare(b.id)
   })
   return arr
 })
@@ -124,19 +125,25 @@ function openDeadline(p: ApplicationProject) {
   editingId.value = p.id
   deadlineDraft.value = p.deadline || ''
 }
+/** 就地更新项目，避免整段重新拉取导致看板闪烁、卡片跳动。 */
+function applyProject(updated: ApplicationProject) {
+  const i = projects.value.findIndex(x => x.id === updated.id)
+  if (i !== -1) projects.value[i] = updated
+  else projects.value.push(updated)
+}
 async function saveDeadline(p: ApplicationProject) {
   try {
-    await api.updateProject(props.profileId, p.id, { deadline: deadlineDraft.value || null })
+    const updated = await api.updateProject(props.profileId, p.id, { deadline: deadlineDraft.value || null })
+    applyProject(updated)
     editingId.value = ''
-    await loadProjects()
   } catch { /* 失败静默，下次刷新再看 */ }
 }
 async function toggleManual(p: ApplicationProject, key: ManualKey) {
   const mats = { ...(p.materials || {}) }
   mats[key] = !mats[key]
   try {
-    await api.updateProject(props.profileId, p.id, { materials: mats })
-    await loadProjects()
+    const updated = await api.updateProject(props.profileId, p.id, { materials: mats })
+    applyProject(updated)
   } catch { /* 失败静默 */ }
 }
 
