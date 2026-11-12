@@ -6,14 +6,13 @@ import DocumentLibrary from './components/DocumentLibrary.vue'
 import LibraryPanel from './components/LibraryPanel.vue'
 import SkillMarketPanel from './components/SkillMarketPanel.vue'
 import ProjectsPanel from './components/ProjectsPanel.vue'
-import BoardPanel from './components/BoardPanel.vue'
 import SettingsView from './components/SettingsView.vue'
 import MatchPanel from './components/MatchPanel.vue'
 import AuthView from './components/AuthView.vue'
 import ProfileSwitcher from './components/ProfileSwitcher.vue'
 import { api, onUnauthorized } from './api/client'
 import {
-  demoProfile, emptyProfile,
+  demoProfile, emptyProfile, uid,
   type AppConfig, type ApplicantProfile, type ApplicationProject, type AuthResponse, type AuthUser,
   type DocumentDetail, type DocumentMeta, type GeneratePayload, type Issue,
   type KnowledgeRef, type LocalLLMConfig, type NodeEvent, type ProfileSection, type ProfileSummary, type QuotaInfo,
@@ -21,21 +20,29 @@ import {
   type SystemProgram, type TabKey, type UserLLMConfig,
 } from './types'
 
-/** 一级导航：左侧栏工作区。 */
-const TABS: { key: TabKey; label: string }[] = [
-  { key: 'profile', label: '申请人档案' },
-  { key: 'match', label: '选校评估' },
-  { key: 'projects', label: '项目管理' },
-  { key: 'board', label: '申请看板' },
-  { key: 'generate', label: '生成文书' },
-  { key: 'library', label: '参考文档库' },
-  { key: 'skills', label: 'Skill 市场' },
-  { key: 'documents', label: '文书库' },
-  { key: 'settings', label: '设置' },
+/** 一级导航：按工作流分组的左侧栏。申请看板（board）已下沉为「项目管理」内部的视图切换，不再单独占一个顶级 tab。 */
+const NAV_GROUPS: { label: string; tabs: { key: TabKey; label: string }[] }[] = [
+  { label: '申请准备', tabs: [
+    { key: 'profile', label: '申请人档案' },
+    { key: 'match', label: '选校评估' },
+    { key: 'projects', label: '项目管理' },
+  ]},
+  { label: '文书', tabs: [
+    { key: 'generate', label: '生成文书' },
+    { key: 'documents', label: '文书库' },
+  ]},
+  { label: '素材', tabs: [
+    { key: 'library', label: '参考文档库' },
+    { key: 'skills', label: 'Skill 市场' },
+  ]},
+  { label: '设置', tabs: [
+    { key: 'settings', label: '设置' },
+  ]},
 ]
+const ALL_TABS = NAV_GROUPS.flatMap(g => g.tabs)
 function tabFromHash(): TabKey {
   const key = window.location.hash.replace(/^#\/?/, '')
-  return TABS.some(tab => tab.key === key) ? key as TabKey : 'profile'
+  return ALL_TABS.some(tab => tab.key === key) ? key as TabKey : 'profile'
 }
 
 const activeTab = ref<TabKey>('profile')
@@ -291,8 +298,9 @@ async function saveProfile(silent = false) {
 }
 
 // 自动保存唯一事实来源；档案正在载入时不触发保存。
+// 注意：本地部署版（standalone）user 恒为 null，不能拿它当自动保存开关，否则本地版永远不保存。
 watch(profile, () => {
-  if (loading || !currentProfileId.value || !user.value) return
+  if (loading || !currentProfileId.value) return
   pendingSave = true
   saveState.value = '有未保存的修改…'
   window.clearTimeout(saveTimer)
@@ -343,7 +351,7 @@ async function selectProfile(id: string) {
   }
 }
 
-interface CreateOptions { label?: string; withDemo?: boolean; switchToProfile?: boolean }
+interface CreateOptions { label?: string; withDemo?: boolean; switchToProfile?: boolean; importedProgramIds?: string[] }
 
 async function createProfile(options: CreateOptions = {}) {
   if (generating.value) { toast('生成进行中，暂不能新建档案', true); return }
@@ -352,11 +360,33 @@ async function createProfile(options: CreateOptions = {}) {
     const base = withDemo ? demoProfile() : emptyProfile()
     // 创建时就能命名，避免多份「未命名档案」分不清。
     base.label = options.label?.trim() || `我的申请档案 ${profiles.value.length + 1}`
+    // 创建时支持从系统自带项目导入目标院校：勾选的官方项目直接写入档案「目标项目」。
+    const imported = (options.importedProgramIds || [])
+      .map(id => systemPrograms.value.find(p => p.program_id === id))
+      .filter((p): p is SystemProgram => !!p)
+    if (imported.length) {
+      base.target_programs = imported.map((p) => ({
+        id: uid(),
+        university: p.school_name_zh,
+        program: p.program_name_zh || p.program_name_en,
+        degree_type: '',
+        region: p.region === 'HK' ? 'Hong Kong, China' : p.region === 'SG' ? 'Singapore' : p.region,
+        intake: p.intake,
+        deadline: '',
+        language_requirement: '',
+        curriculum_notes: '',
+        faculty_notes: p.faculty,
+        why_fit: '',
+        notes: (p.official_urls || []).length ? `官方页面：${p.official_urls.join('  ')}` : '',
+      }))
+    }
     const saved = await api.createProfile(base)
     await loadProfiles()
     await selectProfile(saved.id)
     switcherOpen.value = false
-    toast(withDemo ? '已载入示例档案，请替换为真实信息后再生成' : `已创建「${base.label}」`)
+    toast(withDemo
+      ? '已载入示例档案，请替换为真实信息后再生成'
+      : `已创建「${base.label}」${imported.length ? `，并导入 ${imported.length} 个目标项目` : ''}`)
     if (options.switchToProfile !== false) activeTab.value = 'profile'
   } catch (error) {
     toast((error as Error).message, true)
@@ -642,16 +672,19 @@ onUnmounted(() => window.removeEventListener('hashchange', onHashChange))
         <span class="brand-text"><strong>AppliCraft</strong><small>申请材料工作台</small></span>
       </div>
       <nav class="side-nav" aria-label="主导航">
-        <button
-          v-for="tab in TABS" :key="tab.key" class="side-item"
-          :class="{ active: activeTab === tab.key }" @click="goTab(tab.key)"
-        >
-          <span class="side-label">{{ tab.label }}</span>
-          <span v-if="tab.key === 'documents' && documents.length" class="side-num">{{ documents.length }}</span>
-          <span v-if="tab.key === 'library' && references.length" class="side-num">{{ references.length }}</span>
-          <span v-if="tab.key === 'skills' && selectedSkillIds.length" class="side-num">{{ selectedSkillIds.length }}</span>
-          <span v-if="tab.key === 'generate' && generating" class="side-badge running-badge">生成中</span>
-        </button>
+        <div v-for="group in NAV_GROUPS" :key="group.label" class="side-group">
+          <span class="side-group-label">{{ group.label }}</span>
+          <button
+            v-for="tab in group.tabs" :key="tab.key" class="side-item"
+            :class="{ active: activeTab === tab.key }" @click="goTab(tab.key)"
+          >
+            <span class="side-label">{{ tab.label }}</span>
+            <span v-if="tab.key === 'documents' && documents.length" class="side-num">{{ documents.length }}</span>
+            <span v-if="tab.key === 'library' && references.length" class="side-num">{{ references.length }}</span>
+            <span v-if="tab.key === 'skills' && selectedSkillIds.length" class="side-num">{{ selectedSkillIds.length }}</span>
+            <span v-if="tab.key === 'generate' && generating" class="side-badge running-badge">生成中</span>
+          </button>
+        </div>
       </nav>
       <div class="sidebar-foot">
         <p>文书事实全部来自申请人档案。<br />生成后请人工核对再提交。</p>
@@ -663,7 +696,8 @@ onUnmounted(() => window.removeEventListener('hashchange', onHashChange))
         <div class="topbar-center">
           <ProfileSwitcher
             v-model:open="switcherOpen" :profiles="profiles" :current-id="currentProfileId"
-            :busy="generating" @select="selectProfile" @create="createProfile"
+            :busy="generating" :system-programs="systemPrograms"
+            @select="selectProfile" @create="createProfile"
             @rename="(payload) => renameProfile(payload.id, payload.label)"
             @remove="removeProfile"
           />
@@ -718,7 +752,7 @@ onUnmounted(() => window.removeEventListener('hashchange', onHashChange))
             </div>
             <ProfileForm
               :key="currentProfileId" :profile="profile" :section="profileSection"
-              :save-state="saveState" @section-change="profileSection = $event"
+              :save-state="saveState" @section-change="profileSection = $event" @save="saveProfile(false)"
             />
           </div>
         </div>
@@ -732,17 +766,9 @@ onUnmounted(() => window.removeEventListener('hashchange', onHashChange))
           />
         </div>
 
-        <!-- 项目管理 -->
+        <!-- 项目管理（含「看板」视图切换） -->
         <div v-show="activeTab === 'projects'" class="page-view">
           <ProjectsPanel
-            :profile-id="currentProfileId" :documents="documents" :system-programs="systemPrograms"
-            @go="goTab" @refresh-docs="loadDocuments"
-          />
-        </div>
-
-        <!-- 申请看板 -->
-        <div v-show="activeTab === 'board'" class="page-view">
-          <BoardPanel
             :profile-id="currentProfileId" :documents="documents" :system-programs="systemPrograms"
             @go="goTab" @refresh-docs="loadDocuments"
           />

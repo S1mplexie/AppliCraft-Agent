@@ -9,6 +9,8 @@ const props = defineProps<{
   profileId: string
   documents: DocumentMeta[]
   systemPrograms: SystemProgram[]
+  /** 嵌套在「项目管理」列表页内时隐藏自身页头，避免与列表页头重复。 */
+  embedded?: boolean
 }>()
 const emit = defineEmits<{
   (e: 'go', tab: 'generate' | 'documents' | 'projects'): void
@@ -163,7 +165,7 @@ function officialLinks(p: ApplicationProject) {
 
 <template>
   <div class="page board-page">
-    <div class="bd-head">
+    <div v-if="!embedded" class="bd-head">
       <div class="bd-head-main">
         <span class="bd-eyebrow">APPLICATION BOARD · 申请看板</span>
         <h1>申请看板</h1>
@@ -173,6 +175,10 @@ function officialLinks(p: ApplicationProject) {
         <button class="btn" @click="emit('go', 'projects')">管理项目</button>
         <button class="btn primary" @click="emit('go', 'generate')">生成文书</button>
       </div>
+    </div>
+    <div v-else class="bd-embed-head">
+      <span class="bd-eyebrow">申请看板</span>
+      <p>总览所有目标项目的截止日期、材料进度与文书状态。</p>
     </div>
 
     <p v-if="loading" class="bd-loading"><span class="bd-loading-dot"></span>正在加载项目…</p>

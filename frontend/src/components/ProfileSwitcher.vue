@@ -1,18 +1,19 @@
 <script setup lang="ts">
 /** 顶栏唯一的档案管理入口：切换、新建、改名、删除都在这里完成。 */
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
-import type { ProfileSummary } from '../types'
+import type { ProfileSummary, SystemProgram } from '../types'
 
 const props = defineProps<{
   profiles: ProfileSummary[]
   currentId: string
   busy: boolean
   open: boolean
+  systemPrograms: SystemProgram[]
 }>()
 const emit = defineEmits<{
   'update:open': [value: boolean]
   select: [id: string]
-  create: [payload: { label: string; withDemo: boolean }]
+  create: [payload: { label: string; withDemo: boolean; importedProgramIds: string[] }]
   rename: [payload: { id: string; label: string }]
   remove: [id: string]
 }>()
@@ -22,6 +23,26 @@ const newLabel = ref('')
 const renameId = ref('')
 const renameValue = ref('')
 const removeId = ref('')
+
+// 创建档案时从系统自带项目导入目标院校（可选）。
+const importOpen = ref(false)
+const importSearch = ref('')
+const importChecked = ref<string[]>([])
+const filteredPrograms = computed(() => {
+  const kw = importSearch.value.trim().toLowerCase()
+  return props.systemPrograms.filter(p => {
+    if (!kw) return true
+    return `${p.school_name_zh}${p.school_id}${p.program_name_zh}${p.program_name_en}${p.faculty}`
+      .toLowerCase().includes(kw)
+  })
+})
+function isImp(id: string) { return importChecked.value.includes(id) }
+function toggleImp(p: SystemProgram) {
+  importChecked.value = isImp(p.program_id)
+    ? importChecked.value.filter(id => id !== p.program_id)
+    : [...importChecked.value, p.program_id]
+}
+function clearImp() { importChecked.value = [] }
 
 const current = computed(() => props.profiles.find(item => item.id === props.currentId))
 
@@ -69,8 +90,10 @@ function confirmRemove() {
 }
 function create(withDemo: boolean) {
   if (props.busy) return
-  emit('create', { label: newLabel.value.trim(), withDemo })
+  emit('create', { label: newLabel.value.trim(), withDemo, importedProgramIds: importChecked.value })
   newLabel.value = ''
+  importChecked.value = []
+  importOpen.value = false
   close()
 }
 
@@ -149,6 +172,43 @@ function fmtDate(value: string): string {
         <div class="switcher-create-actions">
           <button class="btn small primary" :disabled="busy" @click="create(false)">＋ 空白档案</button>
           <button class="btn small" :disabled="busy" @click="create(true)">载入示例</button>
+        </div>
+      </div>
+
+      <div class="switcher-import">
+        <button
+          class="switcher-import-toggle" :class="{ open: importOpen }" :disabled="busy"
+          @click="importOpen = !importOpen"
+        >
+          <span>从系统项目导入目标院校（可选）</span>
+          <span class="switcher-import-caret">{{ importOpen ? '▴' : '▾' }}</span>
+        </button>
+        <div v-if="importOpen" class="switcher-import-body">
+          <p v-if="!props.systemPrograms.length" class="hint imp-hint">系统项目库未加载，可稍后到「项目管理」导入。</p>
+          <template v-else>
+            <div class="imp-search">
+              <input v-model="importSearch" placeholder="搜索学校 / 专业中英文名…" aria-label="搜索系统项目" />
+            </div>
+            <div class="switcher-import-list">
+              <label
+                v-for="p in filteredPrograms" :key="p.program_id" class="switcher-imp-item"
+                :class="{ on: isImp(p.program_id) }"
+              >
+                <input
+                  type="checkbox" :checked="isImp(p.program_id)"
+                  @change="toggleImp(p)"
+                />
+                <span class="switcher-imp-text">
+                  <b>{{ p.school_name_zh }}</b>
+                  <small>{{ p.program_name_zh || p.program_name_en }}</small>
+                </span>
+              </label>
+            </div>
+            <div class="switcher-import-foot">
+              <span class="hint">已选 {{ importChecked.length }} 个</span>
+              <button v-if="importChecked.length" class="link" @click="clearImp">清空</button>
+            </div>
+          </template>
         </div>
       </div>
       <p class="switcher-foot">切换后，档案表单、文书库与生成参数会一起切换到该档案。</p>

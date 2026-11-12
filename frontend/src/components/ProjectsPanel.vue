@@ -3,6 +3,7 @@
  *  项目详情里把已生成的文书归组 / 移出，未归组文书标「未分组」。 */
 import { computed, ref, watch } from 'vue'
 import { api } from '../api/client'
+import BoardPanel from './BoardPanel.vue'
 import type { ApplicationProject, DocumentMeta, SystemProgram } from '../types'
 
 const props = defineProps<{
@@ -10,7 +11,10 @@ const props = defineProps<{
   documents: DocumentMeta[]
   systemPrograms: SystemProgram[]
 }>()
-const emit = defineEmits<{ (e: 'go', tab: 'generate' | 'documents'): void; (e: 'refresh-docs'): void }>()
+const emit = defineEmits<{ (e: 'go', tab: 'generate' | 'documents' | 'projects'): void; (e: 'refresh-docs'): void }>()
+
+// 项目管理提供「列表 / 看板」两种视图；看板即原来的「申请看板」，下沉到这里避免两个顶级 tab 各说各话。
+const view = ref<'list' | 'board'>('list')
 
 const projects = ref<ApplicationProject[]>([])
 const loading = ref(false)
@@ -393,12 +397,22 @@ function sourceLabel(p: ApplicationProject) { return p.source === 'imported' ? '
           <p>按申请项目归类文书，一眼看清每所学校的材料准备进度。</p>
         </div>
         <div class="pl-head-actions">
+          <div class="pl-view-toggle" role="tablist" aria-label="项目视图">
+            <button :class="{ on: view === 'list' }" role="tab" :aria-selected="view === 'list'" @click="view = 'list'">列表</button>
+            <button :class="{ on: view === 'board' }" role="tab" :aria-selected="view === 'board'" @click="view = 'board'">看板</button>
+          </div>
           <button class="btn primary" @click="modal = 'import'">＋ 从知识库导入</button>
           <button class="btn" @click="modal = 'create'">新建项目</button>
         </div>
       </div>
 
       <p v-if="loading" class="pl-loading"><span class="pl-loading-dot"></span>正在加载项目…</p>
+
+      <BoardPanel
+        v-else-if="view === 'board'"
+        :profile-id="profileId" :documents="documents" :system-programs="systemPrograms" embedded
+        @go="emit('go', $event)" @refresh-docs="emit('refresh-docs')"
+      />
 
       <template v-else>
         <!-- 准备概览：四项指标 + 文书归组进度 -->

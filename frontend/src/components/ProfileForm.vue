@@ -11,7 +11,7 @@ const props = defineProps<{
   section?: ProfileSection
   saveState?: string
 }>()
-const emit = defineEmits<{ sectionChange: [section: ProfileSection] }>()
+const emit = defineEmits<{ sectionChange: [section: ProfileSection]; save: [] }>()
 
 // 切换当前档案时，父组件通过 :key 重新挂载本组件；p 始终指向同一个响应式档案对象。
 const p = props.profile
@@ -70,7 +70,10 @@ const newRecommender = (): Recommender => ({
   <div class="profile-workspace">
     <div class="profile-toolbar">
       <label class="field profile-name"><span>档案名称</span><input v-model="p.label" placeholder="例如：陈亦然 2027 Fall" /></label>
-      <span class="save-state">{{ saveState || '修改后自动保存' }}</span>
+      <div class="profile-toolbar-right">
+        <span class="save-state">{{ saveState || '修改后自动保存' }}</span>
+        <button class="btn small" type="button" :disabled="!p.id" @click="emit('save')">保存</button>
+      </div>
     </div>
 
     <div class="profile-layout">
