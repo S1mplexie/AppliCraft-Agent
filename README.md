@@ -9,10 +9,12 @@
 > **不想安装、想直接在线用？** 用网页版：**https://applicraft.cn/**
 > 免安装、打开浏览器即用，支持多份档案与申请看板，每天有免费额度。两版怎么选见[第九节](#online)。
 >
-> **不想用了要卸载？** Windows 双击 `uninstall.bat`，macOS / Linux 运行 `bash uninstall.sh`，
-> 一条命令清掉服务、依赖和整个项目（默认先备份数据）。完整说明见[一键卸载](#uninstall)。
+> **不想用了要卸载？** Windows 双击 `uninstall.bat`，macOS / Linux 运行 `bash uninstall.sh`。
+> 运行后输入 `DELETE`（先备份 `backend/data/` 与 `.env` 再删除，推荐）、`PURGE`（不备份彻底删）
+> 或其它任意内容（取消，不改任何文件）；备份默认放在项目同级目录 `AppliCraftLocal-backup/`。
+> 一条命令清掉 8000 端口服务、Python 虚拟环境依赖和整个项目目录。完整说明见[第八节 · 一键卸载](#uninstall)。
 
-**快速导航**：[一键启动](#一运行前提与快速开始一键启动) · [配置 API Key](#二配置你的大模型-api-key) · [功能一览](#三功能一览) · [数据与备份](#四数据与备份) · [常见问题](#六常见问题) · [一键卸载](#uninstall) · [网页在线版](#online)
+**快速导航**：[一键卸载](#uninstall) · [网页在线版](#online) · 其余章节见下方目录（一 快速开始 / 二 配置 API Key / 三 功能一览 / 四 数据与备份 / 五 目录结构 / 六 常见问题 / 七 环境变量）
 
 ---
 
@@ -136,7 +138,7 @@ AppliCraftLocal/
 
 ---
 
-<a id="uninstall"></a>
+<a id="uninstall" name="uninstall"></a>
 
 ## 八、一键卸载（删除依赖与整个项目）
 
@@ -170,7 +172,7 @@ AppliCraftLocal/
 
 ---
 
-<a id="online"></a>
+<a id="online" name="online"></a>
 
 ## 九、网页在线版（不想装就用这个）
 
