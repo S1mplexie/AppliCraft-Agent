@@ -89,6 +89,7 @@ chmod +x start.sh && ./start.sh
 AppliCraftLocal/
 ├── start.sh / start.bat     # 一键启动（无 Docker）
 ├── restart.sh / restart.bat # 一键重启服务
+├── uninstall.sh / uninstall.bat # 一键卸载（删除依赖 + 整个项目）
 ├── .env.example             # 环境变量示例（可选）
 ├── backend/                 # FastAPI 后端（直接 python 启动）
 │   ├── app/
@@ -107,7 +108,7 @@ AppliCraftLocal/
 - **Linux 上 `python3 -m venv` 失败**：安装 `python3-venv`（`sudo apt install python3-venv python3-pip`），再运行 `bash start.sh`。
 - **端口被占用**：编辑 `start.sh` / `start.bat` 里的 `--port 8000` 换成别的端口，访问对应地址。
 - **想改前端界面**：`cd frontend && npm install && npm run build`，产物写入 `frontend/dist/`，重启服务即可。无需重新编译后端。
-- **清掉所有本地数据**：停止服务后删除 `backend/data/` 目录，下次启动会重新初始化（档案 / 文书会丢失，请先备份）。
+- **清掉所有本地数据**：只想重置数据，可停止服务后删除 `backend/data/` 目录，下次启动会重新初始化（档案 / 文书会丢失，请先备份）；想连程序、依赖一起彻底卸载，请用 `uninstall.sh` / `uninstall.bat`（见第八节，默认会先备份数据）。
 - **安全提示**：API Key 以明文保存在本机文件，请妥善保管这台电脑；不要把它部署到公网裸奔，正式对外请自行加 HTTPS 与访问控制。
 
 ---
@@ -124,3 +125,35 @@ AppliCraftLocal/
 | `APPLICRAFT_HOST` / `APPLICRAFT_PORT` | 监听地址 / 端口，默认 `0.0.0.0` / `8000` |
 
 也可不配置，启动后到「设置 → 我的大模型 API」里填。
+
+---
+
+## 八、一键卸载（删除依赖与整个项目）
+
+不想用了，可以一条命令把服务、依赖和整个项目目录一起清掉：
+
+- **Windows**：双击 `uninstall.bat`
+- **macOS / Linux**：`bash uninstall.sh`
+
+运行后会先列出将删除的目录，然后要求**手动输入确认词**：
+
+| 输入 | 行为 |
+|------|------|
+| `DELETE` | **先备份** `backend/data/` 与 `.env` 到项目同级目录 `AppliCraftLocal-backup/`，再删除（推荐） |
+| `PURGE` | 不备份，直接彻底删除，数据不可恢复 |
+| 其它 / 直接回车 | 取消，什么都不改动 |
+
+脚本依次执行：
+
+1. 结束占用 `8000` 端口的服务进程；
+2. 备份个人数据（仅 `DELETE` 模式）；
+3. 删除 `backend/.venv`（**全部 Python 依赖都装在这里**）与 `frontend/node_modules`；
+4. 删除整个项目目录 —— 源码、前端 `dist/`、`knowledge/`、`.git`、`.env` 全部包含在内。
+
+> 因为脚本要删除自己所在的目录，最后一步由系统临时目录里的辅助脚本延迟 2 秒执行；Windows 会弹出一个小窗口显示删除结果，macOS / Linux 的日志写在 `/tmp/applicraft-uninstall.log`。
+
+**不会动的东西**：系统里安装的 Python 解释器、全局 pip 缓存以及其它项目。本项目的 Python 依赖全部隔离在 `backend/.venv/`，不污染系统环境，删掉即干净。若备份目录已存在，新的备份会自动加随机/时间戳后缀，不会覆盖旧备份。
+
+**重装 / 找回数据**：重新下载 ZIP 或 clone 仓库后，把备份目录里的 `backend-data/` 内容拷回新项目的 `backend/data/` 即可恢复档案、文书与 Key 配置（`.env` 同理拷回项目根目录）。
+
+> 只想清空档案但保留程序？停止服务后删除 `backend/data/`，下次启动会自动重新初始化。
