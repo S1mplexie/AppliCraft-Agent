@@ -720,12 +720,15 @@ label.bi-toggle-row > .bi-toggle-input {
 .overall-field { margin-bottom: 2px; }
 
 /* ================= 登录页 ================= */
+/* 纵向 flex + auto margin：短屏内容溢出时从顶部排布并可滚动，避免居中裁切。 */
 .auth-shell {
-  min-height: 100vh; display: flex; align-items: center; justify-content: center;
-  padding: 40px 24px; background: var(--paper);
+  min-height: 100vh; min-height: 100dvh;
+  display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+  padding: 40px 24px 64px; background: var(--paper);
 }
 .auth-layout {
-  width: 100%; max-width: 980px; display: grid; gap: 48px; align-items: center;
+  width: 100%; max-width: 980px; margin: auto 0;
+  display: grid; gap: 48px; align-items: center;
   grid-template-columns: 1.05fr .95fr;
 }
 .intro-brand { display: flex; align-items: center; gap: 11px; font-family: var(--serif); font-size: 17px; font-weight: 700; }
@@ -874,7 +877,7 @@ label.bi-toggle-row > .bi-toggle-input {
   .auth-layout { grid-template-columns: 1fr; gap: 24px; max-width: 460px; }
   .auth-intro h1 { font-size: 25px; margin-top: 18px; }
   .intro-points { display: none; }
-  .auth-shell { padding: 24px 16px; }
+  .auth-shell { padding: 16px 16px 48px; }
   .auth-card { padding: 20px 18px 16px; }
 
   /* 触控目标：按钮与勾选框加大到舒适点击尺寸 */
