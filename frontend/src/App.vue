@@ -335,6 +335,17 @@ async function flushPendingSave() {
   if (pendingSave && currentProfileId.value) await saveProfile(true)
 }
 
+/** 旧版给「目标项目 · 地区」预置过英文占位值；载入档案时统一改为中文标签并落盘一次。
+ *  只处理完全相等的哨兵值，用户自己写的内容不会被改写。 */
+function normalizeLegacyRegions(data: ApplicantProfile): boolean {
+  const legacy: Record<string, string> = { 'Hong Kong, China': '中国香港', Singapore: '新加坡' }
+  let changed = false
+  for (const t of data.target_programs || []) {
+    if (legacy[t.region]) { t.region = legacy[t.region]; changed = true }
+  }
+  return changed
+}
+
 async function selectProfile(id: string) {
   if (!id || id === currentProfileId.value || switching) { switcherOpen.value = false; return }
   if (generating.value) { toast('生成进行中，暂不能切换档案', true); return }
@@ -346,6 +357,10 @@ async function selectProfile(id: string) {
     profile.value = data
     currentProfileId.value = id
     localStorage.setItem(rememberKey(), id)
+    if (normalizeLegacyRegions(profile.value)) {
+      void saveProfile(true)
+      toast('已把旧版预填的地区改为中文标签，可在「目标项目」核对')
+    }
     activeDoc.value = null
     events.value = []; issues.value = []; outline.value = []; warnings.value = []
     saveState.value = '已载入档案'

@@ -246,6 +246,8 @@ export interface SystemProgram {
 }
 /** 系统项目库条目 → 档案目标项目：只搬官方事实骨架，申请人自述与未核实字段一律留空。 */
 export function systemProgramToTarget(p: SystemProgram): TargetProgram {
+  // 知识库中文项目名可能带「（非官方译名）」标注，那是资料校验注记，不能写进文书事实。
+  const zhName = (p.program_name_zh || '').replace(/[（(]非官方译名[）)]/g, '').trim()
   const notes = [
     p.program_name_en ? `官方英文名：${p.program_name_en}` : '',
     (p.official_urls || []).length ? `官方页面：${(p.official_urls || []).join('  ')}` : '',
@@ -254,7 +256,7 @@ export function systemProgramToTarget(p: SystemProgram): TargetProgram {
     id: uid(),
     source_program_id: p.program_id,
     university: p.school_name_zh || p.school_id,
-    program: p.program_name_zh || p.program_name_en,
+    program: zhName || p.program_name_en,
     degree_type: '',
     region: p.region === 'HK' ? '中国香港' : p.region === 'SG' ? '新加坡' : '',
     intake: p.intake,
