@@ -1084,6 +1084,11 @@ label.bi-toggle-row > .bi-toggle-input {
   margin: 0 0 12px; padding: 9px 12px; border: 1px solid #e8dab2; border-radius: 8px;
   background: var(--warn-soft); color: #6d4c07; font-size: 12px; line-height: 1.6;
 }
+/* 页头副标题较长时不可压缩右侧操作区，否则按钮文字会被挤到换行 / 截断 */
+.match-page .page-head > div:first-child { flex: 1 1 320px; min-width: 0; }
+.match-page .page-head .head-actions { flex: 0 0 auto; }
+.match-page .head-actions .btn { white-space: nowrap; }
+
 
 /* 等级徽章（四档统一配色；lg 用于分区标题） */
 .tier-badge { display: inline-flex; align-items: center; padding: 2px 10px; border-radius: 999px; font-size: 10.5px; font-weight: 700; border: 1px solid transparent; white-space: nowrap; }

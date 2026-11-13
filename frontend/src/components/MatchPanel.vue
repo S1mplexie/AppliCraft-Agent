@@ -179,12 +179,11 @@ async function addToTargets(item: MatchItem) {
     <div class="page-head">
       <div>
         <h1>选校评估</h1>
-        <p>大模型结合档案与系统收录的港新项目官方要求，给出适配等级（冲刺 / 稳妥 / 保底 / 硬性缺口）</p>
+        <p>结合档案与项目官方要求，按冲刺 / 稳妥 / 保底 / 硬性缺口分档</p>
       </div>
       <div v-if="state === 'done' || state === 'error'" class="head-actions">
-        <button class="btn primary" :disabled="state === 'loading'" @click="backToPrefs">
-          调整偏好并重新评估
-        </button>
+        <button class="btn primary" :disabled="state === 'loading'" @click="backToPrefs"
+          title="返回偏好设置，修改后重新评估">调整偏好并重新评估</button>
       </div>
     </div>
 
