@@ -329,6 +329,10 @@ select { appearance: auto; cursor: pointer; }
 }
 .prose.bi-grid .bi-zh p:first-child { margin-top: 0; }
 .prose.bi-grid .bi-zh p:last-child { margin-bottom: 0; }
+/* 整宽块：标题/列表等未翻译结构、漏译段落，以及落单译块，整宽渲染不进双栏。 */
+.prose.bi-grid .bi-full { margin: 0 0 14px; padding: 0 0 14px; border-bottom: 1px dashed var(--line); }
+.prose.bi-grid .bi-full:last-child { border-bottom: none; padding-bottom: 0; }
+.prose.bi-grid .bi-full-zh { color: #5a6068; background: #f5f6f8; border-radius: 5px; padding: 10px 12px; border-left: 3px solid var(--accent, #b08d57); }
 @media (max-width: 760px) {
   .prose.bi-grid .bi-pair { grid-template-columns: 1fr; gap: 6px; }
   .prose.bi-grid .bi-zh { margin-bottom: 8px; }

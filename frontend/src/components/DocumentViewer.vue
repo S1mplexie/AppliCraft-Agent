@@ -94,40 +94,44 @@ function _stripZhBlocks(md: string): string {
   return out.join('\n')
 }
 
-function _pairHtml(enText: string, zhText: string): string {
-  const en = enText.trim() ? sanitize(String(marked.parse(enText, { breaks: true }))) : ''
-  const zh = zhText.trim() ? sanitize(String(marked.parse(zhText, { breaks: true }))) : ''
-  return `<div class="bi-pair"><div class="bi-en">${en}</div><div class="bi-zh">${zh}</div></div>`
+// 中英对照：按空行把正文切成「块」，逐块配对。
+// 规则：仅有「英文块紧跟其译块」时才渲染成左右一对；标题 / 列表等未翻译结构、
+// 或模型漏译的段落，一律整宽渲染（不进双栏，避免空白右栏）；译块只配对紧邻的
+// 上一个英文块，从根本上杜绝左右错位。
+function _cleanZh(block: string): string {
+  return block
+    .replace(/^\s*>\s*译[:：]\s?/gm, '')
+    .replace(/^\s*>\s?/gm, '')
+    .trim()
 }
 
 function _buildBilingual(md: string): string {
-  const lines = md.split('\n')
-  let en: string[] = []
-  let zh: string[] = []
-  let zhOpen = false
+  const norm = md.replace(/\r\n/g, '\n')
+  const blocks = norm.split(/\n{2,}/).map(b => b.trim()).filter(b => b !== '')
   const out: string[] = []
-  const flush = () => {
-    if (en.length || zh.length) {
-      out.push(_pairHtml(en.join('\n'), zh.join('\n')))
-      en = []; zh = []; zhOpen = false
-    }
-  }
-  for (const line of lines) {
-    if (/^\s*>\s*译[:：]/.test(line)) {
-      zhOpen = true
-      zh.push(line.replace(/^\s*>\s*译[:：]\s?/, ''))
-    } else if (zhOpen && /^\s*>/.test(line)) {
-      zh.push(line.replace(/^\s*>\s?/, ''))
-    } else {
-      if (zhOpen) flush()
-      if (line.trim() === '') {
-        if (en.length) flush()
+  let pendingEn = ''
+  const renderFull = (enText: string) =>
+    `<div class="bi-full">${sanitize(String(marked.parse(enText, { breaks: true })))}</div>`
+  const renderPair = (enText: string, zhText: string) =>
+    `<div class="bi-pair"><div class="bi-en">${sanitize(String(marked.parse(enText, { breaks: true })))}</div>` +
+    `<div class="bi-zh">${sanitize(String(marked.parse(zhText, { breaks: true })))}</div></div>`
+  const isZh = (b: string) => /^\s*>\s*译[:：]/.test(b)
+  for (const block of blocks) {
+    if (isZh(block)) {
+      const zh = _cleanZh(block)
+      if (pendingEn) {
+        out.push(renderPair(pendingEn, zh))
+        pendingEn = ''
       } else {
-        en.push(line)
+        // 落单译块（前面无可配对英文）：整宽显示中文，避免凭空成对照。
+        out.push(`<div class="bi-full bi-full-zh">${sanitize(String(marked.parse(zh, { breaks: true })))}</div>`)
       }
+    } else {
+      if (pendingEn) out.push(renderFull(pendingEn))
+      pendingEn = block
     }
   }
-  flush()
+  if (pendingEn) out.push(renderFull(pendingEn))
   return out.join('\n')
 }
 
