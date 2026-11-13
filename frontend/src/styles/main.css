@@ -316,7 +316,27 @@ select { appearance: auto; cursor: pointer; }
 .prose h1 { font-size: 24px; margin: 0 0 14px; letter-spacing: .1px; line-height: 1.4; }
 .prose h2 { font-size: 15.5px; margin: 26px 0 10px; padding-bottom: 6px; border-bottom: 1px solid var(--line); letter-spacing: .3px; }
 .prose h3 { font-size: 13.5px; margin: 18px 0 8px; }
+/* 中英对照双栏：左英文右中文，逐段对齐；窄屏降级为上下。 */
+.prose.bi-grid { max-width: 1080px; }
+.prose.bi-grid .bi-pair {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0 24px; align-items: start;
+  margin: 0 0 14px; padding: 0 0 14px; border-bottom: 1px dashed var(--line);
+}
+.prose.bi-grid .bi-pair:last-child { border-bottom: none; padding-bottom: 0; }
+.prose.bi-grid .bi-zh {
+  color: #5a6068; background: #f5f6f8; border-radius: 5px; padding: 6px 12px;
+  border-left: 3px solid var(--accent, #b08d57);
+}
+.prose.bi-grid .bi-zh p:first-child { margin-top: 0; }
+.prose.bi-grid .bi-zh p:last-child { margin-bottom: 0; }
+@media (max-width: 760px) {
+  .prose.bi-grid .bi-pair { grid-template-columns: 1fr; gap: 6px; }
+  .prose.bi-grid .bi-zh { margin-bottom: 8px; }
+}
 .prose p { margin: 0 0 13px; }
+.bilingual-tag {
+  font-size: 11px; color: #8a6d3b; background: #f3ead9; border-radius: 3px; padding: 1px 6px;
+}
 .prose ul, .prose ol { margin: 0 0 13px; padding-left: 20px; }
 .prose li { margin-bottom: 5px; }
 .prose strong { color: #171a1f; }

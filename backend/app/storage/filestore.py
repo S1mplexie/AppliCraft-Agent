@@ -39,6 +39,22 @@ def _count_words(text: str) -> int:
     return latin + cjk
 
 
+def _strip_zh_blocks(text: str) -> str:
+    """移除中英对照文档里的 `> 译：...` 翻译块，得到纯英文正文（用于字数统计与导出）。"""
+    lines = (text or "").splitlines()
+    out: list[str] = []
+    skipping = False
+    for line in lines:
+        if re.match(r"^\s*>\s*译[:：]", line):
+            skipping = True
+            continue
+        if skipping and re.match(r"^\s*>", line):
+            continue
+        skipping = False
+        out.append(line)
+    return "\n".join(out).strip() + "\n"
+
+
 class FileStore:
     def __init__(self, root: Path):
         self.root = Path(root).resolve()
@@ -129,12 +145,15 @@ class FileStore:
         model: str,
         language: str,
         subject: str = "",
+        bilingual: bool = False,
     ) -> dict[str, Any]:
         doc_id = uuid4().hex[:12]
         doc_dir = self._doc_dir(doc_id)
         now = _now()
         label = DOC_TYPE_LABELS.get(doc_type, doc_type)
         title = f"{label} · {subject or '通用'} · {now[:10]}"
+        # 双语文档：字数只统计英文正文（剥离译块），避免中文翻译虚增词数。
+        count_md = _strip_zh_blocks(markdown) if bilingual else markdown
         meta: dict[str, Any] = {
             "id": doc_id,
             "profile_id": self.check_id(profile_id),
@@ -146,7 +165,8 @@ class FileStore:
             "version": 1,
             "model": model,
             "language": language,
-            "word_count": _count_words(markdown),
+            "bilingual": bilingual,
+            "word_count": _count_words(count_md),
             "passed_verification": bool(trace.get("passed_verification", False)),
             "issue_count": len(trace.get("issues", []) or []),
         }
@@ -167,7 +187,9 @@ class FileStore:
         version = int(meta.get("version", 1)) + 1
         meta["version"] = version
         meta["updated_at"] = _now()
-        meta["word_count"] = _count_words(markdown)
+        # 双语文档沿用 meta 里的 bilingual 标志，字数只统计英文正文。
+        count_md = _strip_zh_blocks(markdown) if meta.get("bilingual") else markdown
+        meta["word_count"] = _count_words(count_md)
         if trace is not None:
             self._write_json(doc_dir / "trace.json", trace)
             meta["passed_verification"] = bool(trace.get("passed_verification", False))

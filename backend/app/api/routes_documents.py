@@ -17,7 +17,7 @@ from app.graph.workflow import merge_updates
 from app.knowledge.retriever import get_retriever
 from app.llm.client import LLMClient
 from app.models.schemas import DocumentUpdate, NODE_LABELS, RegenerateRequest
-from app.storage.filestore import FileStore, StorageError
+from app.storage.filestore import FileStore, StorageError, _strip_zh_blocks
 
 router = APIRouter(prefix="/documents", tags=["documents"])
 logger = logging.getLogger(__name__)
@@ -61,6 +61,8 @@ def download_document(
     doc_id: str,
     format: str = Query(default="md", pattern="^(md|docx)$"),
     version: str | None = None,
+    # 中英对照文档导出时默认剥离中文译块，得到纯英文递交版；传 false 可保留对照。
+    strip_zh: bool = Query(default=True),
     store: FileStore = Depends(get_user_store),
 ):
     try:
@@ -69,6 +71,8 @@ def download_document(
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     if markdown is None:
         raise HTTPException(status_code=404, detail="文档或版本不存在")
+    if strip_zh:
+        markdown = _strip_zh_blocks(markdown)
 
     suffix = version or "current"
     if format == "docx":

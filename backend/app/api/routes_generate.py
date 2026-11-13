@@ -114,6 +114,7 @@ def _persist(
         trace=_trace(state, request, settings),
         model=settings.llm_model,
         language=request.get("language", "en"),
+        bilingual=bool(request.get("bilingual", False)),
         subject=_subject(state, request),
     )
     _log_generation(user_id, request["doc_type"], meta["id"], llm_source=llm_source)

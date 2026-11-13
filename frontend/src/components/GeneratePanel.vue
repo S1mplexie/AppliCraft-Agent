@@ -69,7 +69,14 @@ const docTypes: { key: DocType; label: string; hint: string }[] = [
 ]
 const docType = ref<DocType>('ps')
 const language = ref<Language>('en')
+// 中英对照：仅英文文书可用；默认开启，方便中文母语申请人逐段核对 AI 英文。
+const bilingual = ref(true)
 const wordLimit = ref(900)
+// 中文文书无需对照；切到中文时强制关闭，切回英文恢复默认开启。
+watch(language, (value) => {
+  if (value === 'zh') bilingual.value = false
+  else bilingual.value = true
+})
 const tone = ref('professional')
 // 默认选中档案里的第一项（与后端 _pick 的 fallback 语义一致，避免请求里出现歧义的 null）。
 const targetProgramId = ref(props.profile.target_programs[0]?.id || '')
@@ -175,6 +182,7 @@ function submit() {
     target_program_id: docType.value === 'recommendation' ? null : (targetProgramId.value || null),
     recommender_id: docType.value === 'recommendation' ? (recommenderId.value || null) : null,
     language: language.value,
+    bilingual: language.value === 'en' ? bilingual.value : false,
     word_limit: Number(wordLimit.value) || 900,
     tone: tone.value,
     emphasis: [...emphasis.value],
@@ -230,6 +238,10 @@ function submit() {
           <label class="field">
             <span>语言</span>
             <select v-model="language"><option value="en">English</option><option value="zh">简体中文</option></select>
+          </label>
+          <label v-if="language === 'en'" class="field check-field">
+            <input type="checkbox" v-model="bilingual" />
+            <span>中英对照（每段英文附中文翻译，便于逐段核对）</span>
           </label>
           <label class="field">
             <span>{{ docType === 'cv' ? '篇幅参考（词）' : '目标字数（词）' }}</span>

@@ -97,6 +97,7 @@ function fmtDate(value: string): string {
             <div class="library-item-meta">
               <span>v{{ doc.version }}</span><span>约 {{ doc.word_count }} 词</span>
               <span>{{ doc.language === 'zh' ? '中文' : 'English' }}</span>
+              <span v-if="doc.bilingual" class="bilingual-tag">中英对照</span>
               <span v-if="doc.issue_count" class="danger-text">{{ doc.issue_count }} 条待核</span>
             </div>
             <span class="library-delete link danger" @click.stop="emit('remove', doc.id)">删除</span>

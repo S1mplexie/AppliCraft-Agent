@@ -31,6 +31,8 @@ class GenerateRequest(BaseModel):
     target_program_id: str | None = None
     recommender_id: str | None = None
     language: Literal["en", "zh"] = "en"
+    # 中英对照：仅 language=en 时可用；开启后正文每个英文段落后紧跟中文翻译块（> 译：…）。
+    bilingual: bool = False
     word_limit: int = Field(default=900, ge=150, le=3000)
     tone: str = "professional"  # professional | confident | warm | concise
     emphasis: list[str] = Field(default_factory=list)
@@ -99,6 +101,7 @@ class DocumentMeta(BaseModel):
     version: int
     model: str
     language: str
+    bilingual: bool = False
     word_count: int
     passed_verification: bool
     issue_count: int

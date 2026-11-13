@@ -74,6 +74,74 @@ function sanitize(html: string): string {
 
 const rendered = computed(() => sanitize(String(marked.parse(displayMarkdown.value, { breaks: true }))))
 
+// 中英对照视图：解析 markdown 中的 `> 译：` 翻译块，把每个英文块与其译块配对成左右双栏。
+const bilingualView = ref(false)
+watch(
+  () => `${props.document?.meta.id ?? ''}:${props.document?.meta.version ?? 0}`,
+  () => { bilingualView.value = !!props.document?.meta.bilingual },
+  { immediate: true },
+)
+
+function _stripZhBlocks(md: string): string {
+  const out: string[] = []
+  let skipping = false
+  for (const line of md.split('\n')) {
+    if (/^\s*>\s*译[:：]/.test(line)) { skipping = true; continue }
+    if (skipping && /^\s*>/.test(line)) continue
+    skipping = false
+    out.push(line)
+  }
+  return out.join('\n')
+}
+
+function _pairHtml(enText: string, zhText: string): string {
+  const en = enText.trim() ? sanitize(String(marked.parse(enText, { breaks: true }))) : ''
+  const zh = zhText.trim() ? sanitize(String(marked.parse(zhText, { breaks: true }))) : ''
+  return `<div class="bi-pair"><div class="bi-en">${en}</div><div class="bi-zh">${zh}</div></div>`
+}
+
+function _buildBilingual(md: string): string {
+  const lines = md.split('\n')
+  let en: string[] = []
+  let zh: string[] = []
+  let zhOpen = false
+  const out: string[] = []
+  const flush = () => {
+    if (en.length || zh.length) {
+      out.push(_pairHtml(en.join('\n'), zh.join('\n')))
+      en = []; zh = []; zhOpen = false
+    }
+  }
+  for (const line of lines) {
+    if (/^\s*>\s*译[:：]/.test(line)) {
+      zhOpen = true
+      zh.push(line.replace(/^\s*>\s*译[:：]\s?/, ''))
+    } else if (zhOpen && /^\s*>/.test(line)) {
+      zh.push(line.replace(/^\s*>\s?/, ''))
+    } else {
+      if (zhOpen) flush()
+      if (line.trim() === '') {
+        if (en.length) flush()
+      } else {
+        en.push(line)
+      }
+    }
+  }
+  flush()
+  return out.join('\n')
+}
+
+// 纯英文视图：剥离译块后渲染（用于非对照模式与单语文档）。
+const monoHtml = computed(() =>
+  sanitize(String(marked.parse(_stripZhBlocks(displayMarkdown.value), { breaks: true }))),
+)
+
+// 最终正文 HTML：双语文档且开启对照时走双栏，否则走纯英文。
+const viewHtml = computed(() => {
+  if (props.document?.meta.bilingual && bilingualView.value) return _buildBilingual(displayMarkdown.value)
+  return monoHtml.value
+})
+
 const advisedCount = computed(() =>
   props.issues.filter((_, i) => (suggestions[i] || '').trim()).length,
 )
@@ -130,6 +198,13 @@ function submitRegenerate() {
       >
         审核建议{{ issues.length ? ` · ${issues.length} 项待核` : '' }}
       </button>
+      <button
+        v-if="document.meta.bilingual" class="btn small" :class="{ active: bilingualView }"
+        @click="bilingualView = !bilingualView"
+        :title="bilingualView ? '当前为左右双栏对照，点击只看英文' : '点击开启中英对照'"
+      >
+        {{ bilingualView ? '只看英文' : '中英对照' }}
+      </button>
       <select v-model="selectedVersion">
         <option v-for="version in document.versions" :key="version.name" :value="version.name">{{ version.name }}</option>
       </select>
@@ -142,7 +217,7 @@ function submitRegenerate() {
 
     <div class="doc-scroll">
       <textarea v-if="editing" v-model="draft" class="editor" spellcheck="false"></textarea>
-      <article v-else class="prose" v-html="rendered"></article>
+      <article v-else class="prose" :class="{ 'bi-grid': document.meta.bilingual && bilingualView }" v-html="viewHtml"></article>
 
 
       <details v-if="!editing" class="trace">

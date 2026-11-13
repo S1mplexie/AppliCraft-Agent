@@ -60,6 +60,7 @@ export interface DocumentMeta {
   id: string; profile_id: string; doc_type: DocType; doc_type_label: string
   title: string; created_at: string; updated_at: string; version: number
   model: string; language: string; word_count: number
+  bilingual?: boolean
   passed_verification: boolean; issue_count: number
   project_id?: string
 }

@@ -514,14 +514,20 @@ def render_cv_skeleton(facts: dict[str, Any]) -> str:
 
 def build_system(request: dict[str, Any]) -> str:
     doc_type = request["doc_type"]
-    return "\n".join(
-        [
-            BASE_RULES,
-            DOC_RULES[doc_type],
-            "语言要求：" + LANGUAGE_GUIDE.get(request.get("language", "en"), LANGUAGE_GUIDE["en"]),
-            "语气要求：" + TONE_GUIDE.get(request.get("tone", "professional"), TONE_GUIDE["professional"]),
-        ]
-    )
+    parts = [
+        BASE_RULES,
+        DOC_RULES[doc_type],
+        "语言要求：" + LANGUAGE_GUIDE.get(request.get("language", "en"), LANGUAGE_GUIDE["en"]),
+        "语气要求：" + TONE_GUIDE.get(request.get("tone", "professional"), TONE_GUIDE["professional"]),
+    ]
+    if request.get("bilingual") and request.get("language", "en") == "en":
+        parts.append(
+            "中英对照要求：正文用英文正常撰写；每个英文正文段落 / 小标题 / 列表项之后，"
+            "必须紧跟一个中文翻译块，格式为 `> 译：<中文翻译>`（独立成段，以 `> 译：` 开头）。"
+            "翻译须忠实对应上文英文，不得增删事实；专有名词保留英文。"
+            "译块仅供申请人对照，不计入递交内容，也不视为正文事实。"
+        )
+    return "\n".join(parts)
 
 
 def _request_constraints(request: dict[str, Any]) -> str:
@@ -570,6 +576,16 @@ def draft_user(
         parts.append(knowledge)
     if reference:
         parts.append(reference)
+    if request.get("bilingual") and request.get("language", "en") == "en":
+        parts.append(
+            "中英对照格式（必须严格执行）：正文用英文正常写；每个英文正文段落 / 小标题 / "
+            "列表项之后，必须紧跟一个独立的中文翻译块，以 `> 译：` 开头，例如：\n\n"
+            "My undergraduate research on distributed systems ignited my interest...\n\n"
+            "> 译：我本科阶段关于分布式系统的研究点燃了我对……的兴趣\n\n"
+            "列表项也要逐项对照：英文列表项后紧跟 `> 译：` 中文对照；标题同理。"
+            "翻译须逐句忠实对应上文英文，不增删任何事实，专有名词保留英文。"
+            "译块仅供申请人对照，不计入递交正文。"
+        )
     parts.append("申请人事实清单\n" + facts_text)
     return "\n\n".join(parts)
 
@@ -581,6 +597,12 @@ def cv_user(skeleton: str, facts_text: str, request: dict[str, Any], skill: str 
     ]
     if skill:
         parts.append(skill)
+    if request.get("bilingual") and request.get("language", "en") == "en":
+        parts.append(
+            "中英对照格式（必须严格执行）：简历正文用英文正常写；每个英文条目 / 小标题之后，"
+            "必须紧跟一个独立的中文翻译块，以 `> 译：` 开头。翻译须忠实对应上文英文，"
+            "不增删任何事实，专有名词保留英文。译块仅供申请人对照，不计入递交正文。"
+        )
     parts += [
         "简历事实骨架（必须保留每一条事实）\n" + skeleton,
         "申请人事实清单\n" + facts_text,
@@ -660,6 +682,14 @@ def verify_user(
         "申请人事实清单\n" + facts_text,
         "待审核初稿\n" + draft,
     ]
+    if request.get("bilingual") and request.get("language", "en") == "en":
+        parts.insert(
+            -2,
+            "## 关于中英对照译块\n"
+            "初稿中形如 `> 译：...` 的块是中文翻译，仅供申请人对照，不是英文正文的一部分。"
+            "请勿将这些译块当作英文正文审核，也不要报告翻译质量、语气或语法问题；"
+            "只审核英文正文段落的事实与质量。若某译块与英文明显事实不符可顺带指出，但不得据此扣分。",
+        )
     return "\n\n".join(parts)
 
 
@@ -724,4 +754,10 @@ def revise_user(
             "当前初稿\n" + draft,
         ]
     )
+    if request.get("bilingual") and request.get("language", "en") == "en":
+        blocks.append(
+            "中英对照格式保持：本文是双语文书，初稿中每个英文段落后紧跟 `> 译：` 中文译块。"
+            "修订英文时，必须同步更新其对应的 `> 译：` 译块，使中文翻译与修订后的英文一致；"
+            "不要删除译块，也不要新增无对应英文的译块。"
+        )
     return "\n\n".join(blocks)
