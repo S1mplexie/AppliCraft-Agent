@@ -7,12 +7,16 @@ import { formatImportedAt } from '../utils/format'
 const props = defineProps<{
   references: ReferenceDoc[]
   systemPrograms: SystemProgram[]
+  /** 当前档案目标项目里已导入的系统项目 id，用于标记「已在目标项目」。 */
+  targetProgramIds?: string[]
 }>()
 const emit = defineEmits<{
   uploaded: []
   deleted: []
   go: [tab: TabKey]
+  importTargets: [ids: string[]]
 }>()
+const importedTargetIds = computed(() => new Set(props.targetProgramIds || []))
 
 type NameDialog = { id: string; filename: string; isNew: boolean }
 
@@ -182,7 +186,13 @@ const groupedPrograms = computed(() => {
     <section class="card">
       <div class="card-head">
         <h2>系统自带港新项目信息 · {{ systemPrograms.length }} 个</h2>
-        <span class="hint">来自知识库，只读；生成对应项目文书时自动检索官方资料</span>
+        <div class="program-head-actions">
+          <span class="hint">来自知识库，只读；生成对应项目文书时自动检索官方资料</span>
+          <button
+            class="btn small primary" :disabled="!systemPrograms.length"
+            @click="emit('importTargets', [])"
+          >批量导入目标项目</button>
+        </div>
       </div>
       <div v-if="!systemPrograms.length" class="mini-empty">
         <strong>暂无系统项目信息</strong>
@@ -201,7 +211,14 @@ const groupedPrograms = computed(() => {
             <div class="program-fields" v-if="p.fields.length">
               <span v-for="f in p.fields" :key="f" class="tag field-tag">{{ f }}</span>
             </div>
-            <a v-if="p.official_urls.length" class="link" :href="p.official_urls[0]" target="_blank" rel="noopener">官方链接 ↗</a>
+            <div class="program-item-actions">
+              <a v-if="p.official_urls.length" class="link" :href="p.official_urls[0]" target="_blank" rel="noopener">官方链接 ↗</a>
+              <button
+                v-if="!importedTargetIds.has(p.program_id)" class="link"
+                @click="emit('importTargets', [p.program_id])"
+              >加入档案目标项目</button>
+              <span v-else class="in-target">已在目标项目</span>
+            </div>
           </li>
         </ul>
       </div>

@@ -95,6 +95,8 @@ class TargetProgram(BaseModel):
     faculty_notes: str = ""
     why_fit: str = ""
     notes: str = ""
+    # 从系统项目库导入时记录来源，供前端去重与「已在目标项目」标记；手工条目为空。
+    source_program_id: str = ""
 
 
 class Recommender(BaseModel):

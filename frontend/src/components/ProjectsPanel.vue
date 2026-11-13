@@ -657,7 +657,10 @@ function sourceLabel(p: ApplicationProject) { return p.source === 'imported' ? '
           <label>学校<input v-model="form.university" placeholder="香港大学" /></label>
           <label>专业<input v-model="form.program" placeholder="计算机科学" /></label>
           <label>学位<input v-model="form.degree_type" placeholder="MSc" /></label>
-          <label>地区<input v-model="form.region" placeholder="HK / SG" /></label>
+          <label>地区<input v-model="form.region" list="project-region-options" /></label>
+          <datalist id="project-region-options">
+            <option value="中国香港"></option><option value="新加坡"></option><option value="其他"></option>
+          </datalist>
           <label>入学季<input v-model="form.intake" placeholder="2027 FALL" /></label>
           <label>备注<textarea v-model="form.notes" rows="2" /></label>
         </div>

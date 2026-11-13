@@ -183,8 +183,9 @@ function fmtDate(value: string): string {
           <span>从系统项目导入目标院校（可选）</span>
           <span class="switcher-import-caret">{{ importOpen ? '▴' : '▾' }}</span>
         </button>
+        <p class="hint imp-hint">仅作用于新建档案；已有档案请到「申请人档案 → 目标项目」批量导入。</p>
         <div v-if="importOpen" class="switcher-import-body">
-          <p v-if="!props.systemPrograms.length" class="hint imp-hint">系统项目库未加载，可稍后到「项目管理」导入。</p>
+          <p v-if="!props.systemPrograms.length" class="hint imp-hint">系统项目库未加载，请刷新页面重试。</p>
           <template v-else>
             <div class="imp-search">
               <input v-model="importSearch" placeholder="搜索学校 / 专业中英文名…" aria-label="搜索系统项目" />

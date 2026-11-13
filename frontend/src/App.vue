@@ -10,9 +10,10 @@ import SettingsView from './components/SettingsView.vue'
 import MatchPanel from './components/MatchPanel.vue'
 import AuthView from './components/AuthView.vue'
 import ProfileSwitcher from './components/ProfileSwitcher.vue'
+import SystemProgramPicker from './components/SystemProgramPicker.vue'
 import { api, onUnauthorized } from './api/client'
 import {
-  demoProfile, emptyProfile, uid,
+  demoProfile, emptyProfile, systemProgramToTarget,
   type AppConfig, type ApplicantProfile, type ApplicationProject, type AuthResponse, type AuthUser,
   type DocumentDetail, type DocumentMeta, type GeneratePayload, type Issue,
   type KnowledgeRef, type LocalLLMConfig, type NodeEvent, type ProfileSection, type ProfileSummary, type QuotaInfo,
@@ -94,6 +95,13 @@ const activeDoc = ref<DocumentDetail | null>(null)
 const references = ref<ReferenceDoc[]>([])
 const selectedReferenceIds = ref<string[]>([])
 const systemPrograms = ref<SystemProgram[]>([])
+// 系统项目库 → 当前档案目标项目：选择器状态与已导入 id（去重 / 已在目标项目标记）。
+const pickerOpen = ref(false)
+const pickerKey = ref(0)
+const pickerPreselected = ref<string[]>([])
+const existingTargetIds = computed(() => (profile.value.target_programs || [])
+  .map(t => t.source_program_id || '')
+  .filter(Boolean))
 // 项目管理：当前档案的申请项目列表（切档案时刷新，未归组文书标「未分组」）。
 const projects = ref<ApplicationProject[]>([])
 // Skill 市场：内置 + 本人导入的技能，勾选后在生成时作为写法约束注入。
@@ -366,22 +374,7 @@ async function createProfile(options: CreateOptions = {}) {
     const imported = (options.importedProgramIds || [])
       .map(id => systemPrograms.value.find(p => p.program_id === id))
       .filter((p): p is SystemProgram => !!p)
-    if (imported.length) {
-      base.target_programs = imported.map((p) => ({
-        id: uid(),
-        university: p.school_name_zh,
-        program: p.program_name_zh || p.program_name_en,
-        degree_type: '',
-        region: p.region === 'HK' ? 'Hong Kong, China' : p.region === 'SG' ? 'Singapore' : p.region,
-        intake: p.intake,
-        deadline: '',
-        language_requirement: '',
-        curriculum_notes: '',
-        faculty_notes: p.faculty,
-        why_fit: '',
-        notes: (p.official_urls || []).length ? `官方页面：${p.official_urls.join('  ')}` : '',
-      }))
-    }
+    if (imported.length) base.target_programs = imported.map(systemProgramToTarget)
     const saved = await api.createProfile(base)
     await loadProfiles()
     await selectProfile(saved.id)
@@ -393,6 +386,31 @@ async function createProfile(options: CreateOptions = {}) {
   } catch (error) {
     toast((error as Error).message, true)
   }
+}
+
+/** 打开系统项目库选择器；档案页传空数组，参考文档库单个项目点进来时预选该项。 */
+function openTargetPicker(ids: string[] = []) {
+  if (!systemPrograms.value.length) { toast('系统项目库尚未加载，请刷新后重试', true); return }
+  pickerPreselected.value = ids
+  pickerKey.value += 1          // 每次打开重新挂载，保证搜索/筛选/勾选都是干净状态
+  pickerOpen.value = true
+}
+
+/** 把勾选的官方项目写入当前档案的目标项目；已导入的自动跳过，并立即落盘。 */
+async function importTargetPrograms(ids: string[]) {
+  const existing = new Set(existingTargetIds.value)
+  const fresh = ids
+    .map(id => systemPrograms.value.find(p => p.program_id === id))
+    .filter((p): p is SystemProgram => !!p && !existing.has(p.program_id))
+  pickerOpen.value = false
+  if (!fresh.length) { toast('所选项目都已在目标项目中', true); return }
+  if (!profile.value.target_programs) profile.value.target_programs = []
+  profile.value.target_programs.push(...fresh.map(systemProgramToTarget))
+  activeTab.value = 'profile'
+  profileSection.value = 'programs'
+  toast(`已导入 ${fresh.length} 个目标项目，请补充课程要点与契合点`)
+  // 自动保存有 900ms 防抖，这里立即落盘，避免刚导入就切档案 / 关页面时丢失。
+  await saveProfile(true)
 }
 
 async function renameProfile(id: string, label: string) {
@@ -759,7 +777,9 @@ onUnmounted(() => window.removeEventListener('hashchange', onHashChange))
             </div>
             <ProfileForm
               :key="currentProfileId" :profile="profile" :section="profileSection"
-              :save-state="saveState" @section-change="profileSection = $event" @save="saveProfile(false)"
+              :save-state="saveState" :system-program-count="systemPrograms.length"
+              @section-change="profileSection = $event" @save="saveProfile(false)"
+              @import-targets="openTargetPicker()"
             />
           </div>
         </div>
@@ -816,8 +836,9 @@ onUnmounted(() => window.removeEventListener('hashchange', onHashChange))
         <div v-show="activeTab === 'library'" class="page-view">
           <LibraryPanel
             :references="references" :system-programs="systemPrograms"
+            :target-program-ids="existingTargetIds"
             @uploaded="loadReferences" @deleted="loadReferences"
-            @go="goTab"
+            @go="goTab" @import-targets="openTargetPicker"
           />
         </div>
 
@@ -854,6 +875,14 @@ onUnmounted(() => window.removeEventListener('hashchange', onHashChange))
       </main>
     </div>
 
+
+    <!-- 系统项目库 → 当前档案目标项目：档案页与参考文档库共用的选择器 -->
+    <SystemProgramPicker
+      v-if="pickerOpen" :key="pickerKey"
+      :programs="systemPrograms" :existing-ids="existingTargetIds"
+      :preselected="pickerPreselected" :profile-label="profile.label"
+      @close="pickerOpen = false" @import="importTargetPrograms"
+    />
 
     <div v-if="toastMsg" class="toast" :class="{ error: toastError }">{{ toastMsg }}</div>
 

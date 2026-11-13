@@ -27,6 +27,8 @@ export interface TargetProgram {
   id: string; university: string; program: string; degree_type: string
   region: string; intake: string; deadline: string; language_requirement: string
   curriculum_notes: string; faculty_notes: string; why_fit: string; notes: string
+  /** 从系统项目库导入时记录来源 program_id，用于去重与「已在目标项目」标记；手工填写的条目为空。 */
+  source_program_id?: string
 }
 export interface Recommender {
   id: string; name: string; title: string; affiliation: string; email: string
@@ -242,6 +244,29 @@ export interface SystemProgram {
   program_name_en: string; program_name_zh: string; faculty: string
   region: string; intake: string; official_urls: string[]; fields: string[]
 }
+/** 系统项目库条目 → 档案目标项目：只搬官方事实骨架，申请人自述与未核实字段一律留空。 */
+export function systemProgramToTarget(p: SystemProgram): TargetProgram {
+  const notes = [
+    p.program_name_en ? `官方英文名：${p.program_name_en}` : '',
+    (p.official_urls || []).length ? `官方页面：${(p.official_urls || []).join('  ')}` : '',
+  ].filter(Boolean).join('\n')
+  return {
+    id: uid(),
+    source_program_id: p.program_id,
+    university: p.school_name_zh || p.school_id,
+    program: p.program_name_zh || p.program_name_en,
+    degree_type: '',
+    region: p.region === 'HK' ? '中国香港' : p.region === 'SG' ? '新加坡' : '',
+    intake: p.intake,
+    deadline: '',
+    language_requirement: '',
+    curriculum_notes: '',
+    faculty_notes: p.faculty,
+    why_fit: '',
+    notes,
+  }
+}
+
 export interface NodeEvent {
   node: string; label: string; summary: string
   warnings: string[]; outline: any; issues: Issue[] | null; passed: boolean | null

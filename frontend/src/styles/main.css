@@ -440,6 +440,17 @@ label.bi-toggle-row > .bi-toggle-input {
 .section-title h3 { margin: 0 0 3px; font-size: 15px; font-weight: 700; }
 .section-title span { font-size: 11.5px; color: var(--muted); }
 .section-title.sub { margin-top: 20px; }
+/* 目标项目分区：标题右侧放系统项目库导入入口 */
+.section-title-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.section-title-row .btn { flex: none; }
+.import-lead { margin: 10px 0 12px; line-height: 1.65; }
+.profile-sections .entry-head .badge { margin-left: 10px; margin-right: auto; }
+/* 参考文档库：系统项目卡片的操作行 */
+.program-item-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 3px; }
+.program-item-actions .link { font-size: 11.5px; }
+.program-item-actions .in-target { color: var(--faint); font-size: 11px; }
+.program-head-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.program-head-actions .btn { flex: none; }
 .form-section > .hint { margin: 0; }
 
 /* ================= 生成工作台 ================= */
@@ -581,6 +592,7 @@ label.bi-toggle-row > .bi-toggle-input {
   font-size: 12.5px; font-weight: 600; cursor: pointer;
 }
 .switcher-import-toggle.open { color: var(--accent-deep); }
+.switcher-import > .imp-hint { padding: 2px 4px 0; line-height: 1.5; }
 .switcher-import-caret { color: var(--muted); font-size: 11px; }
 .switcher-import-body { padding: 8px 4px 2px; }
 .imp-search { margin-bottom: 8px; }
@@ -1223,6 +1235,7 @@ label.bi-toggle-row > .bi-toggle-input {
 .imp-chip button { padding: 0 1px; border: 0; background: transparent; color: var(--accent); font-size: 13px; line-height: 1; }
 .imp-chip.more { padding: 2px 8px; background: var(--surface-2); color: var(--muted); }
 .imp-foot .btn { flex: none; }
+.imp-foot-actions { display: flex; align-items: center; gap: 8px; flex: none; }
 
 @media (max-width: 760px) {
   .imp-modal { padding: 0; max-height: 94dvh; overflow: hidden; }

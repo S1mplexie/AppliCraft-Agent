@@ -10,8 +10,14 @@ const props = defineProps<{
   profile: ApplicantProfile
   section?: ProfileSection
   saveState?: string
+  /** 系统项目库已收录的官方项目数量，为 0 时禁用导入入口。 */
+  systemProgramCount?: number
 }>()
-const emit = defineEmits<{ sectionChange: [section: ProfileSection]; save: [] }>()
+const emit = defineEmits<{
+  sectionChange: [section: ProfileSection]
+  save: []
+  importTargets: []
+}>()
 
 // 切换当前档案时，父组件通过 :key 重新挂载本组件；p 始终指向同一个响应式档案对象。
 const p = props.profile
@@ -56,7 +62,7 @@ const newAward = (): Award => ({ id: uid(), title: '', issuer: '', date: '', det
 const newSkill = (): SkillGroup => ({ id: uid(), category: '', items: [] })
 const newScore = (): TestScore => ({ id: uid(), kind: '', total: '', breakdown: '', date: '' })
 const newProgram = (): TargetProgram => ({
-  id: uid(), university: '', program: '', degree_type: 'Taught Master', region: '',
+  id: uid(), university: '', program: '', degree_type: 'Taught Master', region: '', source_program_id: '',
   intake: '', deadline: '', language_requirement: '', curriculum_notes: '', faculty_notes: '',
   why_fit: '', notes: '',
 })
@@ -207,13 +213,34 @@ const newRecommender = (): Recommender => ({
 
         <!-- 目标项目 -->
         <section v-show="activeSection === 'programs'" class="form-section">
-          <div class="section-title"><h3>目标项目</h3><span>这里的信息用于定制 PS 的 why-this-programme 段落；截止日期与语言要求请以官网为准</span></div>
+          <div class="section-title section-title-row">
+            <div>
+              <h3>目标项目</h3>
+              <span>这里的信息用于定制 PS 的 why-this-programme 段落；截止日期与语言要求请以官网为准</span>
+            </div>
+            <button
+              class="btn small primary" type="button" :disabled="!props.systemProgramCount"
+              :title="props.systemProgramCount ? '从系统收录的港新官方项目批量导入' : '系统项目库未加载'"
+              @click="emit('importTargets')"
+            >从系统项目库导入</button>
+          </div>
+          <p class="hint import-lead">
+            系统项目库已收录 {{ props.systemProgramCount || 0 }} 个港新官方项目，可批量带入学校、项目名、学院与入学季；
+            导入后再补充课程要点与「你与项目的契合点」，也可以完全手动填写。
+          </p>
+          <datalist id="target-region-options">
+            <option value="中国香港"></option><option value="新加坡"></option><option value="其他"></option>
+          </datalist>
           <div v-for="(item, i) in p.target_programs" :key="item.id" class="entry">
-            <div class="entry-head"><strong>项目 {{ i + 1 }}</strong><button class="link danger" @click="p.target_programs.splice(i, 1)">删除</button></div>
+            <div class="entry-head">
+              <strong>项目 {{ i + 1 }}</strong>
+              <span v-if="item.source_program_id" class="badge ok">系统项目库</span>
+              <button class="link danger" @click="p.target_programs.splice(i, 1)">删除</button>
+            </div>
             <div class="grid2">
               <label class="field"><span>学校</span><input v-model="item.university" /></label>
               <label class="field"><span>项目名称</span><input v-model="item.program" /></label>
-              <label class="field"><span>地区</span><input v-model="item.region" /></label>
+              <label class="field"><span>地区</span><input v-model="item.region" list="target-region-options" /></label>
               <label class="field"><span>入学季</span><input v-model="item.intake" placeholder="2027 Fall" /></label>
               <label class="field"><span>截止日期</span><input v-model="item.deadline" placeholder="以官网核实为准" /></label>
               <label class="field"><span>语言要求</span><input v-model="item.language_requirement" /></label>
