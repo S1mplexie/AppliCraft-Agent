@@ -125,6 +125,28 @@ const summary = computed(() =>
   }))
 )
 
+// 档案关键字段完整度：信息不足时模型难以拉开档次，先给明确提示而不是产出「全部同一档」。
+const missingBasics = computed(() => {
+  const p = props.profile
+  const missing: string[] = []
+  if (!(p.education || []).some(e => e.school || e.gpa || e.gpa_average || e.major)) missing.push('教育背景 / GPA')
+  if (!(p.test_scores || []).some(s => s.total)) missing.push('语言成绩')
+  if (!(p.experiences || []).length) missing.push('实习 / 科研经历')
+  return missing
+})
+
+// 结果退化检测：九成以上项目挤在同一档时诚实提示，避免用户以为「分级功能坏了」。
+const lowDiscrimination = computed(() => {
+  const counts = summary.value.map(s => s.count)
+  const total = counts.reduce((a, b) => a + b, 0)
+  return total > 0 && Math.max(...counts) >= total * 0.9
+})
+const dominantTier = computed(() => {
+  const top = [...summary.value].sort((a, b) => b.count - a.count)[0]
+  const total = summary.value.reduce((a, b) => a + b.count, 0)
+  return top ? `${top.count} / ${total} 个「${top.label}」` : ''
+})
+
 function alreadyIn(item: MatchItem): boolean {
   return item.in_target || addedIds.value.has(item.program_id)
 }
@@ -170,6 +192,9 @@ async function addToTargets(item: MatchItem) {
       <div v-if="hasLastResult" class="banner match-prev-note">
         上次的评估结果已保留：先调整下面的偏好再评估，或直接
         <button class="btn small" @click="showLastResult">查看上次结果</button>
+      </div>
+      <div v-if="missingBasics.length" class="match-warn">
+        当前档案还缺少：{{ missingBasics.join('、') }}。信息不足时模型难以拉开冲刺 / 稳妥 / 保底，建议先到左侧「申请人档案」补全后再评估。
       </div>
       <p style="margin: 0 0 10px;">由大模型综合档案中的 GPA / 均分、语言成绩（含单项）、专业与课程匹配度、科研 / 实习等背景，对系统收录的港新项目评估适配等级：</p>
       <ul class="match-idle-list">
@@ -238,6 +263,10 @@ async function addToTargets(item: MatchItem) {
       <p v-if="result.preferences_applied" class="hint match-pref-note">
         本次已按偏好评估：{{ appliedPrefsText || '已应用择校偏好' }}
       </p>
+
+      <div v-if="lowDiscrimination" class="match-warn">
+        本次评估区分度不足：{{ dominantTier }}，多数项目落在同一档。这通常是档案缺少 GPA、语言成绩或经历等关键信息所致，建议补全档案后重新评估。
+      </div>
 
       <div class="card match-snapshot-card">
         <div class="card-head"><h2>档案硬指标</h2><span class="hint">评估输入</span></div>
