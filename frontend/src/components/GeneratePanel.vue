@@ -239,9 +239,13 @@ function submit() {
             <span>语言</span>
             <select v-model="language"><option value="en">English</option><option value="zh">简体中文</option></select>
           </label>
-          <label v-if="language === 'en'" class="field check-field">
-            <input type="checkbox" v-model="bilingual" />
-            <span>中英对照（每段英文附中文翻译，便于逐段核对）</span>
+          <label v-if="language === 'en'" class="bi-toggle-row" :class="{ 'is-on': bilingual }">
+            <span class="bi-toggle-text">
+              <span class="bi-toggle-title">中英对照</span>
+              <span class="bi-toggle-desc">每段英文附中文翻译，便于逐段核对</span>
+            </span>
+            <input type="checkbox" v-model="bilingual" class="bi-toggle-input" />
+            <span class="bi-toggle-switch" aria-hidden="true"></span>
           </label>
           <label class="field">
             <span>{{ docType === 'cv' ? '篇幅参考（词）' : '目标字数（词）' }}</span>
