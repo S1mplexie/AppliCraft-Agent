@@ -64,6 +64,29 @@ const displayMarkdown = computed(() => {
   return doc.versions.find(v => v.name === selectedVersion.value)?.markdown || doc.markdown
 })
 
+// 校验结论三态：事实风险 / 建议复核 / 已核验。旧文档没有 verdict 时回退到 passed_verification。
+const critique = computed(() => props.document?.trace?.critique || null)
+const verdictMeta = computed(() => {
+  const level = critique.value?.verdict
+  if (level === 'factual_risk') return { label: '事实风险', cls: 'bad' }
+  if (level === 'needs_review') return { label: '建议复核', cls: 'warn' }
+  if (level === 'passed') return { label: '已核验', cls: 'ok' }
+  return props.document?.meta.passed_verification
+    ? { label: '已核验', cls: 'ok' }
+    : { label: '待核对', cls: 'warn' }
+})
+const scoreValue = computed(() => critique.value?.score ?? null)
+const scoreDelta = computed(() => {
+  const delta = props.document?.trace?.score_delta
+  return typeof delta === 'number' ? delta : null
+})
+// 上一轮用户逐项裁决过的条数：让用户知道自己的澄清已被带上。
+const lastResolvedCount = computed(() => {
+  const list = props.document?.trace?.issue_feedback || []
+  return list.filter((x: any) => String(x?.suggestion || '').trim()).length
+})
+const traceOpen = ref(false)
+
 function sanitize(html: string): string {
   return html
     .replace(/<script[\s\S]*?<\/script>/gi, '')
@@ -213,9 +236,11 @@ function submitRegenerate() {
         <option v-for="version in document.versions" :key="version.name" :value="version.name">{{ version.name }}</option>
       </select>
       <span class="spacer"></span>
-      <span class="badge" :class="document.meta.passed_verification ? 'ok' : 'warn'">
-        {{ document.meta.passed_verification ? '已核验' : '待核对' }}
-      </span>
+      <button
+        v-if="scoreValue != null" class="badge score-badge" type="button"
+        title="点击查看质量评分明细" @click="traceOpen = true"
+      >{{ scoreValue }} 分</button>
+      <span class="badge" :class="verdictMeta.cls">{{ verdictMeta.label }}</span>
       <button class="link danger" @click="emit('remove', document.meta.id)">删除</button>
     </div>
 
@@ -224,7 +249,10 @@ function submitRegenerate() {
       <article v-else class="prose" :class="{ 'bi-grid': document.meta.bilingual && bilingualView }" v-html="viewHtml"></article>
 
 
-      <details v-if="!editing" class="trace">
+      <details
+        v-if="!editing" class="trace" :open="traceOpen"
+        @toggle="(e: Event) => traceOpen = (e.target as HTMLDetailsElement).open"
+      >
         <summary>生成轨迹与校验记录</summary>
         <div class="trace-body">
           <div v-if="outline.length">
@@ -237,7 +265,13 @@ function submitRegenerate() {
             </ol>
           </div>
           <div v-if="document.trace.critique && (document.trace.critique.score != null || (document.trace.critique.dimensions && Object.keys(document.trace.critique.dimensions).length))">
-            <h4>质量评分{{ document.trace.critique.score != null ? ' · ' + document.trace.critique.score + '/100' : '' }}</h4>
+            <h4>
+              质量评分{{ scoreValue != null ? ' · ' + scoreValue + '/100' : '' }}
+              <small v-if="scoreDelta != null" class="score-delta" :class="scoreDelta >= 0 ? 'up' : 'down'">
+                较上轮 {{ scoreDelta >= 0 ? '+' : '' }}{{ scoreDelta }}
+              </small>
+              <small> · {{ verdictMeta.label }}（总分 = 六维平均 × 20）</small>
+            </h4>
             <div class="dim-grid">
               <div v-for="(val, key) in (document.trace.critique.dimensions || {})" :key="key" class="dim-mini">
                 <span>{{ DIMENSION_LABELS[key] || key }}</span><strong>{{ val }}/5</strong>
@@ -302,7 +336,7 @@ function submitRegenerate() {
       <summary>
         <strong>审核建议与重新生成</strong>
         <span class="hint" v-if="!regenerating">
-          {{ issues.length ? `${issues.length} 项待核 · 已填 ${advisedCount} 项` : '无待核项 · 可填写整体修改要求后重新生成' }}
+          {{ issues.length ? `${issues.length} 项待核 · 已填 ${advisedCount} 项` : '无待核项 · 可填写整体修改要求后重新生成' }}<template v-if="lastResolvedCount"> · 上轮已裁决 {{ lastResolvedCount }} 项</template>
         </span>
         <span class="hint" v-else>{{ regenStage || '正在调用模型…' }}</span>
       </summary>

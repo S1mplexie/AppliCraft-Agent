@@ -14,6 +14,10 @@ from app.llm.client import LLMClient
 
 OUTLINE_SYSTEM = "你是研究生申请文书的结构规划师。请依据事实清单规划段落，只返回合法的 JSON。"
 
+# 事实安全硬错误：只有这类问题才驱动多轮自动修订。
+# style / missing 等质量建议只给首轮一次机会，避免模型每轮复检都挑出新文风意见而空转。
+FATAL_ISSUE_TYPES = frozenset({"fabrication", "contradiction", "unsupported", "program_fit"})
+
 # 大纲模型调用失败时的兜底结构；标题与目标会展示在界面上，故使用中文。
 FALLBACK_OUTLINES: dict[str, list[dict[str, Any]]] = {
     "ps": [
@@ -233,6 +237,7 @@ async def verify(state: GraphState, *, llm: LLMClient, **_: Any) -> dict[str, An
     summary = ""
     dimensions: dict[str, int] = {}
     score: int | None = None
+    llm_score: int | None = None
     revision_check: list[dict[str, Any]] = []
     previous_issues = state.get("previous_issues") or []
     # 按建议重生成时，把用户已裁决的待核项传给复检，避免把已确认/要求保留的
@@ -270,10 +275,7 @@ async def verify(state: GraphState, *, llm: LLMClient, **_: Any) -> dict[str, An
             }
             raw_score = data.get("score")
             if isinstance(raw_score, (int, float)):
-                score = max(0, min(100, int(raw_score)))
-            elif dimensions:
-                avg = sum(dimensions.values()) / len(dimensions)
-                score = round(avg / 5 * 100)
+                llm_score = max(0, min(100, int(raw_score)))
             raw_check = data.get("revision_check")
             if isinstance(raw_check, list):
                 revision_check = [item for item in raw_check if isinstance(item, dict)]
@@ -291,19 +293,36 @@ async def verify(state: GraphState, *, llm: LLMClient, **_: Any) -> dict[str, An
             "fix": f"压缩到 {int(limit * 0.9)}-{int(limit * 1.1)} 词：优先删冗余修饰、重复论据与总结性段落",
         })
 
-    # 事实安全一票否决：存在编造 / 矛盾 / 无依据 / 项目不符 即视为未通过。
-    fatal_types = {"fabrication", "contradiction", "unsupported", "program_fit"}
-    has_fatal = any((item.get("type") in fatal_types) for item in issues)
+    # 总分一律由六维均值换算（score = 六维平均 × 20），保证总分可解释、与六维一致、
+    # 跨轮稳定可比；模型直接给的 score 仅在其未返回维度时兜底。
+    score = round(sum(dimensions.values()) / len(dimensions) / 5 * 100) if dimensions else llm_score
+
+    hard_issues = [item for item in issues if item.get("type") in FATAL_ISSUE_TYPES]
+    soft_issues = [item for item in issues if item.get("type") not in FATAL_ISSUE_TYPES]
     number_warnings = _numeric_warnings(state["draft"], state["facts_text"])
-    passed = not has_fatal and not number_warnings
-    if has_fatal and score is not None:
+    # 三态结论：事实风险 / 建议复核 / 已核验。数字待核对只降到「建议复核」。
+    if hard_issues:
+        verdict = "factual_risk"
+    elif soft_issues or number_warnings:
+        verdict = "needs_review"
+    else:
+        verdict = "passed"
+    passed = not hard_issues
+    if hard_issues and score is not None:
         score = min(score, 70)
 
+    # 分数历史用于自修复收敛判断：连续两轮没有提升就停止自动改写。
+    history = list(state.get("score_history") or [])
+    if score is not None:
+        history.append(score)
     critique = {
         "passed": passed,
+        "verdict": verdict,
         "score": score,
         "dimensions": dimensions,
         "issues": issues,
+        "hard_issue_count": len(hard_issues),
+        "soft_issue_count": len(soft_issues),
         "summary": summary,
         "numeric_warnings": number_warnings,
         "word_count": words,
@@ -319,14 +338,17 @@ async def verify(state: GraphState, *, llm: LLMClient, **_: Any) -> dict[str, An
     word_note = f"、当前约 {words} 词（目标 {limit}）" if words > limit * 1.15 else ""
     return {
         "critique": critique,
+        "score_history": history,
         "warnings": warnings,
         "events": [
             _event(
                 "verify",
                 f"{phase}完成：质量分 {score if score is not None else '—'}/100，"
-                f"{len(issues)} 条待修订意见、{len(number_warnings)} 处数字待核对{word_note}{resolved_note}",
+                f"{len(hard_issues)} 条事实风险、{len(soft_issues)} 条质量建议、"
+                f"{len(number_warnings)} 处数字待核对{word_note}{resolved_note}",
                 issues=issues,
                 passed=passed,
+                verdict=verdict,
                 score=score,
                 dimensions=dimensions,
                 numeric_warnings=number_warnings,
@@ -338,7 +360,17 @@ async def verify(state: GraphState, *, llm: LLMClient, **_: Any) -> dict[str, An
 
 def should_revise(state: GraphState, *, settings: Settings, **_: Any) -> str:
     issues = (state.get("critique") or {}).get("issues") or []
-    if issues and state.get("revision_count", 0) < settings.max_revisions:
+    if not issues or state.get("revision_count", 0) >= settings.max_revisions:
+        return "finalize"
+    hard = [item for item in issues if item.get("type") in FATAL_ISSUE_TYPES]
+    if hard:
+        # 事实安全硬错误继续修，但连续两轮分数没有提升就停手。
+        history = state.get("score_history") or []
+        if len(history) >= 2 and history[-1] <= history[-2]:
+            return "finalize"
+        return "revise"
+    # 纯质量建议（含本地版字数纪律注入的超篇幅意见）只给首轮一次改写机会。
+    if state.get("revision_count", 0) == 0:
         return "revise"
     return "finalize"
 
@@ -404,15 +436,27 @@ async def finalize(state: GraphState, **_: Any) -> dict[str, Any]:
     if not final:
         raise RuntimeError("生成结果为空，未生成文档")
     words = len(re.findall(r"\b[\w'-]+\b", final)) + len(re.findall(r"[\u4e00-\u9fff]", final))
-    # 结局三态：初审一次通过 / 自我修复后复检通过 / 自我修复仍有问题转人工复核。
+    # 定稿文案区分「用户按审核建议重生成」与「系统自修复」两种链路。
     critique = state.get("critique") or {}
     rounds = state.get("revision_count", 0)
-    if rounds == 0:
+    remaining = len(critique.get("issues") or [])
+    level = critique.get("verdict") or ("passed" if critique.get("passed") else "needs_review")
+    user_driven = bool((state.get("feedback") or "").strip()) or any(
+        str(item.get("suggestion") or "").strip()
+        for item in (state.get("issue_feedback") or [])
+    )
+    if user_driven:
+        if level == "passed":
+            verdict = "已按审核建议修订并复检通过"
+        elif level == "factual_risk":
+            verdict = f"已按审核建议修订，仍有 {remaining} 条事实风险待人工确认"
+        else:
+            verdict = f"已按审核建议修订，复检仍有 {remaining} 条建议待复核"
+    elif rounds == 0:
         verdict = "初审通过，无需修复"
-    elif critique.get("passed"):
+    elif level == "passed":
         verdict = f"自我修复 {rounds} 轮后复检通过"
     else:
-        remaining = len(critique.get("issues") or [])
         verdict = f"自我修复 {rounds} 轮后仍有 {remaining} 条待核项，转人工复核"
     return {
         "final": final,

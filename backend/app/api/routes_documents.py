@@ -145,6 +145,9 @@ def _restore_state(
         "draft": data.get("markdown") or "",
         "critique": trace.get("critique") or {},
         "revision_count": int(trace.get("revision_count") or 0),
+        "score_history": [],
+        # 上一版质量分：重生成后用于展示「较上轮 +N / -N」。
+        "previous_score": (trace.get("critique") or {}).get("score"),
         # 复检对照的初始意见：以本文档生成时的校验结果为上一轮基准（revise 会覆盖）。
         "previous_issues": (trace.get("critique") or {}).get("issues") or [],
         "final": "",
@@ -276,6 +279,15 @@ async def regenerate_document(
             trace["subject"] = subject
             trace["feedback"] = feedback
             trace["issue_feedback"] = issue_feedback
+            # 评分变化：让用户一眼看到这一轮按建议修订后质量是升是降。
+            new_score = (state.get("critique") or {}).get("score")
+            old_score = state.get("previous_score")
+            trace["previous_score"] = old_score
+            trace["score_delta"] = (
+                int(new_score) - int(old_score)
+                if isinstance(new_score, (int, float)) and isinstance(old_score, (int, float))
+                else None
+            )
             meta = store.update_document(doc_id, final, trace=trace)
             _log_generation(user.id, doc_type, document_id=doc_id, llm_source=billing)
             yield _sse("done", {"document": meta})

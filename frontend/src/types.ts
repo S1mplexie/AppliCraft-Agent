@@ -75,9 +75,13 @@ export interface RegenPayload {
 /** 文书质量六维评分（1-5）与综合分（0-100）。 */
 export interface Critique {
   passed?: boolean
+  /** 三态结论：passed 已核验 / needs_review 建议复核 / factual_risk 事实风险。 */
+  verdict?: string
   score?: number
   dimensions?: Record<string, number>
   issues?: Issue[]
+  hard_issue_count?: number
+  soft_issue_count?: number
   summary?: string
   numeric_warnings?: string[]
 }
@@ -112,6 +116,11 @@ export interface DocumentDetail {
     events?: { node: string; summary: string; at: string; score?: number; dimensions?: Record<string, number> }[]
     warnings?: string[]
     revision_count?: number
+    /** 按建议重生成：上一版质量分与分差，用于在评分明细里展示「较上轮 +N」。 */
+    previous_score?: number | null
+    score_delta?: number | null
+    feedback?: string
+    issue_feedback?: { index: number; suggestion: string }[]
   }
   versions: { name: string; markdown: string }[]
 }
@@ -237,6 +246,9 @@ export interface NodeEvent {
   node: string; label: string; summary: string
   warnings: string[]; outline: any; issues: Issue[] | null; passed: boolean | null
   score?: number | null; dimensions?: Record<string, number> | null; knowledge?: KnowledgeRef | null
+  /** verify 结论三态：passed（已核验）/ needs_review（建议复核）/ factual_risk（事实风险）。 */
+  verdict?: string | null
+  hard_issue_count?: number | null; soft_issue_count?: number | null
   /** verify 节点每轮复检覆盖更新：文中出现但事实清单没有的数字。 */
   numeric_warnings?: string[] | null
 }

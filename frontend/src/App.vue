@@ -107,6 +107,8 @@ const warnings = ref<string[]>([])
 const numericWarnings = ref<string[]>([])
 const score = ref<number | null>(null)
 const dimensions = ref<Record<string, number> | null>(null)
+// 校验结论三态：passed / needs_review / factual_risk（旧文档无该字段时由组件回退）。
+const verdict = ref<string | null>(null)
 const knowledge = ref<KnowledgeRef | null>(null)
 const generating = ref(false)
 // 按审核建议重新生成：文档查看器里的反馈框触发，SSE 复用同一套轨迹展示。
@@ -483,6 +485,7 @@ async function handleGenerate(payload: GeneratePayload) {
   events.value = []; issues.value = []; outline.value = []; warnings.value = []
   numericWarnings.value = []
   score.value = null; dimensions.value = null; knowledge.value = null
+  verdict.value = null
   generating.value = true
   try {
     await saveProfile(true)
@@ -497,6 +500,7 @@ async function handleGenerate(payload: GeneratePayload) {
       if (data.score != null) score.value = data.score
       if (data.dimensions) dimensions.value = data.dimensions
       if (data.knowledge) knowledge.value = data.knowledge
+      if (data.verdict) verdict.value = data.verdict
     })
     await loadDocuments()
     await openDocument(meta.id)
@@ -528,6 +532,7 @@ async function handleRegenerate(payload: RegenPayload) {
       if (data.numeric_warnings) numericWarnings.value = data.numeric_warnings
       if (data.score != null) score.value = data.score
       if (data.dimensions) dimensions.value = data.dimensions
+      if (data.verdict) verdict.value = data.verdict
     })
     await loadDocuments()
     await openDocument(meta.id)
@@ -551,6 +556,8 @@ async function openDocument(id: string) {
     numericWarnings.value = trace.critique?.numeric_warnings || []
     score.value = trace.critique?.score ?? null
     dimensions.value = trace.critique?.dimensions ?? null
+    verdict.value = trace.critique?.verdict
+      ?? (issues.value.length ? 'needs_review' : 'passed')
     knowledge.value = trace.knowledge ?? null
     events.value = (trace.events || []).map((e: any) => ({
       node: e.node, label: e.label || e.node, summary: e.summary,
@@ -794,7 +801,7 @@ onUnmounted(() => window.removeEventListener('hashchange', onHashChange))
               :standalone="standalone"
               :generating="generating" :events="events" :issues="issues"
               :outline="outline" :warnings="warnings" :numeric-warnings="numericWarnings"
-              :score="score" :dimensions="dimensions" :knowledge="knowledge"
+              :score="score" :dimensions="dimensions" :knowledge="knowledge" :verdict="verdict"
               :references="references" :selected-reference-ids="selectedReferenceIds"
               :skills="skills" :selected-skill-ids="selectedSkillIds"
               @update:selected-reference-ids="selectedReferenceIds = $event"

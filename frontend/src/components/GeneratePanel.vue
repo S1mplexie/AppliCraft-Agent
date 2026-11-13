@@ -21,6 +21,7 @@ const props = defineProps<{
   numericWarnings: string[]
   score: number | null
   dimensions: Record<string, number> | null
+  verdict: string | null
   knowledge: KnowledgeRef | null
   references: ReferenceDoc[]
   selectedReferenceIds: string[]
@@ -166,6 +167,37 @@ const scoreLabel = computed(() => {
   if (s >= 70) return '良好'
   return '需修改'
 })
+// 生成阶段进度：把 SSE 节点映射成固定步骤，避免轨迹只是一条不断追加的日志。
+const STAGES = [
+  { key: 'intake', label: '素材' },
+  { key: 'outline', label: '大纲' },
+  { key: 'draft', label: '初稿' },
+  { key: 'verify', label: '校验' },
+  { key: 'revise', label: '修订' },
+  { key: 'finalize', label: '定稿' },
+]
+const NODE_TO_STAGE: Record<string, number> = {
+  intake: 0, outline: 1, draft: 2, cv_render: 2, verify: 3, revise: 4, finalize: 5,
+}
+const stageIndex = computed(() => {
+  let idx = -1
+  for (const event of props.events) {
+    const i = NODE_TO_STAGE[event.node]
+    if (i != null) idx = Math.max(idx, i)
+  }
+  return idx
+})
+const stageDone = computed(() => stageIndex.value >= STAGES.length - 1)
+const verdictMeta = computed(() => {
+  switch (props.verdict) {
+    case 'factual_risk': return { label: '事实风险', cls: 'bad' }
+    case 'needs_review': return { label: '建议复核', cls: 'warn' }
+    case 'passed': return { label: '已核验', cls: 'good' }
+    default: return null
+  }
+})
+const FATAL_TYPES = new Set(['fabrication', 'contradiction', 'unsupported', 'program_fit'])
+const hardCount = computed(() => props.issues.filter(i => FATAL_TYPES.has(i.type)).length)
 const knowledgeSources = computed(() => props.knowledge?.sources || [])
 
 function addEmphasis() {
@@ -348,6 +380,15 @@ function submit() {
         </button>
       </div>
 
+      <div v-if="events.length" class="stage-track">
+        <div
+          v-for="(stage, i) in STAGES" :key="stage.key" class="stage"
+          :class="{ done: i <= stageIndex, running: generating && i === stageIndex && !stageDone }"
+        >
+          <span class="stage-dot"></span><span class="stage-label">{{ stage.label }}</span>
+        </div>
+      </div>
+
       <div class="insight-body">
         <div v-show="insightTab === 'trace'">
           <div v-if="events.length" class="timeline">
@@ -371,6 +412,7 @@ function submit() {
               <span class="score-num">{{ score ?? '—' }}</span>
               <span class="score-max">/100</span>
               <span class="score-tag">{{ scoreLabel }}</span>
+              <span v-if="verdictMeta" class="score-verdict" :class="verdictMeta.cls">{{ verdictMeta.label }}</span>
             </div>
             <div class="quality-dims">
               <div v-for="dim in dimensionRows" :key="dim.key" class="dim-row">
@@ -380,6 +422,9 @@ function submit() {
               </div>
             </div>
           </div>
+          <p v-if="score != null || dimensionRows.length" class="quality-note">
+            总分由六维评分等权换算（六维平均 × 20），与下方各维度一致；存在事实安全硬错误时封顶 70 分。
+          </p>
 
           <div v-if="knowledgeSources.length" class="kb-sources">
             <header>已引用项目官方资料 · {{ knowledgeSources.length }} 份</header>
@@ -414,7 +459,7 @@ function submit() {
           </div>
 
           <div v-if="issues.length" class="issues">
-            <header>待修订意见 · {{ issues.length }} 条</header>
+            <header>待修订意见 · {{ issues.length }} 条<span v-if="hardCount"> · 其中 {{ hardCount }} 条事实风险需优先处理</span></header>
             <div v-for="(issue, i) in issues" :key="i" class="issue">
               <span class="tag" :class="issue.type">{{ issue.type }}</span>
               <p>{{ issue.reason }}</p>
