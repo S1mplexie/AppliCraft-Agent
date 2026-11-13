@@ -20,7 +20,10 @@ const emit = defineEmits<{
 
 const editing = ref(false)
 const draft = ref('')
-const selectedVersion = ref('current')
+const selectedVersion = ref('')
+// 当前正文对应的版本名（v1…v{current}），版本选择框里不再单列「当前」选项，
+// 因为当前正文 v{current} 本就已在版本列表中。
+const currentVersionName = computed(() => 'v' + (props.document?.meta.version ?? 1))
 // 逐项审核建议：key 为待核项序号，值是该条的用户修改意见。
 const suggestions = reactive<Record<number, string>>({})
 const overallFeedback = ref('')
@@ -32,12 +35,16 @@ function resetFeedback() {
   overallFeedback.value = ''
 }
 
-watch(() => props.document?.meta.id, () => {
-  editing.value = false
-  selectedVersion.value = 'current'
-  resetFeedback()
-  regenOpen.value = false
-})
+watch(
+  () => `${props.document?.meta.id ?? ''}:${props.document?.meta.version ?? 0}`,
+  () => {
+    if (!props.document) return
+    editing.value = false
+    selectedVersion.value = currentVersionName.value
+    resetFeedback()
+    regenOpen.value = false
+  },
+)
 // 手机视口下不自动展开审核面板：正文自然滚动本身就很长，8 条意见再自动展开
 // 会让页面膨胀到 5000px+；入口由吸附工具栏的「审核建议 · N 项待核」按钮承担。
 const isMobileView = window.matchMedia('(max-width: 760px)')
@@ -54,7 +61,6 @@ watch(() => props.regenerating, (busy) => {
 const displayMarkdown = computed(() => {
   const doc = props.document
   if (!doc) return ''
-  if (selectedVersion.value === 'current') return doc.markdown
   return doc.versions.find(v => v.name === selectedVersion.value)?.markdown || doc.markdown
 })
 
@@ -76,7 +82,7 @@ const canRegenerate = computed(() =>
 )
 
 function startEdit() {
-  if (selectedVersion.value !== 'current') selectedVersion.value = 'current'
+  if (selectedVersion.value !== currentVersionName.value) selectedVersion.value = currentVersionName.value
   draft.value = displayMarkdown.value
   editing.value = true
   regenOpen.value = false
@@ -94,8 +100,8 @@ function copy() {
 }
 function download(format: 'md' | 'docx') {
   if (!props.document) return
-  const version = selectedVersion.value === 'current' ? '' : `&version=${selectedVersion.value}`
-  window.location.href = `/api/documents/${props.document.meta.id}/download?format=${format}${version}`
+  // 版本选择框只列 v1、v2…，selectedVersion 恒为真实版本名（含当前正文对应版本）。
+  window.location.href = `/api/documents/${props.document.meta.id}/download?format=${format}&version=${selectedVersion.value}`
 }
 function submitRegenerate() {
   if (!canRegenerate.value) return
@@ -125,7 +131,6 @@ function submitRegenerate() {
         审核建议{{ issues.length ? ` · ${issues.length} 项待核` : '' }}
       </button>
       <select v-model="selectedVersion">
-        <option value="current">当前 v{{ document.meta.version }}</option>
         <option v-for="version in document.versions" :key="version.name" :value="version.name">{{ version.name }}</option>
       </select>
       <span class="spacer"></span>

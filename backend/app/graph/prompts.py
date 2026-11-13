@@ -592,6 +592,7 @@ def verify_user(
     facts_text: str, draft: str, request: dict[str, Any],
     knowledge: str = "", reference: str = "", skill: str = "",
     previous_issues: list[dict[str, Any]] | None = None,
+    resolved_feedback: list[dict[str, Any]] | None = None,
 ) -> str:
     label = DOC_TYPE_LABELS.get(request["doc_type"], request["doc_type"])
     parts = [
@@ -606,6 +607,35 @@ def verify_user(
             "在 revision_check 字段按 index 返回 resolved / remaining / partially；"
             "已在上一轮指出且当前版本仍然存在的问题必须再次列入 issues。"
         )
+    # 用户已在上一轮审核并裁决的条目：本轮已据此修订，复检时不应再当作新问题提出，
+    # 除非存在事实安全级别的硬错误。这样避免把用户已确认/要求保留的内容反复重新挑出。
+    if resolved_feedback:
+        lines: list[str] = []
+        for item in resolved_feedback:
+            suggestion = str(item.get("suggestion") or "").strip()
+            if not suggestion:
+                continue
+            idx = item.get("index")
+            number = int(idx) + 1 if isinstance(idx, int) else len(lines) + 1
+            seg = [f"{number}."]
+            if item.get("type"):
+                seg.append(f"[{item['type']}]")
+            if item.get("quote"):
+                seg.append(f"上一轮原文「{item['quote']}」")
+            if item.get("reason"):
+                seg.append(f"上一轮问题：{item['reason']}")
+            if item.get("fix"):
+                seg.append(f"模型建议：{item['fix']}")
+            seg.append(f"用户裁决：{suggestion}")
+            lines.append(" ".join(seg))
+        if lines:
+            parts.append(
+                "## 用户已在上一轮审核并裁决、本轮已据此修订的条目（请勿重复列为新问题）\n"
+                + "\n".join(lines)
+                + "\n审核要求：上述条目已由用户明确裁决并要求据此修订，模型也已修订。"
+                "除非该处存在事实安全（fabrication / contradiction / unsupported）级别的硬错误，"
+                "否则不要再把它们作为新的待修订问题列出；若修订后已符合用户裁决，视为已解决。"
+            )
     if skill:
         parts.append(skill)
         parts.append(

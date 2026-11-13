@@ -235,6 +235,12 @@ async def verify(state: GraphState, *, llm: LLMClient, **_: Any) -> dict[str, An
     score: int | None = None
     revision_check: list[dict[str, Any]] = []
     previous_issues = state.get("previous_issues") or []
+    # 按建议重生成时，把用户已裁决的待核项传给复检，避免把已确认/要求保留的
+    # 内容反复重新挑出（事实安全级别的硬错误仍会照常报出）。
+    resolved = state.get("issue_feedback") or []
+    resolved_feedback = resolved if any(
+        str(item.get("suggestion") or "").strip() for item in resolved
+    ) else None
 
     try:
         data = await llm.complete_json(
@@ -246,6 +252,7 @@ async def verify(state: GraphState, *, llm: LLMClient, **_: Any) -> dict[str, An
                 reference=state.get("reference_context", ""),
                 skill=state.get("skill_context", ""),
                 previous_issues=previous_issues or None,
+                resolved_feedback=resolved_feedback,
             ),
             # 评审含主观判断，温度 0 会让六维评分坍缩到同一组数字（线上曾全部输出 62 分）；
             # 0.3 允许评分与措辞有合理波动，事实比对部分由锚点与事实清单约束。

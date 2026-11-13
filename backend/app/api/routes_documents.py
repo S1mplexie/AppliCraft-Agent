@@ -236,21 +236,30 @@ async def regenerate_document(
             state["events"] = state["events"] + [start_event]
             yield _sse("node", _node_payload("regenerate", {"events": [start_event]}))
 
-            # 与生成流同一套自我修复预算：按建议修一轮后必须复检，
-            # 复检仍有问题且未超 max_revisions 时继续自动修复，超限转人工复核。
+            # 用户已驱动修订：按建议修一轮后只复检一次并呈现剩余问题，不再自动多轮修订，
+            # 避免把用户已裁决的条目反复重新提出；事实安全级别的硬错误仍由复检照常报出。
+            # （无用户反馈的纯自修复走下方 while 循环，与初生成保持一致。）
             state["revision_count"] = 0
             update = await nodes.revise(state, llm=llm)
             merge_updates(state, update)
             yield _sse("node", _node_payload(nodes.revise.__name__, update))
-            while True:
+            has_user_feedback = bool(feedback.strip()) or any(
+                str(item.get("suggestion") or "").strip() for item in issue_feedback
+            )
+            if has_user_feedback:
                 update = await nodes.verify(state, llm=llm)
                 merge_updates(state, update)
                 yield _sse("node", _node_payload(nodes.verify.__name__, update))
-                if nodes.should_revise(state, settings=settings) != "revise":
-                    break
-                update = await nodes.revise(state, llm=llm)
-                merge_updates(state, update)
-                yield _sse("node", _node_payload(nodes.revise.__name__, update))
+            else:
+                while True:
+                    update = await nodes.verify(state, llm=llm)
+                    merge_updates(state, update)
+                    yield _sse("node", _node_payload(nodes.verify.__name__, update))
+                    if nodes.should_revise(state, settings=settings) != "revise":
+                        break
+                    update = await nodes.revise(state, llm=llm)
+                    merge_updates(state, update)
+                    yield _sse("node", _node_payload(nodes.revise.__name__, update))
             update = await nodes.finalize(state)
             merge_updates(state, update)
             yield _sse("node", _node_payload(nodes.finalize.__name__, update))
