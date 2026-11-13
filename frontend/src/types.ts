@@ -341,13 +341,13 @@ export function demoProfile(): ApplicantProfile {
   p.target_programs = [
     {
       id: uid(), university: 'The University of Hong Kong', program: 'MSc in Computer Science',
-      degree_type: 'Taught Master', region: 'Hong Kong, China', intake: '2027 Fall', deadline: '',
+      degree_type: 'Taught Master', region: '中国香港', intake: '2027 Fall', deadline: '',
       language_requirement: '', curriculum_notes: '', faculty_notes: '',
       why_fit: '', notes: '截止日期与语言要求请到官网核实后填写',
     },
     {
       id: uid(), university: 'National University of Singapore', program: 'MSc in Data Science and Machine Learning',
-      degree_type: 'Taught Master', region: 'Singapore', intake: '2027 Fall', deadline: '',
+      degree_type: 'Taught Master', region: '新加坡', intake: '2027 Fall', deadline: '',
       language_requirement: '', curriculum_notes: '', faculty_notes: '',
       why_fit: '', notes: '截止日期与语言要求请到官网核实后填写',
     },

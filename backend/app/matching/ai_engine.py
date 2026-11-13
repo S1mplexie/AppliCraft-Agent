@@ -42,7 +42,7 @@ _SYSTEM_PROMPT = """你是一位资深的香港与新加坡授课型 / 研究型
 
 输出要求：只返回一个 JSON 数组，不要任何解释文字、不要使用代码块。数组每个元素形如：
 {"program_id": "项目id", "tier": "gap|reach|match|safety", "reasons": ["依据1", "依据2"], "gaps": ["短板1"]}
-reasons 每条不超过 30 字、gaps 尽量精简，紧凑输出；必须覆盖输入 programs 中的全部 program_id（共 30 个），不可遗漏任何一项。"""
+reasons 每条不超过 30 字、gaps 尽量精简，紧凑输出；必须覆盖输入 programs 中的全部 program_id（共 __PROGRAM_COUNT__ 个），输出数组长度必须等于 __PROGRAM_COUNT__，不可遗漏任何一项。"""
 
 
 def _first_number(text: Any) -> float | None:
@@ -155,7 +155,7 @@ async def ai_evaluate_profile(
 
     data = await llm.complete_json(
         task="选校评估",
-        system=_SYSTEM_PROMPT,
+        system=_SYSTEM_PROMPT.replace("__PROGRAM_COUNT__", str(len(programs))),
         user=user_content,
         max_tokens=8192,
         temperature=0.2,
@@ -171,13 +171,17 @@ async def ai_evaluate_profile(
     by_id = {str(item.get("program_id")): item for item in data if isinstance(item, dict)}
 
     results: list[dict[str, Any]] = []
+    missing = 0
     for pid, req in (requirements.get("programs") or {}).items():
         m = meta.get(pid) or {}
         ai = by_id.get(pid) or {}
         tier = str(ai.get("tier") or "").strip().lower()
         if tier not in _VALID_TIERS:
+            # 模型漏项 / 等级非法时不可静默当「稳妥」：整页会看起来失去分级且误导用户。
+            # 明确标注为占位，提示重新评估；不编造具体判断依据。
+            missing += 1
             tier = "match"
-            reasons = list(ai.get("reasons") or []) or ["模型未给出明确等级，已按稳妥保守处理"]
+            reasons = ["模型未返回该项目的评级，已暂按稳妥占位，建议重新评估"]
         else:
             reasons = list(ai.get("reasons") or [])
         gaps = list(ai.get("gaps") or [])
@@ -201,9 +205,14 @@ async def ai_evaluate_profile(
         })
 
     results.sort(key=lambda x: (_TIER_ORDER.index(x["tier"]), x["school_name_zh"], x["name_en"]))
+    snapshot = _snapshot(profile)
+    if missing:
+        snapshot["notes"].append(
+            f"本次有 {missing} 个项目未获得模型评级，已暂按「稳妥」占位，建议重新评估。"
+        )
     return {
         "results": results,
-        "profile_snapshot": _snapshot(profile),
+        "profile_snapshot": snapshot,
         "tier_order": _TIER_ORDER,
         "tier_labels": _TIER_LABELS,
         "preferences_applied": bool(cleaned),

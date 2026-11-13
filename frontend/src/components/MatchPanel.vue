@@ -37,6 +37,18 @@ function removeField(v: string) {
   prefs.value.preferred_fields = prefs.value.preferred_fields.filter(x => x !== v)
 }
 
+// 偏好文案：既用于结果页展示「本次按什么偏好评估」，也在回到偏好页时提示上次设置。
+const prefsText = computed(() => {
+  const parts: string[] = []
+  if (prefs.value.priority_regions.includes('HK')) parts.push('优先香港')
+  if (prefs.value.priority_regions.includes('SG')) parts.push('优先新加坡')
+  if (prefs.value.preferred_fields.length) parts.push(`优先方向：${prefs.value.preferred_fields.join('、')}`)
+  return parts.join(' · ')
+})
+// 记录「发起本次评估时」的偏好快照，避免用户后来改了偏好导致结果页文案对不上。
+const appliedPrefsText = ref('')
+const hasLastResult = computed(() => !!result.value)
+
 watch(() => props.profileId, () => {
   state.value = 'idle'
   result.value = null
@@ -47,9 +59,11 @@ async function runMatch() {
   if (state.value === 'loading') return
   state.value = 'loading'
   loadError.value = ''
+  const submittedPrefs = prefsText.value
   try {
     result.value = await api.matchProfile(props.profileId, prefs.value)
     state.value = 'done'
+    appliedPrefsText.value = submittedPrefs
     addedIds.value = new Set()
     emit('quotaChanged')
     if (result.value.billing_source === 'system') {
@@ -61,7 +75,26 @@ async function runMatch() {
   }
 }
 
-const tierOrder = computed(() => result.value?.tier_order || ['gap', 'reach', 'match', 'safety'])
+// 重新评估不直接发起（避免不给改偏好的机会）：回到偏好表单，
+// 上次结果保留在内存里，可随时无消耗查看。
+function backToPrefs() {
+  if (state.value === 'loading') return
+  state.value = 'idle'
+  loadError.value = ''
+  scrollToTop()
+}
+function showLastResult() {
+  if (!result.value) return
+  state.value = 'done'
+  scrollToTop()
+}
+function scrollToTop() {
+  const page = document.querySelector('.match-page')
+  const scroller = page?.closest('.page-view') as HTMLElement | null
+  try { scroller?.scrollTo({ top: 0, behavior: 'smooth' }) } catch { /* 忽略 */ }
+  try { window.scrollTo({ top: 0, behavior: 'smooth' }) } catch { /* 忽略 */ }
+}
+
 const tierLabels = computed(() => result.value?.tier_labels || {})
 
 // 展示顺序：先呈现录取机会（冲刺 / 稳妥 / 保底），最后单列硬性缺口，更符合阅读习惯。
@@ -104,7 +137,7 @@ async function addToTargets(item: MatchItem) {
     university: item.school_name_zh,
     program: item.name_en,
     degree_type: 'Taught Master',
-    region: item.region === 'HK' ? 'Hong Kong, China' : 'Singapore',
+    region: item.region === 'HK' ? '中国香港' : item.region === 'SG' ? '新加坡' : '',
     intake: '', deadline: item.deadline, language_requirement: '',
     curriculum_notes: '', faculty_notes: '', why_fit: '',
     notes: '来自选校评估，请核对官网最新要求后补充课程与师资信息',
@@ -124,19 +157,23 @@ async function addToTargets(item: MatchItem) {
     <div class="page-head">
       <div>
         <h1>选校评估</h1>
-        <p>大模型结合档案与 30 个港新项目官方要求，给出适配等级（保底 / 稳妥 / 冲刺 / 硬性缺口）</p>
+        <p>大模型结合档案与系统收录的港新项目官方要求，给出适配等级（冲刺 / 稳妥 / 保底 / 硬性缺口）</p>
       </div>
-      <div v-if="state !== 'idle'" class="head-actions">
-        <button class="btn primary" :disabled="state === 'loading' || !llmReady" @click="runMatch">
-          {{ state === 'loading' ? '评估中…' : '重新评估' }}
+      <div v-if="state === 'done' || state === 'error'" class="head-actions">
+        <button class="btn primary" :disabled="state === 'loading'" @click="backToPrefs">
+          调整偏好并重新评估
         </button>
       </div>
     </div>
 
     <div v-if="state === 'idle'" class="card">
-      <p style="margin: 0 0 10px;">由大模型综合档案中的 GPA / 均分、语言成绩（含单项）、专业与课程匹配度、科研 / 实习等背景，对 30 个港新项目评估适配等级：</p>
+      <div v-if="hasLastResult" class="banner match-prev-note">
+        上次的评估结果已保留：先调整下面的偏好再评估，或直接
+        <button class="btn small" @click="showLastResult">查看上次结果</button>
+      </div>
+      <p style="margin: 0 0 10px;">由大模型综合档案中的 GPA / 均分、语言成绩（含单项）、专业与课程匹配度、科研 / 实习等背景，对系统收录的港新项目评估适配等级：</p>
       <ul class="match-idle-list">
-        <li>适配等级分级（保底 / 稳妥 / 冲刺 / 硬性缺口），每条附判断依据</li>
+        <li>四档适配等级（冲刺 / 稳妥 / 保底 / 硬性缺口），每条附判断依据</li>
         <li>硬性缺口清单（语言未达标等明显不满足官方门槛的项目会被单独标出）</li>
         <li>一键把项目加入目标项目列表</li>
       </ul>
@@ -168,9 +205,14 @@ async function addToTargets(item: MatchItem) {
             <span v-for="f in prefs.preferred_fields" :key="f" class="tag removable" @click="removeField(f)">{{ f }} ×</span>
           </div>
         </div>
-        <p class="hint">偏好会让大模型在评估理由中呼应你的倾向；留空则对所有项目一视同仁。</p>
+        <p class="hint">偏好会让大模型在评估理由中呼应你的倾向；留空则对所有项目一视同仁。调整偏好本身不消耗额度。</p>
       </div>
-      <button class="btn primary" :disabled="state === 'loading' || !llmReady" @click="runMatch">开始评估</button>
+      <div class="match-start-actions">
+        <button class="btn primary" :disabled="state === 'loading' || !llmReady" @click="runMatch">
+          {{ hasLastResult ? '按当前偏好重新评估' : '开始评估' }}
+        </button>
+        <button v-if="hasLastResult" class="btn" @click="showLastResult">返回上次结果</button>
+      </div>
     </div>
 
     <div v-else-if="state === 'loading'" class="card">
@@ -179,7 +221,11 @@ async function addToTargets(item: MatchItem) {
 
     <div v-else-if="state === 'error'" class="card">
       <div class="auth-error">{{ loadError }}</div>
-      <button class="btn" @click="runMatch">重试</button>
+      <div class="match-start-actions" style="margin-top: 12px;">
+        <button class="btn primary" :disabled="!llmReady" @click="runMatch">重试</button>
+        <button class="btn" @click="backToPrefs">返回修改偏好</button>
+        <button v-if="hasLastResult" class="btn" @click="showLastResult">查看上次结果</button>
+      </div>
     </div>
 
     <template v-else-if="result">
@@ -189,6 +235,9 @@ async function addToTargets(item: MatchItem) {
           <span class="match-stat-label">{{ s.label }}</span>
         </div>
       </div>
+      <p v-if="result.preferences_applied" class="hint match-pref-note">
+        本次已按偏好评估：{{ appliedPrefsText || '已应用择校偏好' }}
+      </p>
 
       <div class="card match-snapshot-card">
         <div class="card-head"><h2>档案硬指标</h2><span class="hint">评估输入</span></div>
