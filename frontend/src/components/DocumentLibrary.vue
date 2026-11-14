@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import DocumentViewer from './DocumentViewer.vue'
+import DocumentInsights from './DocumentInsights.vue'
 import type { DocumentDetail, DocumentMeta, Issue, RegenPayload, TabKey } from '../types'
 
 const props = defineProps<{
@@ -13,6 +14,9 @@ const props = defineProps<{
   scope: 'current' | 'all'
   regenerating: boolean
   regenStage: string
+  /** 本次生成进行中：右栏切换成实时轨迹，替代文书查看器。 */
+  generating: boolean
+  liveData: Record<string, any> | null
 }>()
 const emit = defineEmits<{
   open: [id: string]
@@ -114,7 +118,19 @@ function fmtDate(value: string): string {
       </aside>
 
       <section class="panel library-viewer">
+        <!-- 生成中：直接在这里显示本次生成的实时轨迹，而不是留在「生成文书」tab -->
+        <template v-if="generating">
+          <div class="gen-live-head">
+            <span class="gen-live-dot"></span>
+            <div>
+              <strong>正在生成新文书…</strong>
+              <small>下方是本次生成的实时轨迹与自检修复过程；完成后会自动打开新文书并归档记录</small>
+            </div>
+          </div>
+          <DocumentInsights v-bind="liveData || {}" live :generating="true" />
+        </template>
         <DocumentViewer
+          v-else
           :document="document" :issues="issues" :outline="outline" :warnings="warnings"
           :regenerating="regenerating" :regen-stage="regenStage"
           @save="emit('save', $event)" @remove="emit('remove', $event)"

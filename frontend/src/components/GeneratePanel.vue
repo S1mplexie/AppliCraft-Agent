@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
-import DocumentInsights from './DocumentInsights.vue'
 import { shortImportedAt } from '../utils/format'
 import type {
   AppConfig, ApplicantProfile, DocType, GeneratePayload, KnowledgeRef,
@@ -306,22 +305,20 @@ function submit() {
         </button>
         <div v-if="blockReason" class="reason">{{ blockReason }}</div>
         <p class="hint">
-          生成会先规划大纲供你确认，再起草正文；全程调用 {{ effectiveModel }}（{{ billingLabel }}），完成后自动打开文书库，生成轨迹与校验记录会归档到该文书下。
+          生成会先规划大纲供你确认；确认后跳到「文书库」实时显示生成过程，全程调用 {{ effectiveModel }}（{{ billingLabel }}），完成后自动打开新文书并归档轨迹与校验记录。
         </p>
       </div>
     </section>
 
-    <!-- 生成页只展示「本次生成」的实时进度：完成后洞察随文书归档到文书库，
-         切回生成页不会残留上一份文书的轨迹 / 校验结果。 -->
-    <DocumentInsights
-      v-if="generating"
-      live
-      :events="events" :issues="issues" :outline="outline"
-      :warnings="warnings" :numeric-warnings="numericWarnings"
-      :score="score" :dimensions="dimensions" :verdict="verdict"
-      :knowledge="knowledge" :word-count="wordCount" :placeholder-count="placeholderCount"
-      :word-limit="wordLimit" :generating="generating" :model-name="effectiveModel"
-      @go="$emit('go', $event)"
-    />
+    <!-- 生成过程已移到「文书库」实时展示：这里只留一条跳转提示，
+         生成页不再渲染任何轨迹，彻底避免串台。 -->
+    <div v-if="generating" class="gen-running-hint">
+      <span class="gen-live-dot"></span>
+      <div>
+        <strong>正在生成新文书…</strong>
+        <small>实时轨迹与自检修复过程在「文书库」显示，完成后会自动打开新文书</small>
+      </div>
+      <button class="btn small" @click="$emit('go', 'documents')">查看生成过程</button>
+    </div>
   </div>
 </template>

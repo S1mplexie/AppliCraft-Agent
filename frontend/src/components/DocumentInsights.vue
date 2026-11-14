@@ -44,6 +44,8 @@ const archivedEvents = computed<NodeEvent[]>(() =>
 
 const view = computed(() => {
   if (props.live) {
+    // 文书库的实时区不传表单里的 wordLimit，从最近的 verify 自检结果里取目标篇幅。
+    const lastVerify = [...(props.events || [])].reverse().find(e => e.node === 'verify')
     return {
       events: props.events || [],
       issues: props.issues || [],
@@ -56,7 +58,7 @@ const view = computed(() => {
       knowledge: props.knowledge ?? null,
       wordCount: props.wordCount ?? null,
       placeholderCount: props.placeholderCount ?? null,
-      wordLimit: props.wordLimit ?? null,
+      wordLimit: props.wordLimit ?? lastVerify?.self_check?.limit ?? null,
     }
   }
   const c = critique.value

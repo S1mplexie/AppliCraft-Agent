@@ -549,6 +549,22 @@ async function handleGenerate(payload: GeneratePayload) {
   }
 }
 
+/** 文书库「正在生成」区用的实时数据：与归档洞察共用组件，但来自本次 SSE 事件流。 */
+const liveInsight = computed(() => ({
+  events: events.value,
+  issues: issues.value,
+  outline: outline.value,
+  warnings: warnings.value,
+  numericWarnings: numericWarnings.value,
+  score: score.value,
+  dimensions: dimensions.value,
+  verdict: verdict.value,
+  knowledge: knowledge.value,
+  wordCount: wordCount.value,
+  placeholderCount: placeholderCount.value,
+  modelName: effectiveModel.value,
+}))
+
 /** 阶段二：用户确认大纲后，带 outline 正式生成。edited 为空表示沿用模型规划的大纲。 */
 async function startGenerationWithOutline(edited: any[] | null) {
   const pr = planReview.value
@@ -560,6 +576,8 @@ async function startGenerationWithOutline(edited: any[] | null) {
   score.value = null; dimensions.value = null; knowledge.value = null
   verdict.value = null
   generating.value = true
+  // 生成过程直接切到文书库实时展示，生成页不再停留、也不再显示任何轨迹。
+  activeTab.value = 'documents'
   try {
     const meta = await api.generateStream(payload, (envelope) => {
       if (envelope.event !== 'node') return
@@ -577,7 +595,7 @@ async function startGenerationWithOutline(edited: any[] | null) {
       if (data.placeholder_count != null) placeholderCount.value = data.placeholder_count
     })
     await loadDocuments()
-    await openDocument(meta.id)
+    await openDocument(meta.id, true)
     await refreshBilling()
     activeTab.value = 'documents'
     toast('生成完成，已在文书库中打开')
@@ -597,6 +615,8 @@ async function replan() {
   planning.value = true
   try {
     const plan = await api.generatePlan(pr.payload)
+    // 用户在重新规划期间关闭了预检：丢弃这次结果，不要把弹窗又弹回来。
+    if (!planReview.value) return
     planOutline.value = JSON.parse(JSON.stringify(plan.outline || []))
     planReview.value = {
       outline: plan.outline || [], evidence: plan.evidence || {},
@@ -607,6 +627,19 @@ async function replan() {
 }
 /** 跳过预检，直接让模型自行规划并起草（等同旧流程）。 */
 function skipPlan() { startGenerationWithOutline(null) }
+/** 关闭预检：点遮罩 / 关闭按钮 / ESC 都只取消本次生成，绝不顺手触发生成。
+ *  旧实现把遮罩绑成 skipPlan，点一下弹窗外空白就直接开始起草（还会扣额度）。 */
+function cancelPlan() {
+  planReview.value = null
+  planOutline.value = []
+}
+function onPlanKeydown(e: KeyboardEvent) {
+  if (e.key === 'Escape' && planReview.value) cancelPlan()
+}
+watch(planReview, (open) => {
+  if (open) window.addEventListener('keydown', onPlanKeydown)
+  else window.removeEventListener('keydown', onPlanKeydown)
+})
 
 async function handleRegenerate(payload: RegenPayload) {
   const doc = activeDoc.value
@@ -640,7 +673,10 @@ async function handleRegenerate(payload: RegenPayload) {
   }
 }
 
-async function openDocument(id: string) {
+async function openDocument(id: string, fromGeneration = false) {
+  // 生成中的实时轨迹与全局 events 绑定，此时打开别的文书会覆盖事件流造成串台；
+  // 只有生成流程自己收尾时（fromGeneration）才允许打开。
+  if (generating.value && !fromGeneration) { toast('生成进行中，完成后会自动打开新文书', true); return }
   try {
     activeDoc.value = await api.getDocument(id)
     const trace = activeDoc.value.trace || {}
@@ -917,9 +953,10 @@ onUnmounted(() => window.removeEventListener('hashchange', onHashChange))
         </div>
 
         <!-- 大纲预检弹窗：确认 / 微调结构后再起草 -->
-        <div v-if="planReview" class="plan-overlay" @click.self="skipPlan">
+        <div v-if="planReview" class="plan-overlay" @click.self="cancelPlan">
           <div class="plan-modal">
             <div class="plan-head">
+              <button class="icon-btn plan-close" title="取消本次生成" @click="cancelPlan">×</button>
               <h2>大纲预检</h2>
               <p>确认每段的结构与素材，或微调后再起草。改完后点「确认并开始撰写」。</p>
             </div>
@@ -951,6 +988,7 @@ onUnmounted(() => window.removeEventListener('hashchange', onHashChange))
             </div>
 
             <div class="plan-foot">
+              <button class="btn plan-cancel" @click="cancelPlan">取消</button>
               <button class="btn" :disabled="planning" @click="replan">
                 {{ planning ? '规划中…' : '重新规划大纲' }}
               </button>
@@ -987,6 +1025,7 @@ onUnmounted(() => window.removeEventListener('hashchange', onHashChange))
             :documents="documents" :document="activeDoc" :active-id="activeDoc?.meta.id || ''"
             :issues="issues" :outline="outline" :warnings="warnings" :scope="docScope"
             :regenerating="regenerating" :regen-stage="regenStage"
+            :generating="generating" :live-data="liveInsight"
             @open="openDocument" @save="saveDocument" @remove="removeDocument"
             @regenerate="handleRegenerate"
             @go="goTab" @scope="setDocScope"
