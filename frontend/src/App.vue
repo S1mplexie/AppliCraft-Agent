@@ -119,6 +119,11 @@ const dimensions = ref<Record<string, number> | null>(null)
 const verdict = ref<string | null>(null)
 const knowledge = ref<KnowledgeRef | null>(null)
 const generating = ref(false)
+// 最近一次生成的结果：成功条 / 失败卡片 / 列表「新」标记共用的数据源，
+// 把「生成文书 → 文书库 → 返回生成工作台」串成一条可往返的链路。
+const genOutcome = ref<{
+  ok: boolean; docId?: string; title?: string; score?: number | null; message?: string
+} | null>(null)
 // 大纲预检：handleGenerate 先规划大纲并展示给用户确认 / 微调，确认后再正式起草。
 // planReview 是「大纲草稿」本身：收起弹窗后依然保留，并按档案写入 localStorage；
 // planOpen 只控制弹窗显隐。两者解耦，避免点一下别处就把已规划的大纲丢掉。
@@ -201,7 +206,13 @@ function toast(message: string, error = false) {
   toastTimer = window.setTimeout(() => (toastMsg.value = ''), 4200)
 }
 
-function goTab(tab: TabKey) { activeTab.value = tab }
+function goTab(tab: TabKey) {
+  activeTab.value = tab
+  // 离开文书库后不保留「刚生成」的瞬时提示；失败卡片保留到用户明确处理。
+  if (tab !== 'documents' && genOutcome.value?.ok) genOutcome.value = null
+}
+/** 用户主动关掉成功条 / 失败卡片。 */
+function dismissGenResult() { genOutcome.value = null }
 function syncHash() {
   // 未登录时保持干净的入口地址，避免初次访问被写成 #/profile 之类的内部路由。
   if (!user.value) return
@@ -210,6 +221,16 @@ function syncHash() {
 }
 function onHashChange() { activeTab.value = tabFromHash() }
 watch(activeTab, syncHash)
+// v-show 不会重放 CSS 动画：切 tab 时给目标页加一次 class，触发轻量淡入。
+watch(activeTab, (tab) => {
+  void nextTick(() => {
+    const el = document.querySelector<HTMLElement>(`.page-view[data-tab="${tab}"]`)
+    if (!el) return
+    el.classList.remove('page-enter')
+    void el.offsetWidth
+    el.classList.add('page-enter')
+  })
+})
 
 /** 每个账号各自记住上次使用的档案；退出后重新登录不会跳回第一份。 */
 function rememberKey() {
@@ -609,6 +630,7 @@ async function startGenerationWithOutline(edited: any[] | null) {
   numericWarnings.value = []; wordCount.value = null; placeholderCount.value = null
   score.value = null; dimensions.value = null; knowledge.value = null
   verdict.value = null
+  genOutcome.value = null
   generating.value = true
   // 生成过程直接切到文书库实时展示，生成页不再停留、也不再显示任何轨迹。
   activeTab.value = 'documents'
@@ -632,9 +654,14 @@ async function startGenerationWithOutline(edited: any[] | null) {
     await openDocument(meta.id, true)
     await refreshBilling()
     activeTab.value = 'documents'
+    genOutcome.value = {
+      ok: true, docId: meta.id, title: meta.title || '新文书', score: score.value,
+    }
     toast('生成完成，已在文书库中打开')
   } catch (error) {
-    toast((error as Error).message, true)
+    const message = (error as Error).message
+    genOutcome.value = { ok: false, message }
+    toast(message, true)
   } finally {
     generating.value = false
   }
@@ -720,7 +747,10 @@ async function handleRegenerate(payload: RegenPayload) {
 async function openDocument(id: string, fromGeneration = false) {
   // 生成中的实时轨迹与全局 events 绑定，此时打开别的文书会覆盖事件流造成串台；
   // 只有生成流程自己收尾时（fromGeneration）才允许打开。
-  if (generating.value && !fromGeneration) { toast('生成进行中，完成后会自动打开新文书', true); return }
+  if (generating.value && !fromGeneration) {
+    toast('生成进行中，完成后会自动打开新文书；期间可点左侧「生成文书」返回工作台')
+    return
+  }
   try {
     activeDoc.value = await api.getDocument(id)
     const trace = activeDoc.value.trace || {}
@@ -870,7 +900,7 @@ onUnmounted(() => window.removeEventListener('hashchange', onHashChange))
             <span v-if="tab.key === 'documents' && documents.length" class="side-num">{{ documents.length }}</span>
             <span v-if="tab.key === 'library' && references.length" class="side-num">{{ references.length }}</span>
             <span v-if="tab.key === 'skills' && selectedSkillIds.length" class="side-num">{{ selectedSkillIds.length }}</span>
-            <span v-if="tab.key === 'generate' && generating" class="side-badge running-badge">生成中</span>
+            <span v-if="tab.key === 'documents' && generating" class="side-badge running-badge">生成中</span>
           </button>
         </div>
       </nav>
@@ -923,7 +953,7 @@ onUnmounted(() => window.removeEventListener('hashchange', onHashChange))
 
       <main class="page-wrap">
         <!-- 申请人档案 -->
-        <div v-show="activeTab === 'profile'" class="page-view">
+        <div v-show="activeTab === 'profile'" data-tab="profile" class="page-view">
           <div class="page profile-page">
             <div class="page-head">
               <div>
@@ -948,7 +978,7 @@ onUnmounted(() => window.removeEventListener('hashchange', onHashChange))
         </div>
 
         <!-- 选校评估 -->
-        <div v-show="activeTab === 'match'" class="page-view">
+        <div v-show="activeTab === 'match'" data-tab="match" class="page-view">
           <MatchPanel
             :profile-id="currentProfileId" :profile="profile" :standalone="standalone"
             :llm-configured="llmConfigured"
@@ -957,7 +987,7 @@ onUnmounted(() => window.removeEventListener('hashchange', onHashChange))
         </div>
 
         <!-- 项目管理（含「看板」视图切换） -->
-        <div v-show="activeTab === 'projects'" class="page-view">
+        <div v-show="activeTab === 'projects'" data-tab="projects" class="page-view">
           <ProjectsPanel
             :profile-id="currentProfileId" :documents="documents" :system-programs="systemPrograms"
             @go="goTab" @refresh-docs="loadDocuments"
@@ -965,7 +995,7 @@ onUnmounted(() => window.removeEventListener('hashchange', onHashChange))
         </div>
 
         <!-- 生成工作台 -->
-        <div v-show="activeTab === 'generate'" class="page-view">
+        <div v-show="activeTab === 'generate'" data-tab="generate" class="page-view">
           <div class="page generate-page">
             <div class="page-head">
               <div>
@@ -974,7 +1004,9 @@ onUnmounted(() => window.removeEventListener('hashchange', onHashChange))
               </div>
               <div class="head-actions">
                 <button class="btn" @click="goTab('profile')">检查档案</button>
-                <button class="btn" @click="goTab('documents')">查看文书库</button>
+                <button class="btn" @click="goTab('documents')">
+                  {{ generating ? '查看生成进度 →' : '查看文书库 →' }}
+                </button>
               </div>
             </div>
             <!-- 收起预检后大纲草稿仍在：一键继续编辑，不重新调用规划接口。 -->
@@ -1055,7 +1087,7 @@ onUnmounted(() => window.removeEventListener('hashchange', onHashChange))
         </div>
 
         <!-- 参考文档库 -->
-        <div v-show="activeTab === 'library'" class="page-view">
+        <div v-show="activeTab === 'library'" data-tab="library" class="page-view">
           <LibraryPanel
             :references="references" :system-programs="systemPrograms"
             :target-program-ids="existingTargetIds"
@@ -1065,7 +1097,7 @@ onUnmounted(() => window.removeEventListener('hashchange', onHashChange))
         </div>
 
         <!-- Skill 市场 -->
-        <div v-show="activeTab === 'skills'" class="page-view">
+        <div v-show="activeTab === 'skills'" data-tab="skills" class="page-view">
           <SkillMarketPanel
             :skills="skills" :selected-skill-ids="selectedSkillIds"
             @update:selected-skill-ids="selectedSkillIds = $event"
@@ -1074,12 +1106,13 @@ onUnmounted(() => window.removeEventListener('hashchange', onHashChange))
         </div>
 
         <!-- 文书库 -->
-        <div v-show="activeTab === 'documents'" class="page-view library-view">
+        <div v-show="activeTab === 'documents'" data-tab="documents" class="page-view library-view">
           <DocumentLibrary
             :documents="documents" :document="activeDoc" :active-id="activeDoc?.meta.id || ''"
             :issues="issues" :outline="outline" :warnings="warnings" :scope="docScope"
             :regenerating="regenerating" :regen-stage="regenStage"
-            :generating="generating" :live-data="liveInsight"
+            :generating="generating" :live-data="liveInsight" :gen-outcome="genOutcome"
+            @dismiss-result="dismissGenResult"
             @open="openDocument" @save="saveDocument" @remove="removeDocument"
             @regenerate="handleRegenerate"
             @go="goTab" @scope="setDocScope"
@@ -1087,7 +1120,7 @@ onUnmounted(() => window.removeEventListener('hashchange', onHashChange))
         </div>
 
         <!-- 设置 -->
-        <div v-show="activeTab === 'settings'" class="page-view">
+        <div v-show="activeTab === 'settings'" data-tab="settings" class="page-view">
           <SettingsView
             :user="user" :quota="quota" :config="config" :my-llm="myLlm" :profiles="profiles"
             :current-profile-id="currentProfileId" :save-state="saveState" :standalone="standalone"

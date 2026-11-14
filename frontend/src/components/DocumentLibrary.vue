@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
 import DocumentViewer from './DocumentViewer.vue'
 import DocumentInsights from './DocumentInsights.vue'
 import type { DocumentDetail, DocumentMeta, Issue, RegenPayload, TabKey } from '../types'
@@ -17,6 +17,10 @@ const props = defineProps<{
   /** 本次生成进行中：右栏切换成实时轨迹，替代文书查看器。 */
   generating: boolean
   liveData: Record<string, any> | null
+  /** 最近一次生成的结果：成功条 / 失败卡片 / 「新」标记共用的数据源。 */
+  genOutcome: {
+    ok: boolean; docId?: string; title?: string; score?: number | null; message?: string
+  } | null
 }>()
 const emit = defineEmits<{
   open: [id: string]
@@ -25,6 +29,7 @@ const emit = defineEmits<{
   regenerate: [payload: RegenPayload]
   go: [tab: TabKey]
   scope: [value: 'current' | 'all']
+  dismissResult: []
 }>()
 
 const filters = [
@@ -44,6 +49,14 @@ const filtered = computed(() => {
   })
 })
 
+// 新文书生成完成后，把它滚进列表可视区（文书多时顶部提示条之外的第二重定位）。
+watch(() => props.genOutcome?.docId, async (id) => {
+  if (!id || !props.genOutcome?.ok) return
+  await nextTick()
+  document.querySelector<HTMLElement>('.library-item.just-created')
+    ?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+})
+
 function fmtDate(value: string): string {
   if (!value) return '—'
   const d = new Date(value)
@@ -61,8 +74,24 @@ function fmtDate(value: string): string {
         <p>按类型筛选、回溯版本、核对事实校验意见并导出 DOCX</p>
       </div>
       <div class="head-actions">
-        <button class="btn primary" @click="emit('go', 'generate')">新建文书</button>
+        <button class="btn primary" @click="emit('go', 'generate')">
+          {{ generating ? '返回生成工作台 →' : '新建文书 →' }}
+        </button>
       </div>
+    </div>
+
+    <!-- 生成完成的往返闭环：明确告诉用户新文书在哪、分数多少、怎么回去写下一份。 -->
+    <div v-if="genOutcome?.ok" class="gen-result-bar">
+      <span class="gen-result-icon">✓</span>
+      <div class="gen-result-text">
+        <strong>《{{ genOutcome.title || '新文书' }}》已生成并打开</strong>
+        <small>
+          质量分{{ genOutcome.score != null ? ' ' + genOutcome.score + '/100' : '已归档' }}
+          · 生成轨迹与事实校验已保存在这份文书下
+        </small>
+      </div>
+      <button class="btn small" @click="emit('go', 'generate')">返回生成工作台</button>
+      <button class="icon-btn" title="关闭提示" @click="emit('dismissResult')">×</button>
     </div>
 
     <div class="library-layout">
@@ -91,13 +120,17 @@ function fmtDate(value: string): string {
         <div class="library-list">
           <button
             v-for="doc in filtered" :key="doc.id" class="library-item"
-            :class="{ active: activeId === doc.id }" @click="emit('open', doc.id)"
+            :class="{ active: activeId === doc.id, 'just-created': genOutcome?.ok && genOutcome.docId === doc.id }"
+            @click="emit('open', doc.id)"
           >
             <div class="library-item-top">
               <span class="badge" :class="doc.passed_verification ? 'ok' : 'warn'">{{ doc.doc_type_label }}</span>
               <small>{{ fmtDate(doc.created_at) }}</small>
             </div>
-            <strong>{{ doc.title }}</strong>
+            <div class="library-item-title">
+              <strong>{{ doc.title }}</strong>
+              <span v-if="genOutcome?.ok && genOutcome.docId === doc.id" class="new-tag">新</span>
+            </div>
             <div class="library-item-meta">
               <span>v{{ doc.version }}</span><span>约 {{ doc.word_count }} 词</span>
               <span>{{ doc.language === 'zh' ? '中文' : 'English' }}</span>
@@ -112,7 +145,7 @@ function fmtDate(value: string): string {
             <button v-if="scope === 'current' && !documents.length" class="btn small" @click="emit('scope', 'all')">
               查看全部档案的文书
             </button>
-            <button class="btn small primary" @click="emit('go', 'generate')">去生成</button>
+            <button class="btn small primary" @click="emit('go', 'generate')">去生成 →</button>
           </div>
         </div>
       </aside>
@@ -124,11 +157,23 @@ function fmtDate(value: string): string {
             <span class="gen-live-dot"></span>
             <div>
               <strong>正在生成新文书…</strong>
-              <small>下方是本次生成的实时轨迹与自检修复过程；完成后会自动打开新文书并归档记录</small>
+              <small>下方是本次生成的实时轨迹与自检修复过程；生成在后台继续，可先回工作台，点左侧「文书库」随时回来</small>
             </div>
+            <button class="btn small" @click="emit('go', 'generate')">回生成工作台</button>
           </div>
           <DocumentInsights v-bind="liveData || {}" live :generating="true" />
         </template>
+        <!-- 生成失败：不要把用户悄悄丢回上一份文书，给明确原因与重试入口。 -->
+        <div v-else-if="genOutcome && !genOutcome.ok" class="gen-fail-card">
+          <span class="gen-fail-mark">!</span>
+          <h2>本次生成未完成</h2>
+          <p class="gen-fail-msg">{{ genOutcome.message || '生成过程中出现异常，请稍后重试。' }}</p>
+          <p class="gen-fail-hint">这次没有产出新文书；原来的文书和额度状态未受影响。可以回到生成工作台调整参数后重试。</p>
+          <div class="gen-fail-actions">
+            <button class="btn primary" @click="emit('go', 'generate')">返回生成工作台重试 →</button>
+            <button class="btn" @click="emit('dismissResult')">留在文书库</button>
+          </div>
+        </div>
         <DocumentViewer
           v-else
           :document="document" :issues="issues" :outline="outline" :warnings="warnings"

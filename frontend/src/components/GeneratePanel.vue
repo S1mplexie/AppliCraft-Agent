@@ -315,10 +315,10 @@ function submit() {
     <div v-if="generating" class="gen-running-hint">
       <span class="gen-live-dot"></span>
       <div>
-        <strong>正在生成新文书…</strong>
-        <small>实时轨迹与自检修复过程在「文书库」显示，完成后会自动打开新文书</small>
+        <strong>这份文书正在后台生成</strong>
+        <small>切换页面不会中断生成；实时轨迹与自检修复过程在「文书库」，完成后会自动打开新文书</small>
       </div>
-      <button class="btn small" @click="$emit('go', 'documents')">查看生成过程</button>
+      <button class="btn small primary" @click="$emit('go', 'documents')">查看生成过程 →</button>
     </div>
   </div>
 </template>

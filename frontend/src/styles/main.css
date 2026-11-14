@@ -1759,3 +1759,72 @@ label.bi-toggle-row > .bi-toggle-input {
 .plan-draft-text strong { font-size: 14px; }
 .plan-draft-text small { color: var(--ink-soft, #5b6b7f); font-size: 12px; }
 @media (max-width: 760px) { .plan-draft-bar { padding: 10px 12px; } }
+
+/* ===== tab 切换：轻量入场动画（v-show 由 App.vue 重放 class 触发） ===== */
+@keyframes pageEnter {
+  from { opacity: 0; transform: translateY(7px); }
+  to { opacity: 1; transform: none; }
+}
+.page-view.page-enter { animation: pageEnter .26s cubic-bezier(.22, .61, .36, 1) both; }
+.side-badge { flex: none; }
+@media (prefers-reduced-motion: reduce) {
+  .page-view.page-enter { animation: none; }
+  .gen-live-dot { animation: none; }
+}
+
+/* ===== 生成文书 ⇄ 文书库：状态条、失败卡片、新文书标记 ===== */
+.gen-result-bar {
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  margin: 0 0 14px; padding: 11px 14px;
+  border: 1px solid #bfe3c8; border-radius: 12px;
+  background: linear-gradient(90deg, #f2fbf4, #fbfefb);
+}
+.gen-result-icon {
+  width: 24px; height: 24px; border-radius: 50%; flex: none;
+  display: grid; place-items: center; font-size: 13px; font-weight: 700;
+  background: #2f8f52; color: #fff;
+}
+.gen-result-text { display: flex; flex-direction: column; gap: 2px; flex: 1 1 240px; min-width: 0; }
+.gen-result-text strong { font-size: 13px; color: var(--ink, #1f2a37); }
+.gen-result-text small { font-size: 11.5px; color: var(--muted, #6b7684); }
+.gen-result-bar > .btn { flex: none; }
+.gen-result-bar > .icon-btn { flex: none; }
+
+.gen-live-head > div { flex: 1; min-width: 0; }
+.gen-live-head > .btn { flex: none; }
+
+.gen-fail-card {
+  flex: 1; min-height: 0; overflow: auto; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; text-align: center;
+  padding: 42px 28px; gap: 10px;
+}
+.gen-fail-mark {
+  width: 42px; height: 42px; border-radius: 50%; flex: none;
+  display: grid; place-items: center; font-size: 22px; font-weight: 700;
+  background: #fdecec; color: #c0392b; border: 1px solid #f5c6c2;
+}
+.gen-fail-card h2 { margin: 4px 0 0; font-size: 19px; }
+.gen-fail-msg {
+  margin: 0; max-width: 520px; font-size: 13px; line-height: 1.7;
+  color: #a1332b; word-break: break-word;
+}
+.gen-fail-hint {
+  margin: 0; max-width: 520px; font-size: 12px; line-height: 1.7;
+  color: var(--muted, #6b7684);
+}
+.gen-fail-actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: 10px; }
+
+.library-item-title { display: flex; align-items: center; gap: 6px; min-width: 0; }
+.library-item-title strong { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.new-tag {
+  flex: none; padding: 1px 6px; border-radius: 999px; font-size: 10px; font-weight: 700;
+  background: var(--accent, #b08d57); color: #fff;
+}
+.library-item.just-created { border-color: var(--accent, #b08d57); }
+
+@media (max-width: 760px) {
+  .gen-live-head { flex-wrap: wrap; }
+  .gen-live-head > div { flex-basis: calc(100% - 24px); }
+  .gen-fail-card { padding: 28px 18px; }
+  .gen-result-bar { padding: 10px 12px; }
+}
