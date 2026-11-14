@@ -162,6 +162,7 @@ async def outline(state: GraphState, *, llm: LLMClient, **_: Any) -> dict[str, A
                 "title": str(item.get("title", "")),
                 "goal": str(item.get("goal", "")),
                 "evidence_ids": list(item.get("evidence_ids") or []),
+                "specifics": str(item.get("specifics", "")),
             }
             for item in sections
             if isinstance(item, dict)
