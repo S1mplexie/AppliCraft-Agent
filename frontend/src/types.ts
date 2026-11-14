@@ -115,7 +115,9 @@ export interface DocumentDetail {
     knowledge?: KnowledgeRef
     references?: { id: string; name: string; filename: string; included?: boolean; missing?: boolean }[]
     skills?: { id: string; name: string; included?: boolean; missing?: boolean; truncated?: boolean; origin?: string }[]
-    events?: { node: string; summary: string; at: string; score?: number; dimensions?: Record<string, number> }[]
+    /** 各轮自检分数序列（初稿 → 每次复检），用于还原修复曲线。 */
+    score_history?: number[]
+    events?: (Partial<NodeEvent> & { node: string; summary: string; at?: string })[]
     warnings?: string[]
     revision_count?: number
     /** 按建议重生成：上一版质量分与分差，用于在评分明细里展示「较上轮 +N」。 */
@@ -277,6 +279,27 @@ export function systemProgramToTarget(p: SystemProgram): TargetProgram {
   }
 }
 
+/** 节点中文名：SSE 事件自带 label，但归档 trace 的事件只有 node，打开历史文档时据此还原。 */
+export const NODE_LABELS: Record<string, string> = {
+  intake: '整理申请人事实清单',
+  outline: '规划结构与素材选取',
+  draft: '起草正文',
+  cv_render: '渲染简历并润色',
+  verify: '事实一致性与文书质量校验',
+  revise: '按校验意见修订',
+  finalize: '定稿与归档',
+  regenerate: '应用用户审核建议',
+}
+/** 程序确定性自检（不依赖模型）：篇幅 / 占位符 / 结构 / 数字核对的可读结论。 */
+export interface SelfCheck {
+  length_ok: boolean
+  words?: number | null
+  limit?: number | null
+  placeholders: number
+  placeholder_ok: boolean
+  structure_ok: boolean
+  numbers: number
+}
 export interface NodeEvent {
   node: string; label: string; summary: string
   warnings: string[]; outline: any; issues: Issue[] | null; passed: boolean | null
@@ -289,6 +312,21 @@ export interface NodeEvent {
   /** 确定性后检指标：约 X 词（目标 Y）、[TO CONFIRM] 占位符个数。 */
   word_count?: number | null; word_limit?: number | null
   placeholder_count?: number | null; placeholder_overflow?: boolean | null
+  /** 自检 / 自修复明细：SSE 事件与归档 trace 的事件同构，供生成轨迹还原分数曲线。 */
+  phase?: 'initial' | 'recheck' | null
+  round?: number | null
+  score_before?: number | null
+  score_delta?: number | null
+  self_check?: SelfCheck | null
+  issue_total?: number | null
+  fixes?: string[] | null
+  fix_count?: number | null
+  focus?: string | null
+  before_score?: number | null
+  initial_score?: number | null
+  final_score?: number | null
+  score_gain?: number | null
+  revision_count?: number | null
 }
 export interface ResumeParseResult {
   profile: ApplicantProfile

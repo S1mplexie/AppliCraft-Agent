@@ -45,6 +45,8 @@ def _trace(state: dict[str, Any], request: dict[str, Any], settings: Settings) -
         "issues": critique.get("issues") or [],
         "passed_verification": bool(critique.get("passed")),
         "score": critique.get("score"),
+        # 各轮自检的分数序列（初稿 → 每次复检），供前端/文档库还原修复曲线。
+        "score_history": state.get("score_history") or [],
         "dimensions": critique.get("dimensions") or {},
         "knowledge": state.get("knowledge") or {},
         "references": state.get("reference_meta") or [],
@@ -157,6 +159,21 @@ def _node_payload(node: str, update: dict[str, Any]) -> dict[str, Any]:
         "word_limit": critique.get("word_limit") if node == "verify" else None,
         "placeholder_count": critique.get("placeholder_count") if node == "verify" else None,
         "placeholder_overflow": critique.get("placeholder_overflow") if node == "verify" else None,
+        # 自检 / 自修复结构化明细：从节点事件直接透传，SSE 与归档 trace 共用同一套字段。
+        "phase": last_event.get("phase"),
+        "round": last_event.get("round"),
+        "score_before": last_event.get("score_before"),
+        "score_delta": last_event.get("score_delta"),
+        "self_check": last_event.get("self_check"),
+        "issue_total": last_event.get("issue_total"),
+        "fixes": last_event.get("fixes"),
+        "fix_count": last_event.get("fix_count"),
+        "focus": last_event.get("focus"),
+        "before_score": last_event.get("before_score"),
+        "initial_score": last_event.get("initial_score"),
+        "final_score": last_event.get("final_score"),
+        "score_gain": last_event.get("score_gain"),
+        "revision_count": last_event.get("revision_count"),
     }
 
 

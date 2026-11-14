@@ -13,7 +13,7 @@ import ProfileSwitcher from './components/ProfileSwitcher.vue'
 import SystemProgramPicker from './components/SystemProgramPicker.vue'
 import { api, onUnauthorized } from './api/client'
 import {
-  demoProfile, emptyProfile, systemProgramToTarget,
+  NODE_LABELS, demoProfile, emptyProfile, systemProgramToTarget,
   type AppConfig, type ApplicantProfile, type ApplicationProject, type AuthResponse, type AuthUser,
   type DocumentDetail, type DocumentMeta, type GeneratePayload, type Issue,
   type KnowledgeRef, type LocalLLMConfig, type NodeEvent, type ProfileSection, type ProfileSummary, type QuotaInfo,
@@ -655,9 +655,14 @@ async function openDocument(id: string) {
     wordCount.value = trace.critique?.word_count ?? null
     placeholderCount.value = trace.critique?.placeholder_count ?? null
     knowledge.value = trace.knowledge ?? null
+    // 归档 trace 的事件里带着完整的自检/修复字段（score、self_check、fixes、phase …），
+    // 必须整包展开还原；只留 node/summary 会让历史文档的分数曲线与自检过程消失。
     events.value = (trace.events || []).map((e: any) => ({
-      node: e.node, label: e.label || e.node, summary: e.summary,
-      warnings: [], outline: null, issues: null, passed: null,
+      ...e,
+      label: e.label || NODE_LABELS[e.node] || e.node,
+      warnings: e.warnings || [],
+      issues: e.issues ?? null,
+      passed: e.passed ?? null,
     }))
     activeTab.value = 'documents'
   } catch (error) {

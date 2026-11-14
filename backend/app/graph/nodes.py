@@ -83,7 +83,9 @@ def _post_check(draft: str) -> tuple[list[dict[str, Any]], dict[str, Any]]:
         "placeholder_count": len(placeholders),
         "placeholder_overflow": len(placeholders) > PLACEHOLDER_BUDGET,
     }
-    if re.search(r'\{\s*"sections"|"evidence_ids"\s*:|"title"\s*:\s*"|##\s*Outline|```json|```\s*$', draft):
+    leak = bool(re.search(r'\{\s*"sections"|"evidence_ids"\s*:|"title"\s*:\s*"|##\s*Outline|```json|```\s*$', draft))
+    metrics["structure_leak"] = leak
+    if leak:
         issues.append({
             "type": "style",
             "severity": "soft",
@@ -348,6 +350,12 @@ async def verify(state: GraphState, *, llm: LLMClient, **_: Any) -> dict[str, An
 
     # 分数历史用于自修复收敛判断：连续两轮没有提升就停止自动改写。
     history = list(state.get("score_history") or [])
+    # 本轮之前的分数：轨迹里据此显示「初稿 X 分 → 自检修复后 Y 分」。
+    # 按建议重生成时 score_history 被重置，退回上一版文档的分数作为修复前基准。
+    score_before = history[-1] if history else state.get("previous_score")
+    if not isinstance(score_before, (int, float)) or isinstance(score_before, bool):
+        score_before = None
+    score_delta = int(score) - int(score_before) if score is not None and score_before is not None else None
     if score is not None:
         history.append(score)
     critique = {
@@ -368,7 +376,25 @@ async def verify(state: GraphState, *, llm: LLMClient, **_: Any) -> dict[str, An
     }
     # 数字待核对只进 critique（每轮复检覆盖更新），不进全局 warnings：
     # 自修复循环会多轮 verify，全局 warnings 是累加通道，把数字警告放进去会产生重复与过时提示。
-    phase = "复检" if state.get("revision_count", 0) else "初审"
+    rounds = state.get("revision_count", 0)
+    phase = "复检" if rounds else "初审"
+    phase_key = "initial" if rounds == 0 else "recheck"
+    # 程序确定性自检的可读结论：与模型六维评分分开呈现，明确哪些是代码直检的硬指标。
+    self_check = {
+        "length_ok": 0.85 <= words / limit <= 1.15 if limit else True,
+        "words": words,
+        "limit": limit,
+        "placeholders": post_metrics.get("placeholder_count") or 0,
+        "placeholder_ok": not post_metrics.get("placeholder_overflow", False),
+        "structure_ok": not post_metrics.get("structure_leak", False),
+        "numbers": len(number_warnings),
+    }
+    check_note = (
+        f"；程序自检：篇幅{'达标' if self_check['length_ok'] else '偏差'}、"
+        f"占位符 {self_check['placeholders']} 个、"
+        f"结构{'正常' if self_check['structure_ok'] else '有残留'}"
+    )
+    gain_note = f"，较修复前 {score_delta:+d} 分" if score_delta is not None else ""
     resolved_note = ""
     if previous_issues and revision_check:
         resolved = sum(1 for item in revision_check if item.get("status") == "resolved")
@@ -381,9 +407,9 @@ async def verify(state: GraphState, *, llm: LLMClient, **_: Any) -> dict[str, An
         "events": [
             _event(
                 "verify",
-                f"{phase}完成：质量分 {score if score is not None else '—'}/100，"
+                f"{phase}完成：质量分 {score if score is not None else '—'}/100{gain_note}，"
                 f"{len(hard_issues)} 条事实风险、{len(soft_issues)} 条质量建议、"
-                f"{len(number_warnings)} 处数字待核对{word_note}{resolved_note}",
+                f"{len(number_warnings)} 处数字待核对{word_note}{resolved_note}{check_note}",
                 issues=issues,
                 passed=passed,
                 verdict=verdict,
@@ -394,6 +420,14 @@ async def verify(state: GraphState, *, llm: LLMClient, **_: Any) -> dict[str, An
                 word_limit=limit,
                 placeholder_count=post_metrics.get("placeholder_count"),
                 placeholder_overflow=post_metrics.get("placeholder_overflow", False),
+                phase=phase_key,
+                round=rounds,
+                score_before=score_before,
+                score_delta=score_delta,
+                self_check=self_check,
+                issue_total=len(issues),
+                hard_issue_count=len(hard_issues),
+                soft_issue_count=len(soft_issues),
             )
         ],
     }
@@ -463,12 +497,24 @@ async def revise(state: GraphState, *, llm: LLMClient, **_: Any) -> dict[str, An
         summary = f"已按 {len(focus_issues)} 条校验意见与整体补充说明修订全文"
     else:
         summary = f"自我修复（{focus_label}）：处理 {len(focus_issues)}/{len(issues)} 条意见，待复检确认"
+    critique = state.get("critique") or {}
+    fixes = [
+        str(item.get("reason") or item.get("fix") or "").strip().replace("\n", " ")[:90]
+        for item in focus_issues[:4]
+    ]
     return {
         "draft": _clean_markdown(text),
         "revision_count": rounds + 1,
         # 记录修订前的完整意见清单（未按轮次过滤），供下一轮复检做"已解决/仍存在"对照。
         "previous_issues": issues,
-        "events": [_event("revise", summary, resolved=len(focus_issues), focus=focus_label)],
+        "events": [_event(
+            "revise", summary,
+            resolved=len(focus_issues), focus=focus_label,
+            round=rounds + 1,
+            fixes=[f for f in fixes if f],
+            fix_count=len(focus_issues),
+            before_score=critique.get("score"),
+        )],
     }
 
 
@@ -499,7 +545,27 @@ async def finalize(state: GraphState, **_: Any) -> dict[str, Any]:
         verdict = f"自我修复 {rounds} 轮后复检通过"
     else:
         verdict = f"自我修复 {rounds} 轮后仍有 {remaining} 条待核项，转人工复核"
+    # 定稿事件把整条自检修复链的分数首尾带上，即使前端只渲染纯文本轨迹也能看到提升。
+    history = [h for h in (state.get("score_history") or []) if isinstance(h, (int, float))]
+    initial_score = history[0] if history else state.get("previous_score")
+    if not isinstance(initial_score, (int, float)) or isinstance(initial_score, bool):
+        initial_score = None
+    final_score = history[-1] if history else critique.get("score")
+    score_gain = (
+        int(final_score) - int(initial_score)
+        if isinstance(final_score, (int, float)) and isinstance(initial_score, (int, float))
+        else None
+    )
+    gain_note = (
+        f"，质量分 {initial_score} → {final_score}（{score_gain:+d}）"
+        if score_gain is not None and rounds else ""
+    )
     return {
         "final": final,
-        "events": [_event("finalize", f"{verdict}，约 {words} 词", word_count=words, verdict=verdict)],
+        "events": [_event(
+            "finalize", f"{verdict}，约 {words} 词{gain_note}",
+            word_count=words, verdict=verdict,
+            initial_score=initial_score, final_score=final_score,
+            score_gain=score_gain, revision_count=rounds,
+        )],
     }

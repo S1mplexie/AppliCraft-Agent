@@ -180,8 +180,8 @@ const STAGES = [
   { key: 'intake', label: '素材' },
   { key: 'outline', label: '大纲' },
   { key: 'draft', label: '初稿' },
-  { key: 'verify', label: '校验' },
-  { key: 'revise', label: '修订' },
+  { key: 'verify', label: '自检' },
+  { key: 'revise', label: '自修复' },
   { key: 'finalize', label: '定稿' },
 ]
 const NODE_TO_STAGE: Record<string, number> = {
@@ -204,6 +204,60 @@ const verdictMeta = computed(() => {
     default: return null
   }
 })
+// ===== 自检修复轨迹：把「初稿评分 → 每轮自检 → 自修复 → 复检评分」显式画出来 =====
+// 只统计「本次运行」：起草（draft / cv_render）或按建议重生成（regenerate）之后的事件。
+// 历史文档的 trace 会累积多轮事件，不切段会把上一版分数误当成本轮初稿分。
+const runStart = computed(() => {
+  let idx = 0
+  props.events.forEach((e, i) => {
+    if (e.node === 'draft' || e.node === 'cv_render' || e.node === 'regenerate') idx = i + 1
+  })
+  return idx
+})
+const runEvents = computed(() => props.events.slice(runStart.value))
+const verifyEvents = computed(() => runEvents.value.filter(e => e.node === 'verify'))
+const repairRounds = computed(() => runEvents.value.filter(e => e.node === 'revise').length)
+function issuesOf(e: NodeEvent): number {
+  if (e.issue_total != null) return e.issue_total
+  return (e.hard_issue_count ?? 0) + (e.soft_issue_count ?? 0)
+}
+/** 分数曲线：初稿（或按建议修订前）→ 自检修复后的最后一次复检。 */
+const repair = computed(() => {
+  const vs = verifyEvents.value
+  if (!vs.length) return null
+  const first = vs[0]
+  const last = vs[vs.length - 1]
+  const initial = first.score_before ?? first.score ?? null
+  const final = last.score ?? props.score ?? null
+  return {
+    initial,
+    final,
+    delta: initial != null && final != null ? final - initial : null,
+    rounds: repairRounds.value,
+    issuesBefore: issuesOf(first),
+    issuesAfter: issuesOf(last),
+    userDriven: props.events[runStart.value - 1]?.node === 'regenerate',
+  }
+})
+function signed(n: number | null | undefined): string {
+  if (n == null) return '—'
+  return n > 0 ? '+' + n : String(n)
+}
+function deltaClass(n: number | null | undefined): string {
+  if (n == null || n === 0) return 'flat'
+  return n > 0 ? 'up' : 'down'
+}
+/** 程序确定性自检的四项硬指标，转成可直接渲染的 chip。 */
+function checkChips(e: NodeEvent): { text: string; bad: boolean }[] {
+  const sc = e.self_check
+  if (!sc) return []
+  return [
+    { text: '篇幅 ' + (sc.length_ok ? '达标' : '偏差') + (sc.words != null ? ' ' + sc.words + '/' + (sc.limit ?? '—') + ' 词' : ''), bad: !sc.length_ok },
+    { text: '占位符 ' + sc.placeholders + '/3', bad: !sc.placeholder_ok },
+    { text: '结构 ' + (sc.structure_ok ? '正常' : '有残留'), bad: !sc.structure_ok },
+    { text: sc.numbers ? '数字 ' + sc.numbers + ' 处待核' : '数字已核对', bad: sc.numbers > 0 },
+  ]
+}
 const FATAL_TYPES = new Set(['fabrication', 'contradiction', 'unsupported', 'program_fit'])
 const hardCount = computed(() => props.issues.filter(i => FATAL_TYPES.has(i.type)).length)
 const knowledgeSources = computed(() => props.knowledge?.sources || [])
@@ -399,11 +453,64 @@ function submit() {
 
       <div class="insight-body">
         <div v-show="insightTab === 'trace'">
+          <!-- 自检修复：初稿分 → 复检分，让分数提升与修复轮次一眼可见 -->
+          <div v-if="repair" class="repair-card">
+            <div class="repair-head">
+              <span class="repair-title">自检修复</span>
+              <span class="repair-badge" :class="repair.rounds ? 'active' : 'clean'">
+                {{ repair.rounds ? '自动修复 ' + repair.rounds + ' 轮' : '初审通过 · 未触发修复' }}
+              </span>
+            </div>
+            <div class="repair-flow">
+              <div class="rf-side">
+                <small>{{ repair.userDriven ? '修订前评分' : '初稿评分' }}</small>
+                <div><b>{{ repair.initial ?? '—' }}</b><span>/100</span></div>
+              </div>
+              <div class="rf-arrow">
+                <span class="rf-line"></span>
+                <em :class="deltaClass(repair.delta)">{{ signed(repair.delta) }} 分</em>
+              </div>
+              <div class="rf-side">
+                <small>自检修复后复检</small>
+                <div><b :class="deltaClass(repair.delta)">{{ repair.final ?? '—' }}</b><span>/100</span></div>
+              </div>
+            </div>
+            <p class="repair-meta">
+              <template v-if="repair.rounds">
+                模型复核 + 程序直检共发现 {{ repair.issuesBefore }} 条问题，经 {{ repair.rounds }} 轮自修复，复检剩 {{ repair.issuesAfter }} 条
+              </template>
+              <template v-else>初稿即通过事实一致性与程序自检，无需自动改写</template>
+            </p>
+          </div>
+
           <div v-if="events.length" class="timeline">
-            <div v-for="(event, i) in events" :key="i" class="timeline-item">
+            <div
+              v-for="(event, i) in events" :key="i" class="timeline-item"
+              :class="{ 'tl-verify': event.node === 'verify', 'tl-revise': event.node === 'revise' }"
+            >
               <span class="timeline-dot"></span>
-              <strong>{{ event.label }}</strong>
+              <div class="tl-head">
+                <strong>{{ event.label }}</strong>
+                <span v-if="event.node === 'verify'" class="tl-tag" :class="event.round ? 'recheck' : 'initial'">
+                  {{ event.round ? '第 ' + event.round + ' 轮复检' : '初稿初审' }}
+                </span>
+                <span v-else-if="event.node === 'revise'" class="tl-tag fix">
+                  自检修复{{ event.focus ? ' · ' + event.focus : '' }}
+                </span>
+              </div>
               <small>{{ event.summary }}</small>
+              <div v-if="event.node === 'verify'" class="tl-detail">
+                <span class="tl-score">质量分 <b>{{ event.score ?? '—' }}</b>/100</span>
+                <span v-if="event.score_delta != null" class="tl-delta" :class="deltaClass(event.score_delta)">{{ signed(event.score_delta) }}</span>
+                <span class="tl-issues">发现 {{ issuesOf(event) }} 条意见</span>
+                <div v-if="checkChips(event).length" class="tl-check">
+                  <span class="tlc-label">程序自检</span>
+                  <span v-for="(chip, j) in checkChips(event)" :key="j" :class="{ bad: chip.bad }">{{ chip.text }}</span>
+                </div>
+              </div>
+              <div v-else-if="event.node === 'revise' && event.fixes?.length" class="tl-fixes">
+                <div v-for="(fix, j) in event.fixes" :key="j">· {{ fix }}</div>
+              </div>
             </div>
           </div>
           <div v-else class="mini-empty">
@@ -433,6 +540,15 @@ function submit() {
           <p v-if="score != null || dimensionRows.length" class="quality-note">
             总分由六维评分等权换算（六维平均 × 20），与下方各维度一致；存在事实安全硬错误时封顶 70 分。
           </p>
+
+          <!-- 事实校验页也能看到同一条自检修复分数曲线 -->
+          <div v-if="repair && repair.rounds" class="quality-progress">
+            <span class="qp-label">自检修复</span>
+            <span>{{ repair.userDriven ? '修订前' : '初稿' }} <b>{{ repair.initial ?? '—' }}</b></span>
+            <span class="qp-arrow">→</span>
+            <span>修复 {{ repair.rounds }} 轮后 <b>{{ repair.final ?? '—' }}</b></span>
+            <em :class="deltaClass(repair.delta)">{{ signed(repair.delta) }} 分</em>
+          </div>
 
           <div v-if="wordCount != null" class="selfcheck">
             <span class="sc-label">确定性自检</span>
