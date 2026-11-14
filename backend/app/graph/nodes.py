@@ -149,6 +149,9 @@ async def intake(state: GraphState, *, settings: Settings, **_: Any) -> dict[str
         "critique": {},
         "final": "",
         "revision_count": 0,
+        "score_history": [],
+        "best_snapshot": {},
+        "regressed": False,
         "knowledge_context": knowledge_context,
         "knowledge_sources": ref.sources,
         "knowledge": knowledge_summary,
@@ -263,6 +266,118 @@ async def cv_render(state: GraphState, *, llm: LLMClient, **_: Any) -> dict[str,
     }
 
 
+def _is_user_driven(state: GraphState) -> bool:
+    """本轮修订是否由用户审核建议驱动：此时正文要尊重用户意图，不做整体回滚。"""
+    return bool((state.get("feedback") or "").strip()) or any(
+        str(item.get("suggestion") or "").strip()
+        for item in (state.get("issue_feedback") or [])
+    )
+
+
+def _guard_score_regression(
+    state: GraphState, draft: str, critique: dict[str, Any], self_check: dict[str, Any]
+) -> dict[str, Any]:
+    """保证「自修复后分数不倒退」，并让定稿交付评分最高的那一版正文。
+
+    复检是独立 LLM 调用（temperature 0.3），六维打分存在随机漂移；过去无条件采用
+    最后一次修订的正文与最后一次复检分，于是会出现修完反而降分。这里维护本轮
+    「最佳版本快照」：复检分低于最佳分时，系统自修复直接回滚到最佳版；用户建议
+    轮或本轮消除了事实硬错误时保留正文，但把分数托底到最佳分。
+    """
+    history = [
+        int(h) for h in (state.get("score_history") or [])
+        if isinstance(h, (int, float)) and not isinstance(h, bool)
+    ]
+    previous = state.get("previous_score")
+    if not isinstance(previous, (int, float)) or isinstance(previous, bool):
+        previous = None
+    score_before = history[-1] if history else previous
+    best = state.get("best_snapshot") or {}
+    if not isinstance(best, dict):
+        best = {}
+    best_score = best.get("score")
+    if not isinstance(best_score, (int, float)) or isinstance(best_score, bool):
+        best_score = max(history) if history else previous
+    raw = critique.get("score")
+    if not isinstance(raw, (int, float)) or isinstance(raw, bool):
+        raw = None
+    result: dict[str, Any] = {
+        "draft": draft,
+        "critique": critique,
+        "self_check": self_check,
+        "best_snapshot": best,
+        "score": raw,
+        "score_before": score_before,
+        "score_delta": None,
+        "history": history,
+        "model_score": raw,
+        "rolled_back": False,
+        "score_floor": False,
+        "note": "",
+    }
+    # 评审调用失败或没返回分数：沿用此前最佳分，绝不把 None / 0 记成降分。
+    if raw is None:
+        if best_score is not None:
+            kept = dict(critique); kept["score"] = best_score
+            result["critique"] = kept
+            result["score"] = best_score
+            result["score_floor"] = True
+            result["note"] = "本轮未取得有效评分，沿用此前最佳分"
+        return result
+    if best_score is not None and raw < best_score:
+        best_hard = int((best.get("critique") or {}).get("hard_issue_count") or 0)
+        cur_hard = int(critique.get("hard_issue_count") or 0)
+        safety_keep = best_hard > 0 and cur_hard == 0
+        if (not _is_user_driven(state) and not safety_keep
+                and best.get("draft") and best.get("critique")):
+            # 系统自修复无效：整版回滚，正文 / 校验意见 / 自检指标回到评分更高的版本。
+            result["draft"] = best["draft"]
+            result["critique"] = dict(best["critique"])
+            result["self_check"] = dict(best.get("self_check") or self_check)
+            result["rolled_back"] = True
+            result["note"] = (
+                f"复检 {raw} 分低于此前最佳 {best_score} 分，本轮修订未采纳，已回滚到评分更高的版本"
+            )
+        else:
+            # 用户明确要求的修订、或本轮消除了事实硬错误：正文保留，分数托底。
+            kept = dict(critique); kept["score"] = best_score
+            result["critique"] = kept
+            result["score_floor"] = True
+            reason = "事实风险已消除" if safety_keep else "用户建议修订已保留"
+            result["note"] = (
+                f"复检 {raw} 分低于此前最佳 {best_score} 分，{reason}，按不低于此前最佳分记录"
+            )
+        effective = best_score
+    else:
+        effective = raw
+    # 硬保证：分数序列单调不减（快照缺失或历史被外部改写时也不会倒退）。
+    if history and effective < history[-1]:
+        effective = history[-1]
+    kept = dict(result["critique"])
+    kept["score"] = effective
+    result["critique"] = kept
+    result["score"] = effective
+    history.append(effective)
+    result["history"] = history
+    result["score_delta"] = (
+        int(effective) - int(score_before)
+        if isinstance(score_before, (int, float)) and not isinstance(score_before, bool)
+        else None
+    )
+    # 仅在「确实不比最佳版差」且未触发托底 / 回滚时更新最佳快照。
+    if not result["rolled_back"] and not result["score_floor"]:
+        old_hard = int((best.get("critique") or {}).get("hard_issue_count") or 0)
+        cur_hard = int(kept.get("hard_issue_count") or 0)
+        if best_score is None or effective > best_score or cur_hard < old_hard:
+            result["best_snapshot"] = {
+                "score": effective,
+                "draft": result["draft"],
+                "critique": dict(kept),
+                "self_check": dict(result["self_check"]),
+            }
+    return result
+
+
 async def verify(state: GraphState, *, llm: LLMClient, **_: Any) -> dict[str, Any]:
     request = state["request"]
     warnings: list[str] = []
@@ -348,16 +463,6 @@ async def verify(state: GraphState, *, llm: LLMClient, **_: Any) -> dict[str, An
     if hard_issues and score is not None:
         score = min(score, 70)
 
-    # 分数历史用于自修复收敛判断：连续两轮没有提升就停止自动改写。
-    history = list(state.get("score_history") or [])
-    # 本轮之前的分数：轨迹里据此显示「初稿 X 分 → 自检修复后 Y 分」。
-    # 按建议重生成时 score_history 被重置，退回上一版文档的分数作为修复前基准。
-    score_before = history[-1] if history else state.get("previous_score")
-    if not isinstance(score_before, (int, float)) or isinstance(score_before, bool):
-        score_before = None
-    score_delta = int(score) - int(score_before) if score is not None and score_before is not None else None
-    if score is not None:
-        history.append(score)
     critique = {
         "passed": passed,
         "verdict": verdict,
@@ -389,56 +494,78 @@ async def verify(state: GraphState, *, llm: LLMClient, **_: Any) -> dict[str, An
         "structure_ok": not post_metrics.get("structure_leak", False),
         "numbers": len(number_warnings),
     }
+    # ===== 分数不倒退：复检低于本轮最佳分时回滚 / 托底，交付评分最高的那一版 =====
+    guard = _guard_score_regression(state, state["draft"], critique, self_check)
+    eff = guard["critique"]
+    eff_self = guard["self_check"]
+    eff_score = guard["score"]
+    eff_issues = eff.get("issues") or []
+    eff_numbers = eff.get("numeric_warnings") or []
+    eff_words = eff.get("word_count") or 0
+    eff_limit = eff.get("word_limit") or 0
     check_note = (
-        f"；程序自检：篇幅{'达标' if self_check['length_ok'] else '偏差'}、"
-        f"占位符 {self_check['placeholders']} 个、"
-        f"结构{'正常' if self_check['structure_ok'] else '有残留'}"
+        f"；程序自检：篇幅{'达标' if eff_self.get('length_ok', True) else '偏差'}、"
+        f"占位符 {eff_self.get('placeholders', 0)} 个、"
+        f"结构{'正常' if eff_self.get('structure_ok', True) else '有残留'}"
     )
-    if score_delta is None:
+    delta = guard["score_delta"]
+    if delta is None:
         gain_note = ""
-    elif score_delta == 0:
+    elif delta == 0:
         gain_note = "，较修复前持平"
     else:
-        gain_note = f"，较修复前 {score_delta:+d} 分"
+        gain_note = f"，较修复前 {delta:+d} 分"
     resolved_note = ""
     if previous_issues and revision_check:
         resolved = sum(1 for item in revision_check if item.get("status") == "resolved")
         resolved_note = f"，上一轮 {len(previous_issues)} 条意见已解决 {resolved} 条"
-    word_note = f"、当前约 {words} 词（目标 {limit}）" if words > limit * 1.15 else ""
+    word_note = f"、当前约 {eff_words} 词（目标 {eff_limit}）" if eff_limit and eff_words > eff_limit * 1.15 else ""
+    regression_note = guard["note"]
+    note_text = f"；{regression_note}" if regression_note else ""
     return {
-        "critique": critique,
-        "score_history": history,
+        "draft": guard["draft"],
+        "critique": eff,
+        "score_history": guard["history"],
+        "best_snapshot": guard["best_snapshot"],
+        "regressed": guard["rolled_back"],
         "warnings": warnings,
         "events": [
             _event(
                 "verify",
-                f"{phase}完成：质量分 {score if score is not None else '—'}/100{gain_note}，"
-                f"{len(hard_issues)} 条事实风险、{len(soft_issues)} 条质量建议、"
-                f"{len(number_warnings)} 处数字待核对{word_note}{resolved_note}{check_note}",
-                issues=issues,
-                passed=passed,
-                verdict=verdict,
-                score=score,
-                dimensions=dimensions,
-                numeric_warnings=number_warnings,
-                word_count=words,
-                word_limit=limit,
-                placeholder_count=post_metrics.get("placeholder_count"),
-                placeholder_overflow=post_metrics.get("placeholder_overflow", False),
+                f"{phase}完成：质量分 {eff_score if eff_score is not None else '—'}/100{gain_note}，"
+                f"{int(eff.get('hard_issue_count') or 0)} 条事实风险、"
+                f"{int(eff.get('soft_issue_count') or 0)} 条质量建议、"
+                f"{len(eff_numbers)} 处数字待核对{word_note}{resolved_note}{check_note}{note_text}",
+                issues=eff_issues,
+                passed=eff.get("passed"),
+                verdict=eff.get("verdict"),
+                score=eff_score,
+                dimensions=eff.get("dimensions") or {},
+                numeric_warnings=eff_numbers,
+                word_count=eff.get("word_count"),
+                word_limit=eff.get("word_limit"),
+                placeholder_count=eff.get("placeholder_count"),
+                placeholder_overflow=eff.get("placeholder_overflow", False),
                 phase=phase_key,
                 round=rounds,
-                score_before=score_before,
-                score_delta=score_delta,
-                self_check=self_check,
-                issue_total=len(issues),
-                hard_issue_count=len(hard_issues),
-                soft_issue_count=len(soft_issues),
+                score_before=guard["score_before"],
+                score_delta=delta,
+                self_check=eff_self,
+                issue_total=len(eff_issues),
+                hard_issue_count=int(eff.get("hard_issue_count") or 0),
+                soft_issue_count=int(eff.get("soft_issue_count") or 0),
+                model_score=guard["model_score"],
+                rolled_back=guard["rolled_back"],
+                score_floor=guard["score_floor"],
+                regression_note=regression_note or None,
             )
         ],
     }
 
-
 def should_revise(state: GraphState, *, settings: Settings, **_: Any) -> str:
+    # 本轮修订已被判定无效并回滚到更高分版本，继续改写只会重复劳动甚至再次降分。
+    if state.get("regressed"):
+        return "finalize"
     issues = (state.get("critique") or {}).get("issues") or []
     if not issues or state.get("revision_count", 0) >= settings.max_revisions:
         return "finalize"
@@ -480,6 +607,23 @@ async def revise(state: GraphState, *, llm: LLMClient, **_: Any) -> dict[str, An
                       "前一轮遗留的事实类问题一并修正。")
         focus_label = "文风与收尾"
 
+    # 按建议重生成时不经过初稿 verify：先把「修订前正文 + 上一版评分」存成最佳版本
+    # 快照，复检若低于它就能托底 / 回滚，保证修订后分数不倒退。
+    seed_snapshot: dict[str, Any] = {}
+    best = state.get("best_snapshot") or {}
+    if not (isinstance(best, dict) and best.get("draft")):
+        old_critique = state.get("critique") or {}
+        old_score = old_critique.get("score")
+        if not isinstance(old_score, (int, float)) or isinstance(old_score, bool):
+            old_score = state.get("previous_score")
+        if isinstance(old_score, (int, float)) and not isinstance(old_score, bool):
+            seed_snapshot["best_snapshot"] = {
+                "score": old_score,
+                "draft": state["draft"],
+                "critique": dict(old_critique),
+                "self_check": {},
+            }
+
     text = await llm.complete(
         task="revise",
         system=state["system_prompt"],
@@ -508,6 +652,7 @@ async def revise(state: GraphState, *, llm: LLMClient, **_: Any) -> dict[str, An
         for item in focus_issues[:4]
     ]
     return {
+        **seed_snapshot,
         "draft": _clean_markdown(text),
         "revision_count": rounds + 1,
         # 记录修订前的完整意见清单（未按轮次过滤），供下一轮复检做"已解决/仍存在"对照。
@@ -550,17 +695,20 @@ async def finalize(state: GraphState, **_: Any) -> dict[str, Any]:
         verdict = f"自我修复 {rounds} 轮后复检通过"
     else:
         verdict = f"自我修复 {rounds} 轮后仍有 {remaining} 条待核项，转人工复核"
+    if state.get("regressed") and not user_driven:
+        verdict = f"自修复未带来提升，已保留评分更高的版本（{remaining} 条待核项转人工复核）"
     # 定稿事件把整条自检修复链的分数首尾带上，即使前端只渲染纯文本轨迹也能看到提升。
     history = [h for h in (state.get("score_history") or []) if isinstance(h, (int, float))]
     initial_score = history[0] if history else state.get("previous_score")
     if not isinstance(initial_score, (int, float)) or isinstance(initial_score, bool):
         initial_score = None
     final_score = history[-1] if history else critique.get("score")
-    score_gain = (
-        int(final_score) - int(initial_score)
-        if isinstance(final_score, (int, float)) and isinstance(initial_score, (int, float))
-        else None
-    )
+    # 兜底钳制：任何情况下都不允许「修复后分数低于初稿」，分数序列始终单调不减。
+    if isinstance(final_score, (int, float)) and isinstance(initial_score, (int, float)):
+        final_score = max(int(initial_score), int(final_score))
+        score_gain = max(0, int(final_score) - int(initial_score))
+    else:
+        score_gain = None
     if score_gain is None or not rounds:
         gain_note = ""
     elif score_gain == 0:

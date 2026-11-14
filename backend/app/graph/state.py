@@ -15,6 +15,12 @@ class GraphState(TypedDict, total=False):
     draft: str
     critique: dict[str, Any]
     revision_count: int
+    # 自修复版本择优：本轮评分最高的正文 / 校验快照；复检分低于它时回滚或托底，
+    # 保证「自修复后分数不倒退」且交付的是评分最高的那一版。
+    best_snapshot: dict[str, Any]
+    regressed: bool
+    score_history: list[int]
+    previous_score: int | None
     final: str
     # 用户审核建议（按建议重新生成时由接口写入，revise 节点消费）。
     feedback: str

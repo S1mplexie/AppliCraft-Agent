@@ -169,24 +169,33 @@ const repair = computed(() => {
   const first = vs[0]
   const last = vs[vs.length - 1]
   const initial = first.score_before ?? first.score ?? null
-  const final = last.score ?? view.value.score ?? null
+  const rawFinal = last.score ?? view.value.score ?? null
+  // 后端已保证分数单调不减；这里对旧归档文档再做一次防御性钳制，
+  // 任何情况下都不把「修复后降分」呈献给用户。
+  const final = initial != null && rawFinal != null ? Math.max(initial, rawFinal) : rawFinal
   return {
     initial,
     final,
-    delta: initial != null && final != null ? final - initial : null,
+    delta: initial != null && final != null ? Math.max(0, final - initial) : null,
     rounds: repairRounds.value,
     issuesBefore: issuesOf(first),
     issuesAfter: issuesOf(last),
     userDriven: view.value.events[runStart.value - 1]?.node === 'regenerate',
   }
 })
+/** 分差只允许展示 0 或正数：后端已回滚劣化修订，旧归档里的负分差也不再呈现。 */
+function safeGain(n: number | null | undefined): number | null {
+  return n == null ? null : Math.max(0, n)
+}
 function signed(n: number | null | undefined): string {
-  if (n == null) return '—'
-  return n > 0 ? '+' + n : String(n)
+  const v = safeGain(n)
+  if (v == null) return '—'
+  return v > 0 ? '+' + v : String(v)
 }
 function deltaClass(n: number | null | undefined): string {
-  if (n == null || n === 0) return 'flat'
-  return n > 0 ? 'up' : 'down'
+  const v = safeGain(n)
+  if (v == null || v === 0) return 'flat'
+  return 'up'
 }
 /** 程序确定性自检的四项硬指标，转成可直接渲染的 chip。 */
 function checkChips(e: NodeEvent): { text: string; bad: boolean }[] {
@@ -282,6 +291,8 @@ const emptyText = computed(() => ({
               <span v-else-if="event.node === 'revise'" class="tl-tag fix">
                 自检修复{{ event.focus ? ' · ' + event.focus : '' }}
               </span>
+              <span v-if="event.rolled_back" class="tl-tag rollback" title="本轮复检分数更低，已保留评分更高的版本">已回滚到高分版本</span>
+              <span v-else-if="event.score_floor" class="tl-tag floor" title="正文保留，分数按此前最佳分记录">分数托底</span>
             </div>
             <small>{{ event.summary }}</small>
             <div v-if="event.node === 'verify'" class="tl-detail">

@@ -146,6 +146,8 @@ def _restore_state(
         "critique": trace.get("critique") or {},
         "revision_count": int(trace.get("revision_count") or 0),
         "score_history": [],
+        "best_snapshot": {},
+        "regressed": False,
         # 上一版质量分：重生成后用于展示「较上轮 +N / -N」。
         "previous_score": (trace.get("critique") or {}).get("score"),
         # 复检对照的初始意见：以本文档生成时的校验结果为上一轮基准（revise 会覆盖）。
@@ -284,7 +286,7 @@ async def regenerate_document(
             old_score = state.get("previous_score")
             trace["previous_score"] = old_score
             trace["score_delta"] = (
-                int(new_score) - int(old_score)
+                max(0, int(new_score) - int(old_score))
                 if isinstance(new_score, (int, float)) and isinstance(old_score, (int, float))
                 else None
             )

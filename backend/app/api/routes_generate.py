@@ -174,6 +174,11 @@ def _node_payload(node: str, update: dict[str, Any]) -> dict[str, Any]:
         "final_score": last_event.get("final_score"),
         "score_gain": last_event.get("score_gain"),
         "revision_count": last_event.get("revision_count"),
+        # 分数不倒退：本轮模型原始分、是否回滚 / 托底及其说明。
+        "model_score": last_event.get("model_score"),
+        "rolled_back": last_event.get("rolled_back"),
+        "score_floor": last_event.get("score_floor"),
+        "regression_note": last_event.get("regression_note"),
     }
 
 

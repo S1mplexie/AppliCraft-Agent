@@ -1828,3 +1828,7 @@ label.bi-toggle-row > .bi-toggle-input {
   .gen-fail-card { padding: 28px 18px; }
   .gen-result-bar { padding: 10px 12px; }
 }
+
+/* ===== 分数不倒退：回滚 / 托底事件标记 ===== */
+.tl-tag.rollback { background: #e8f2ff; color: #2b6cb0; }
+.tl-tag.floor { background: #fdf3e3; color: #8a6d3b; }

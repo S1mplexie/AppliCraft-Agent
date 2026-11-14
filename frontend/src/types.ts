@@ -322,6 +322,11 @@ export interface NodeEvent {
   round?: number | null
   score_before?: number | null
   score_delta?: number | null
+  /** 分数不倒退：本轮模型原始分、是否回滚 / 托底及其说明。 */
+  model_score?: number | null
+  rolled_back?: boolean | null
+  score_floor?: boolean | null
+  regression_note?: string | null
   self_check?: SelfCheck | null
   issue_total?: number | null
   fixes?: string[] | null
