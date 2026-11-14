@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
-import { DIMENSION_LABELS } from '../types'
+import DocumentInsights from './DocumentInsights.vue'
 import { shortImportedAt } from '../utils/format'
 import type {
   AppConfig, ApplicantProfile, DocType, GeneratePayload, KnowledgeRef,
@@ -89,20 +89,8 @@ const extraInstructions = ref('')
 const emphasis = ref<string[]>([])
 const emphasisInput = ref('')
 
-type InsightKey = 'trace' | 'verify' | 'outline'
-const insightTab = ref<InsightKey>('trace')
-const insightTabs = computed(() => [
-  { key: 'trace' as const, label: '生成轨迹', count: props.events.length },
-  { key: 'verify' as const, label: '事实校验', count: props.issues.length },
-  { key: 'outline' as const, label: '段落大纲', count: props.outline.length },
-])
-// 有任何产出（轨迹/校验/大纲）时展开面板；空闲时收起，页面保持简洁。
-const hasOutput = computed(() => props.events.length > 0 || props.outline.length > 0 || props.score != null)
-const insightOpen = ref(false)
-watch(() => props.generating, (running) => {
-  if (running) { insightTab.value = 'trace'; insightOpen.value = true }
-})
-watch(hasOutput, (v) => { if (v) insightOpen.value = true })
+// 生成轨迹 / 事实校验 / 段落大纲已下沉到 DocumentInsights：
+// 文书库按文书归档展示，生成页只保留「本次生成」的实时进度。
 
 watch(docType, (value) => {
   wordLimit.value = value === 'recommendation' ? 550 : value === 'cv' ? 600 : 900
@@ -153,118 +141,6 @@ const blockReason = computed(() => {
   if (props.generating) return '正在生成中…'
   return ''
 })
-
-const dimensionRows = computed(() =>
-  Object.entries(props.dimensions || {}).map(([key, value]) => ({
-    key,
-    label: DIMENSION_LABELS[key] || key,
-    value: Math.max(0, Math.min(5, Number(value) || 0)),
-  })),
-)
-const scoreColor = computed(() => {
-  const s = props.score
-  if (s == null) return 'neutral'
-  if (s >= 85) return 'good'
-  if (s >= 70) return 'warn'
-  return 'bad'
-})
-const scoreLabel = computed(() => {
-  const s = props.score
-  if (s == null) return '未评分'
-  if (s >= 85) return '优秀'
-  if (s >= 70) return '良好'
-  return '需修改'
-})
-// 生成阶段进度：把 SSE 节点映射成固定步骤，避免轨迹只是一条不断追加的日志。
-const STAGES = [
-  { key: 'intake', label: '素材' },
-  { key: 'outline', label: '大纲' },
-  { key: 'draft', label: '初稿' },
-  { key: 'verify', label: '自检' },
-  { key: 'revise', label: '自修复' },
-  { key: 'finalize', label: '定稿' },
-]
-const NODE_TO_STAGE: Record<string, number> = {
-  intake: 0, outline: 1, draft: 2, cv_render: 2, verify: 3, revise: 4, finalize: 5,
-}
-const stageIndex = computed(() => {
-  let idx = -1
-  for (const event of props.events) {
-    const i = NODE_TO_STAGE[event.node]
-    if (i != null) idx = Math.max(idx, i)
-  }
-  return idx
-})
-const stageDone = computed(() => stageIndex.value >= STAGES.length - 1)
-const verdictMeta = computed(() => {
-  switch (props.verdict) {
-    case 'factual_risk': return { label: '事实风险', cls: 'bad' }
-    case 'needs_review': return { label: '建议复核', cls: 'warn' }
-    case 'passed': return { label: '已核验', cls: 'good' }
-    default: return null
-  }
-})
-// ===== 自检修复轨迹：把「初稿评分 → 每轮自检 → 自修复 → 复检评分」显式画出来 =====
-// 只统计「本次运行」：起草（draft / cv_render）或按建议重生成（regenerate）之后的事件。
-// 历史文档的 trace 会累积多轮事件，不切段会把上一版分数误当成本轮初稿分。
-const runStart = computed(() => {
-  let idx = 0
-  props.events.forEach((e, i) => {
-    if (e.node === 'draft' || e.node === 'cv_render' || e.node === 'regenerate') idx = i + 1
-  })
-  return idx
-})
-const runEvents = computed(() => props.events.slice(runStart.value))
-const verifyEvents = computed(() => runEvents.value.filter(e => e.node === 'verify'))
-const repairRounds = computed(() => runEvents.value.filter(e => e.node === 'revise').length)
-function issuesOf(e: NodeEvent): number {
-  if (e.issue_total != null) return e.issue_total
-  if (e.hard_issue_count != null || e.soft_issue_count != null) {
-    return (e.hard_issue_count ?? 0) + (e.soft_issue_count ?? 0)
-  }
-  // 旧归档文档的 verify 事件只带 issues 数组，没有计数与自检明细。
-  return e.issues?.length ?? 0
-}
-/** 分数曲线：初稿（或按建议修订前）→ 自检修复后的最后一次复检。 */
-const repair = computed(() => {
-  const vs = verifyEvents.value
-  if (!vs.length) return null
-  const first = vs[0]
-  const last = vs[vs.length - 1]
-  const initial = first.score_before ?? first.score ?? null
-  const final = last.score ?? props.score ?? null
-  return {
-    initial,
-    final,
-    delta: initial != null && final != null ? final - initial : null,
-    rounds: repairRounds.value,
-    issuesBefore: issuesOf(first),
-    issuesAfter: issuesOf(last),
-    userDriven: props.events[runStart.value - 1]?.node === 'regenerate',
-  }
-})
-function signed(n: number | null | undefined): string {
-  if (n == null) return '—'
-  return n > 0 ? '+' + n : String(n)
-}
-function deltaClass(n: number | null | undefined): string {
-  if (n == null || n === 0) return 'flat'
-  return n > 0 ? 'up' : 'down'
-}
-/** 程序确定性自检的四项硬指标，转成可直接渲染的 chip。 */
-function checkChips(e: NodeEvent): { text: string; bad: boolean }[] {
-  const sc = e.self_check
-  if (!sc) return []
-  return [
-    { text: '篇幅 ' + (sc.length_ok ? '达标' : '偏差') + (sc.words != null ? ' ' + sc.words + '/' + (sc.limit ?? '—') + ' 词' : ''), bad: !sc.length_ok },
-    { text: '占位符 ' + sc.placeholders + '/3', bad: !sc.placeholder_ok },
-    { text: '结构 ' + (sc.structure_ok ? '正常' : '有残留'), bad: !sc.structure_ok },
-    { text: sc.numbers ? '数字 ' + sc.numbers + ' 处待核' : '数字已核对', bad: sc.numbers > 0 },
-  ]
-}
-const FATAL_TYPES = new Set(['fabrication', 'contradiction', 'unsupported', 'program_fit'])
-const hardCount = computed(() => props.issues.filter(i => FATAL_TYPES.has(i.type)).length)
-const knowledgeSources = computed(() => props.knowledge?.sources || [])
 
 function addEmphasis() {
   const value = emphasisInput.value.trim()
@@ -430,205 +306,22 @@ function submit() {
         </button>
         <div v-if="blockReason" class="reason">{{ blockReason }}</div>
         <p class="hint">
-          生成会先规划大纲供你确认，再起草正文；全程调用 {{ effectiveModel }}（{{ billingLabel }}），完成后自动打开文书库。
+          生成会先规划大纲供你确认，再起草正文；全程调用 {{ effectiveModel }}（{{ billingLabel }}），完成后自动打开文书库，生成轨迹与校验记录会归档到该文书下。
         </p>
       </div>
     </section>
 
-    <!-- 轨迹 / 校验 / 大纲：空闲时收起，生成或查看结果时展开 -->
-    <section v-if="insightOpen" class="card insight-panel">
-      <div class="insight-tabs">
-        <button
-          v-for="tab in insightTabs" :key="tab.key" class="insight-tab"
-          :class="{ active: insightTab === tab.key }" @click="insightTab = tab.key"
-        >
-          {{ tab.label }}<em v-if="tab.count">{{ tab.count }}</em>
-        </button>
-      </div>
-
-      <div v-if="events.length" class="stage-track">
-        <div
-          v-for="(stage, i) in STAGES" :key="stage.key" class="stage"
-          :class="{ done: i <= stageIndex, running: generating && i === stageIndex && !stageDone }"
-        >
-          <span class="stage-dot"></span><span class="stage-label">{{ stage.label }}</span>
-        </div>
-      </div>
-
-      <div class="insight-body">
-        <div v-show="insightTab === 'trace'">
-          <!-- 自检修复：初稿分 → 复检分，让分数提升与修复轮次一眼可见 -->
-          <div v-if="repair" class="repair-card">
-            <div class="repair-head">
-              <span class="repair-title">自检修复</span>
-              <span class="repair-badge" :class="repair.rounds ? 'active' : 'clean'">
-                {{ repair.rounds ? '自动修复 ' + repair.rounds + ' 轮' : '初审通过 · 未触发修复' }}
-              </span>
-            </div>
-            <div class="repair-flow">
-              <div class="rf-side">
-                <small>{{ repair.userDriven ? '修订前评分' : '初稿评分' }}</small>
-                <div><b>{{ repair.initial ?? '—' }}</b><span>/100</span></div>
-              </div>
-              <div class="rf-arrow">
-                <span class="rf-line"></span>
-                <em :class="deltaClass(repair.delta)">{{ signed(repair.delta) }} 分</em>
-              </div>
-              <div class="rf-side">
-                <small>自检修复后复检</small>
-                <div><b :class="deltaClass(repair.delta)">{{ repair.final ?? '—' }}</b><span>/100</span></div>
-              </div>
-            </div>
-            <p class="repair-meta">
-              <template v-if="repair.rounds">
-                模型复核 + 程序直检共发现 {{ repair.issuesBefore }} 条问题，经 {{ repair.rounds }} 轮自修复，复检剩 {{ repair.issuesAfter }} 条
-              </template>
-              <template v-else>初稿即通过事实一致性与程序自检，无需自动改写</template>
-            </p>
-          </div>
-
-          <div v-if="events.length" class="timeline">
-            <div
-              v-for="(event, i) in events" :key="i" class="timeline-item"
-              :class="{ 'tl-verify': event.node === 'verify', 'tl-revise': event.node === 'revise' }"
-            >
-              <span class="timeline-dot"></span>
-              <div class="tl-head">
-                <strong>{{ event.label }}</strong>
-                <span v-if="event.node === 'verify'" class="tl-tag" :class="event.round ? 'recheck' : 'initial'">
-                  {{ event.round ? '第 ' + event.round + ' 轮复检' : '初稿初审' }}
-                </span>
-                <span v-else-if="event.node === 'revise'" class="tl-tag fix">
-                  自检修复{{ event.focus ? ' · ' + event.focus : '' }}
-                </span>
-              </div>
-              <small>{{ event.summary }}</small>
-              <div v-if="event.node === 'verify'" class="tl-detail">
-                <span class="tl-score">质量分 <b>{{ event.score ?? '—' }}</b>/100</span>
-                <span v-if="event.score_delta != null" class="tl-delta" :class="deltaClass(event.score_delta)">{{ signed(event.score_delta) }}</span>
-                <span class="tl-issues">发现 {{ issuesOf(event) }} 条意见</span>
-                <div v-if="checkChips(event).length" class="tl-check">
-                  <span class="tlc-label">程序自检</span>
-                  <span v-for="(chip, j) in checkChips(event)" :key="j" :class="{ bad: chip.bad }">{{ chip.text }}</span>
-                </div>
-              </div>
-              <div v-else-if="event.node === 'revise' && event.fixes?.length" class="tl-fixes">
-                <div v-for="(fix, j) in event.fixes" :key="j">· {{ fix }}</div>
-              </div>
-            </div>
-          </div>
-          <div v-else class="mini-empty">
-            <strong>还没有生成轨迹</strong>
-            <span>点击「{{ buttonLabel }}」，这里会实时显示生成过程的每个节点</span>
-          </div>
-          <div v-if="generating" class="running">正在调用 {{ effectiveModel }} …</div>
-        </div>
-
-        <div v-show="insightTab === 'verify'">
-          <!-- 质量评分概览 -->
-          <div v-if="score != null || dimensionRows.length" class="quality-card" :class="scoreColor">
-            <div class="quality-score">
-              <span class="score-num">{{ score ?? '—' }}</span>
-              <span class="score-max">/100</span>
-              <span class="score-tag">{{ scoreLabel }}</span>
-              <span v-if="verdictMeta" class="score-verdict" :class="verdictMeta.cls">{{ verdictMeta.label }}</span>
-            </div>
-            <div class="quality-dims">
-              <div v-for="dim in dimensionRows" :key="dim.key" class="dim-row">
-                <span class="dim-label">{{ dim.label }}</span>
-                <span class="dim-bar"><span class="dim-fill" :style="{ width: (dim.value / 5 * 100) + '%' }"></span></span>
-                <span class="dim-val">{{ dim.value }}/5</span>
-              </div>
-            </div>
-          </div>
-          <p v-if="score != null || dimensionRows.length" class="quality-note">
-            总分由六维评分等权换算（六维平均 × 20），与下方各维度一致；存在事实安全硬错误时封顶 70 分。
-          </p>
-
-          <!-- 事实校验页也能看到同一条自检修复分数曲线 -->
-          <div v-if="repair && repair.rounds" class="quality-progress">
-            <span class="qp-label">自检修复</span>
-            <span>{{ repair.userDriven ? '修订前' : '初稿' }} <b>{{ repair.initial ?? '—' }}</b></span>
-            <span class="qp-arrow">→</span>
-            <span>修复 {{ repair.rounds }} 轮后 <b>{{ repair.final ?? '—' }}</b></span>
-            <em :class="deltaClass(repair.delta)">{{ signed(repair.delta) }} 分</em>
-          </div>
-
-          <div v-if="wordCount != null" class="selfcheck">
-            <span class="sc-label">确定性自检</span>
-            <span class="sc-item">约 <b>{{ wordCount }}</b> 词（目标 {{ wordLimit }}）</span>
-            <span class="sc-item" :class="{ warn: (placeholderCount ?? 0) > 3 }">
-              <b>{{ placeholderCount ?? 0 }}</b> 个待确认占位符
-            </span>
-            <small class="hint">篇幅与占位符由程序直接核对，不依赖模型判断。</small>
-          </div>
-
-          <div v-if="knowledgeSources.length" class="kb-sources">
-            <header>已引用项目官方资料 · {{ knowledgeSources.length }} 份</header>
-            <ul>
-              <li v-for="(src, i) in knowledgeSources" :key="i">
-                <template v-if="src.url"><a :href="src.url" target="_blank" rel="noopener">{{ src.school }} · {{ src.program }}</a></template>
-                <template v-else>{{ src.school }} · {{ src.program }}</template>
-                <small> · {{ src.field }}</small>
-              </li>
-            </ul>
-          </div>
-          <div v-else-if="knowledge && knowledge.note" class="kb-note">{{ knowledge.note }}</div>
-
-          <div v-if="selected.length" class="kb-sources">
-            <header>本次将使用的参考文档 · {{ selected.length }} 份</header>
-            <ul>
-              <li v-for="doc in props.references.filter((r) => selected.includes(r.id))" :key="doc.id">
-                {{ doc.name || doc.filename }}
-                <small> · {{ doc.char_count }} 字 · 导入 {{ shortImportedAt(doc.uploaded_at) }}</small>
-              </li>
-            </ul>
-          </div>
-
-          <div v-if="selectedSkills.length" class="kb-sources">
-            <header>本次启用的写作技能 · {{ selectedSkills.length }} 个</header>
-            <ul>
-              <li v-for="skill in props.skills.filter((s) => selectedSkills.includes(s.id))" :key="skill.id">
-                {{ skill.name }}
-                <small> · {{ skill.origin === 'builtin' ? '系统内置' : '我导入的' }}</small>
-              </li>
-            </ul>
-          </div>
-
-          <div v-if="issues.length" class="issues">
-            <header>待修订意见 · {{ issues.length }} 条<span v-if="hardCount"> · 其中 {{ hardCount }} 条事实风险需优先处理</span></header>
-            <div v-for="(issue, i) in issues" :key="i" class="issue">
-              <span class="tag" :class="issue.type">{{ issue.type }}</span>
-              <p>{{ issue.reason }}</p>
-              <small>「{{ issue.quote }}」→ {{ issue.fix }}</small>
-            </div>
-            <button class="btn small full" @click="emit('go', 'documents')">逐项给建议并重新生成</button>
-          </div>
-          <div v-if="warnings.length" class="warnings">
-            <div v-for="(warning, i) in warnings" :key="i">⚠ {{ warning }}</div>
-          </div>
-          <div v-if="numericWarnings.length" class="warnings">
-            <div v-for="(warning, i) in numericWarnings" :key="'n' + i">№ {{ warning }}</div>
-            <small class="hint">以上数字在最新一轮复检中仍未在事实清单里找到对应。</small>
-          </div>
-          <div v-if="!score && !dimensionRows.length && !issues.length && !warnings.length && !numericWarnings.length && !knowledgeSources.length && !(knowledge && knowledge.note)" class="mini-empty">
-            <strong>暂无校验意见</strong>
-            <span>生成后模型会核对文书中的事实与数字，并给出质量评分，可疑之处会列在这里</span>
-          </div>
-        </div>
-
-        <div v-show="insightTab === 'outline'">
-          <div v-if="outline.length" class="outline-list">
-            <div v-for="(section, i) in outline" :key="i" class="outline-item">
-              <span class="outline-index">{{ String(i + 1).padStart(2, '0') }}</span>
-              <div><strong>{{ section.title }}</strong><p>{{ section.goal }}</p>
-                <small v-if="section.evidence_ids && section.evidence_ids.length">证据：{{ section.evidence_ids.join(', ') }}</small>
-              </div>
-            </div>
-          </div>
-          <div v-else class="mini-empty"><strong>还没有大纲</strong><span>生成时模型会先规划段落结构，再逐段写作</span></div>
-        </div>
-      </div>
-    </section>
+    <!-- 生成页只展示「本次生成」的实时进度：完成后洞察随文书归档到文书库，
+         切回生成页不会残留上一份文书的轨迹 / 校验结果。 -->
+    <DocumentInsights
+      v-if="generating"
+      live
+      :events="events" :issues="issues" :outline="outline"
+      :warnings="warnings" :numeric-warnings="numericWarnings"
+      :score="score" :dimensions="dimensions" :verdict="verdict"
+      :knowledge="knowledge" :word-count="wordCount" :placeholder-count="placeholderCount"
+      :word-limit="wordLimit" :generating="generating" :model-name="effectiveModel"
+      @go="$emit('go', $event)"
+    />
   </div>
 </template>

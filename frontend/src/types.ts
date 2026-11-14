@@ -86,6 +86,11 @@ export interface Critique {
   soft_issue_count?: number
   summary?: string
   numeric_warnings?: string[]
+  /** 确定性后检（verify 节点写入）：约 X 词、目标篇幅、[TO CONFIRM] 占位符个数。 */
+  word_count?: number | null
+  word_limit?: number | null
+  placeholder_count?: number | null
+  placeholder_overflow?: boolean | null
 }
 export interface KnowledgeSource { school: string; program: string; field: string; url: string }
 export interface KnowledgeRef {

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, reactive, ref, watch } from 'vue'
 import { marked } from 'marked'
-import { DIMENSION_LABELS } from '../types'
+import DocumentInsights from './DocumentInsights.vue'
 import type { DocumentDetail, Issue, RegenPayload } from '../types'
 
 const props = defineProps<{
@@ -76,16 +76,17 @@ const verdictMeta = computed(() => {
     : { label: '待核对', cls: 'warn' }
 })
 const scoreValue = computed(() => critique.value?.score ?? null)
-const scoreDelta = computed(() => {
-  const delta = props.document?.trace?.score_delta
-  return typeof delta === 'number' ? delta : null
-})
 // 上一轮用户逐项裁决过的条数：让用户知道自己的澄清已被带上。
 const lastResolvedCount = computed(() => {
   const list = props.document?.trace?.issue_feedback || []
   return list.filter((x: any) => String(x?.suggestion || '').trim()).length
 })
 const traceOpen = ref(false)
+// 正文下方的洞察区（生成轨迹 / 事实校验 / 段落大纲）：toolbar 分数入口快速滚动到这里。
+const insightsRef = ref<HTMLElement | null>(null)
+function scrollToInsights() {
+  insightsRef.value?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+}
 
 function sanitize(html: string): string {
   return html
@@ -226,6 +227,10 @@ function submitRegenerate() {
         审核建议{{ issues.length ? ` · ${issues.length} 项待核` : '' }}
       </button>
       <button
+        v-if="!editing" class="btn small" title="查看这份文书的生成轨迹、事实校验与段落大纲"
+        @click="scrollToInsights"
+      >生成轨迹</button>
+      <button
         v-if="document.meta.bilingual" class="btn small" :class="{ active: bilingualView }"
         @click="bilingualView = !bilingualView"
         :title="bilingualView ? '当前为左右双栏对照，点击只看英文' : '点击开启中英对照'"
@@ -238,7 +243,7 @@ function submitRegenerate() {
       <span class="spacer"></span>
       <button
         v-if="scoreValue != null" class="badge score-badge" type="button"
-        title="点击查看质量评分明细" @click="traceOpen = true"
+        title="查看这份文书的生成轨迹与质量评分" @click="scrollToInsights"
       >{{ scoreValue }} 分</button>
       <span class="badge" :class="verdictMeta.cls">{{ verdictMeta.label }}</span>
       <button class="link danger" @click="emit('remove', document.meta.id)">删除</button>
@@ -248,36 +253,18 @@ function submitRegenerate() {
       <textarea v-if="editing" v-model="draft" class="editor" spellcheck="false"></textarea>
       <article v-else class="prose" :class="{ 'bi-grid': document.meta.bilingual && bilingualView }" v-html="viewHtml"></article>
 
+      <!-- 该文书自己的生成轨迹 / 事实校验 / 段落大纲：数据全部从 document.trace 派生，
+           与生成页的实时状态解耦，打开另一份文书也不会串台。 -->
+      <div v-if="!editing" ref="insightsRef" class="doc-insights">
+        <DocumentInsights :document="document" />
+      </div>
 
       <details
         v-if="!editing" class="trace" :open="traceOpen"
         @toggle="(e: Event) => traceOpen = (e.target as HTMLDetailsElement).open"
       >
-        <summary>生成轨迹与校验记录</summary>
+        <summary>引用资料与元信息</summary>
         <div class="trace-body">
-          <div v-if="outline.length">
-            <h4>段落大纲</h4>
-            <ol>
-              <li v-for="(section, i) in outline" :key="i">
-                <b>{{ section.title }}</b> — {{ section.goal }}
-                <span v-if="section.evidence_ids && section.evidence_ids.length">[{{ section.evidence_ids.join(', ') }}]</span>
-              </li>
-            </ol>
-          </div>
-          <div v-if="document.trace.critique && (document.trace.critique.score != null || (document.trace.critique.dimensions && Object.keys(document.trace.critique.dimensions).length))">
-            <h4>
-              质量评分{{ scoreValue != null ? ' · ' + scoreValue + '/100' : '' }}
-              <small v-if="scoreDelta != null" class="score-delta" :class="scoreDelta >= 0 ? 'up' : 'down'">
-                较上轮 {{ scoreDelta >= 0 ? '+' : '' }}{{ scoreDelta }}
-              </small>
-              <small> · {{ verdictMeta.label }}（总分 = 六维平均 × 20）</small>
-            </h4>
-            <div class="dim-grid">
-              <div v-for="(val, key) in (document.trace.critique.dimensions || {})" :key="key" class="dim-mini">
-                <span>{{ DIMENSION_LABELS[key] || key }}</span><strong>{{ val }}/5</strong>
-              </div>
-            </div>
-          </div>
           <div v-if="document.trace.knowledge && document.trace.knowledge.sources && document.trace.knowledge.sources.length">
             <h4>引用项目官方资料 · {{ document.trace.knowledge.sources.length }} 份</h4>
             <ul class="kb-mini">

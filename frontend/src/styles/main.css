@@ -1686,3 +1686,26 @@ label.bi-toggle-row > .bi-toggle-input {
   display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-end; margin-top: 18px;
   padding-top: 14px; border-top: 1px solid var(--border, #e3e8ef);
 }
+
+/* ===== 文书洞察：生成页实时进度 / 文书库按文书归档 ===== */
+.insight-scope-bar {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 8px;
+  padding: 10px 14px 2px;
+}
+.insight-scope {
+  font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 999px;
+  border: 1px solid var(--line, #e3e8ef); background: var(--surface-2, #f2f5f9); color: var(--muted, #6b7684);
+}
+.insight-scope.live { background: var(--accent-soft, #fdf3e3); border-color: var(--accent, #b08d57); color: var(--accent-deep, #8a6d3b); }
+.insight-scope.archive { background: #eef4ff; border-color: #c7dbff; color: #1e40af; }
+.insight-scope-bar small { font-size: 11px; color: var(--faint, #8a94a3); }
+
+/* 文书库：洞察区跟在正文下方，随正文一起滚动，不与正文抢高度 */
+.doc-insights { max-width: 720px; margin: 26px auto 0; scroll-margin-top: 16px; }
+.doc-insights .insight-panel { overflow: visible; }
+.doc-insights .insight-body { max-height: none; overflow: visible; }
+.doc-insights .insight-tabs { padding-left: 8px; padding-right: 8px; }
+@media (max-width: 760px) {
+  .doc-insights { margin-top: 18px; }
+  .insight-scope-bar { padding: 8px 10px 0; }
+}
