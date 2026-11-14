@@ -219,7 +219,11 @@ const verifyEvents = computed(() => runEvents.value.filter(e => e.node === 'veri
 const repairRounds = computed(() => runEvents.value.filter(e => e.node === 'revise').length)
 function issuesOf(e: NodeEvent): number {
   if (e.issue_total != null) return e.issue_total
-  return (e.hard_issue_count ?? 0) + (e.soft_issue_count ?? 0)
+  if (e.hard_issue_count != null || e.soft_issue_count != null) {
+    return (e.hard_issue_count ?? 0) + (e.soft_issue_count ?? 0)
+  }
+  // 旧归档文档的 verify 事件只带 issues 数组，没有计数与自检明细。
+  return e.issues?.length ?? 0
 }
 /** 分数曲线：初稿（或按建议修订前）→ 自检修复后的最后一次复检。 */
 const repair = computed(() => {

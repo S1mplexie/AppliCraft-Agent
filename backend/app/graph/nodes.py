@@ -394,7 +394,12 @@ async def verify(state: GraphState, *, llm: LLMClient, **_: Any) -> dict[str, An
         f"占位符 {self_check['placeholders']} 个、"
         f"结构{'正常' if self_check['structure_ok'] else '有残留'}"
     )
-    gain_note = f"，较修复前 {score_delta:+d} 分" if score_delta is not None else ""
+    if score_delta is None:
+        gain_note = ""
+    elif score_delta == 0:
+        gain_note = "，较修复前持平"
+    else:
+        gain_note = f"，较修复前 {score_delta:+d} 分"
     resolved_note = ""
     if previous_issues and revision_check:
         resolved = sum(1 for item in revision_check if item.get("status") == "resolved")
@@ -556,10 +561,12 @@ async def finalize(state: GraphState, **_: Any) -> dict[str, Any]:
         if isinstance(final_score, (int, float)) and isinstance(initial_score, (int, float))
         else None
     )
-    gain_note = (
-        f"，质量分 {initial_score} → {final_score}（{score_gain:+d}）"
-        if score_gain is not None and rounds else ""
-    )
+    if score_gain is None or not rounds:
+        gain_note = ""
+    elif score_gain == 0:
+        gain_note = f"，质量分 {initial_score} → {final_score}（持平）"
+    else:
+        gain_note = f"，质量分 {initial_score} → {final_score}（{score_gain:+d}）"
     return {
         "final": final,
         "events": [_event(
