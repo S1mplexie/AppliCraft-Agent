@@ -153,6 +153,10 @@ def _node_payload(node: str, update: dict[str, Any]) -> dict[str, Any]:
         "score": critique.get("score") if node == "verify" else None,
         "dimensions": critique.get("dimensions") if node == "verify" else None,
         "knowledge": update.get("knowledge"),
+        "word_count": critique.get("word_count") if node == "verify" else None,
+        "word_limit": critique.get("word_limit") if node == "verify" else None,
+        "placeholder_count": critique.get("placeholder_count") if node == "verify" else None,
+        "placeholder_overflow": critique.get("placeholder_overflow") if node == "verify" else None,
     }
 
 
