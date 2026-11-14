@@ -13,11 +13,11 @@ from app.api.deps import check_quota, get_current_user, get_db, get_llm, get_use
 from app.config import Settings, get_settings
 from app.db.models import GenerationLog, User
 from app.db.session import SessionLocal
-from app.graph import prompts
+from app.graph import nodes, prompts
 from app.graph.workflow import build_graph, initial_state, merge_updates
 from app.llm.client import LLMClient
 from app.library.service import build_reference_context
-from app.models.schemas import GenerateRequest, NODE_LABELS
+from app.models.schemas import GeneratePlanResponse, GenerateRequest, NODE_LABELS
 from app.skills.service import build_skill_context
 from app.storage.filestore import FileStore
 
@@ -232,3 +232,49 @@ async def generate_sync(
             llm_source=_llm_source(llm),
         )
         raise
+
+
+def _build_evidence_legend(facts: dict[str, Any]) -> dict[str, str]:
+    """把证据编号（E1 / ED1 / A1 …）映射成可读标签，便于用户确认大纲前知道每段会用到哪些事实。"""
+    index = facts.get("index") or {}
+    legend: dict[str, str] = {}
+    for eid, item in index.items():
+        if isinstance(item, dict):
+            school = item.get("school") or item.get("org") or item.get("issuer") or item.get("title") or ""
+            role = item.get("degree") or item.get("role") or item.get("name") or ""
+            label = " · ".join(x for x in (school, role) if x).strip()
+            legend[str(eid)] = label or str(eid)
+        else:
+            legend[str(eid)] = str(eid)
+    return legend
+
+
+@router.post("/plan", response_model=GeneratePlanResponse)
+async def generate_plan(
+    payload: GenerateRequest,
+    llm: LLMClient = Depends(get_llm),
+    store: FileStore = Depends(get_user_store),
+    user: User = Depends(get_current_user),
+    settings: Settings = Depends(get_settings),
+):
+    """大纲预检：只做素材锁定 + 大纲规划，不消耗额度、不写审计、不归档。
+
+    返回模型规划的结构与素材选取，以及证据图例，供用户在正式起草前确认或微调。
+    用户确认后的 outline 再随 /generate/stream 提交，工作流据此跳过 outline 节点。
+    """
+    profile = store.get_profile(payload.profile_id)
+    if not profile:
+        raise HTTPException(status_code=404, detail="申请人档案不存在，请先保存档案")
+    request = payload.model_dump()
+    # 规划阶段不扣额度：initial_state 仅用于装配 fact/reference/skill 容器。
+    state = initial_state(profile, request)
+    intake_update = await nodes.intake(state=state, settings=settings)
+    state.update(intake_update)
+    _inject_references(state, store, request)
+    _inject_skills(state, store, request)
+    outline_update = await nodes.outline(state=state, llm=llm)
+    state.update(outline_update)
+    outline = state.get("outline") or []
+    evidence = _build_evidence_legend(state.get("facts") or {})
+    warnings = (intake_update.get("warnings") or []) + (outline_update.get("warnings") or [])
+    return GeneratePlanResponse(outline=outline, evidence=evidence, warnings=warnings)

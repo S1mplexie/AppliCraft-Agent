@@ -119,6 +119,20 @@ const dimensions = ref<Record<string, number> | null>(null)
 const verdict = ref<string | null>(null)
 const knowledge = ref<KnowledgeRef | null>(null)
 const generating = ref(false)
+// 大纲预检：handleGenerate 先规划大纲并展示给用户确认 / 微调，确认后再正式起草。
+// planReview 非空即表示处于「等待用户确认大纲」阶段，此时 generating 为假。
+const planReview = ref<{
+  outline: any[]
+  evidence: Record<string, string>
+  warnings: string[]
+  payload: GeneratePayload
+  planError?: string
+} | null>(null)
+const planOutline = ref<any[]>([])      // 用户可编辑的副本
+const planning = ref(false)              // 正在调用 /generate/plan
+// 确定性后检指标：verify 节点随事件上报，供「事实校验」页展示自检行。
+const wordCount = ref<number | null>(null)
+const placeholderCount = ref<number | null>(null)
 // 按审核建议重新生成：文档查看器里的反馈框触发，SSE 复用同一套轨迹展示。
 const regenerating = ref(false)
 const regenStage = ref('')
@@ -515,14 +529,39 @@ async function onResumeFile(event: Event) {
 
 async function handleGenerate(payload: GeneratePayload) {
   if (!currentProfileId.value) { toast('请先创建或选择档案', true); return }
+  // 阶段一：先规划大纲（不消耗额度），展示给用户确认 / 微调后再起草。
+  planning.value = true
+  planReview.value = null
+  try {
+    await saveProfile(true)
+    const plan = await api.generatePlan({ ...payload, profile_id: currentProfileId.value })
+    planOutline.value = JSON.parse(JSON.stringify(plan.outline || []))
+    planReview.value = {
+      outline: plan.outline || [],
+      evidence: plan.evidence || {},
+      warnings: plan.warnings || [],
+      payload: { ...payload, profile_id: currentProfileId.value },
+    }
+  } catch (error) {
+    toast((error as Error).message, true)
+  } finally {
+    planning.value = false
+  }
+}
+
+/** 阶段二：用户确认大纲后，带 outline 正式生成。edited 为空表示沿用模型规划的大纲。 */
+async function startGenerationWithOutline(edited: any[] | null) {
+  const pr = planReview.value
+  if (!pr) return
+  const payload = { ...pr.payload, outline: edited ?? pr.outline }
+  planReview.value = null
   events.value = []; issues.value = []; outline.value = []; warnings.value = []
-  numericWarnings.value = []
+  numericWarnings.value = []; wordCount.value = null; placeholderCount.value = null
   score.value = null; dimensions.value = null; knowledge.value = null
   verdict.value = null
   generating.value = true
   try {
-    await saveProfile(true)
-    const meta = await api.generateStream({ ...payload, profile_id: currentProfileId.value }, (envelope) => {
+    const meta = await api.generateStream(payload, (envelope) => {
       if (envelope.event !== 'node') return
       const data = envelope.data as NodeEvent
       events.value.push(data)
@@ -534,6 +573,8 @@ async function handleGenerate(payload: GeneratePayload) {
       if (data.dimensions) dimensions.value = data.dimensions
       if (data.knowledge) knowledge.value = data.knowledge
       if (data.verdict) verdict.value = data.verdict
+      if (data.word_count != null) wordCount.value = data.word_count
+      if (data.placeholder_count != null) placeholderCount.value = data.placeholder_count
     })
     await loadDocuments()
     await openDocument(meta.id)
@@ -546,6 +587,26 @@ async function handleGenerate(payload: GeneratePayload) {
     generating.value = false
   }
 }
+
+/** 用户在大纲预检里点击「确认并开始撰写」。 */
+function confirmPlan() { startGenerationWithOutline(planOutline.value) }
+/** 重新规划大纲（模型再生成一份结构）。 */
+async function replan() {
+  const pr = planReview.value
+  if (!pr) return
+  planning.value = true
+  try {
+    const plan = await api.generatePlan(pr.payload)
+    planOutline.value = JSON.parse(JSON.stringify(plan.outline || []))
+    planReview.value = {
+      outline: plan.outline || [], evidence: plan.evidence || {},
+      warnings: plan.warnings || [], payload: pr.payload,
+    }
+  } catch (error) { toast((error as Error).message, true) }
+  finally { planning.value = false }
+}
+/** 跳过预检，直接让模型自行规划并起草（等同旧流程）。 */
+function skipPlan() { startGenerationWithOutline(null) }
 
 async function handleRegenerate(payload: RegenPayload) {
   const doc = activeDoc.value
@@ -591,6 +652,8 @@ async function openDocument(id: string) {
     dimensions.value = trace.critique?.dimensions ?? null
     verdict.value = trace.critique?.verdict
       ?? (issues.value.length ? 'needs_review' : 'passed')
+    wordCount.value = trace.critique?.word_count ?? null
+    placeholderCount.value = trace.critique?.placeholder_count ?? null
     knowledge.value = trace.knowledge ?? null
     events.value = (trace.events || []).map((e: any) => ({
       node: e.node, label: e.label || e.node, summary: e.summary,
@@ -834,9 +897,10 @@ onUnmounted(() => window.removeEventListener('hashchange', onHashChange))
               :key="currentProfileId"
               :profile="profile" :profile-id="currentProfileId" :config="config" :my-llm="myLlm" :quota="quota"
               :standalone="standalone"
-              :generating="generating" :events="events" :issues="issues"
+              :generating="generating" :planning="planning" :events="events" :issues="issues"
               :outline="outline" :warnings="warnings" :numeric-warnings="numericWarnings"
               :score="score" :dimensions="dimensions" :knowledge="knowledge" :verdict="verdict"
+              :word-count="wordCount" :placeholder-count="placeholderCount"
               :references="references" :selected-reference-ids="selectedReferenceIds"
               :skills="skills" :selected-skill-ids="selectedSkillIds"
               @update:selected-reference-ids="selectedReferenceIds = $event"
@@ -844,6 +908,52 @@ onUnmounted(() => window.removeEventListener('hashchange', onHashChange))
               @generate="handleGenerate" @go="goTab"
               @refresh-references="loadReferences"
             />
+          </div>
+        </div>
+
+        <!-- 大纲预检弹窗：确认 / 微调结构后再起草 -->
+        <div v-if="planReview" class="plan-overlay" @click.self="skipPlan">
+          <div class="plan-modal">
+            <div class="plan-head">
+              <h2>大纲预检</h2>
+              <p>确认每段的结构与素材，或微调后再起草。改完后点「确认并开始撰写」。</p>
+            </div>
+
+            <div v-if="planReview.warnings.length" class="plan-warnings">
+              <div v-for="(w, i) in planReview.warnings" :key="i">⚠ {{ w }}</div>
+            </div>
+
+            <div class="plan-list">
+              <div v-for="(sec, i) in planOutline" :key="i" class="plan-section">
+                <div class="plan-sec-head">
+                  <span class="plan-idx">{{ String(i + 1).padStart(2, '0') }}</span>
+                  <input v-model="sec.title" class="plan-title" placeholder="段落小标题" />
+                  <div class="plan-sec-actions">
+                    <button class="icon-btn" :disabled="i === 0" title="上移" @click="planOutline.splice(i - 1, 0, planOutline.splice(i, 1)[0])">↑</button>
+                    <button class="icon-btn" :disabled="i === planOutline.length - 1" title="下移" @click="planOutline.splice(i + 1, 0, planOutline.splice(i, 1)[0])">↓</button>
+                    <button class="icon-btn danger" title="删除该段" @click="planOutline.splice(i, 1)">×</button>
+                  </div>
+                </div>
+                <textarea v-model="sec.specifics" class="plan-specifics" rows="2"
+                  placeholder="本段要落地的具名事实（课程名 / 方法 / 数字 / 机构 / 工具）与具体反思" />
+                <div v-if="sec.evidence_ids && sec.evidence_ids.length" class="plan-evidence">
+                  <span class="pe-label">素材：</span>
+                  <span v-for="eid in sec.evidence_ids" :key="eid" class="pe-chip">
+                    {{ eid }}<small v-if="planReview.evidence[eid]"> · {{ planReview.evidence[eid] }}</small>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div class="plan-foot">
+              <button class="btn" :disabled="planning" @click="replan">
+                {{ planning ? '规划中…' : '重新规划大纲' }}
+              </button>
+              <button class="btn" @click="skipPlan">跳过预检直接生成</button>
+              <button class="btn primary" :disabled="!planOutline.length || planning" @click="confirmPlan">
+                确认并开始撰写
+              </button>
+            </div>
           </div>
         </div>
 

@@ -28,8 +28,8 @@ def build_graph(llm: LLMClient, settings: Settings):
     builder.add_edge(START, "intake")
     builder.add_conditional_edges(
         "intake",
-        nodes.route_by_doc_type,
-        {"cv": "cv_render", "narrative": "outline"},
+        nodes.route_after_intake,
+        {"cv_render": "cv_render", "outline": "outline", "draft": "draft"},
     )
     builder.add_edge("cv_render", "verify")
     builder.add_edge("outline", "draft")
@@ -47,13 +47,15 @@ def build_graph(llm: LLMClient, settings: Settings):
 
 
 def initial_state(profile: dict[str, Any], request: dict[str, Any]) -> dict[str, Any]:
+    # 用户在大纲预检里确认过的结构：提供时工作流跳过 outline 节点直接起草。
+    approved_outline = request.get("outline") or []
     return {
         "profile": profile,
         "request": request,
         "facts": {},
         "facts_text": "",
         "system_prompt": "",
-        "outline": [],
+        "outline": list(approved_outline),
         "draft": "",
         "critique": {},
         "revision_count": 0,

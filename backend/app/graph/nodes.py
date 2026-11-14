@@ -18,6 +18,10 @@ OUTLINE_SYSTEM = "你是研究生申请文书的结构规划师。请依据事�
 # style / missing 等质量建议只给首轮一次机会，避免模型每轮复检都挑出新文风意见而空转。
 FATAL_ISSUE_TYPES = frozenset({"fabrication", "contradiction", "unsupported", "program_fit"})
 
+# [TO CONFIRM] 占位符预算：模型被告知最多 3 个；超出说明它没有遵守指令，
+# 这类占位符往往意味着事实清单缺料，确定性后检只如实上报，不直接驱动修订去虚构。
+PLACEHOLDER_BUDGET = 3
+
 # 大纲模型调用失败时的兜底结构；标题与目标会展示在界面上，故使用中文。
 FALLBACK_OUTLINES: dict[str, list[dict[str, Any]]] = {
     "ps": [
@@ -66,6 +70,28 @@ def _numeric_warnings(draft: str, facts_text: str) -> list[str]:
         for number in sorted(candidates)
         if number not in facts_text
     ][:5]
+
+
+def _post_check(draft: str) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    """确定性后检（不依赖模型）：抓取占位符超预算与结构泄漏这两类确定性硬伤。
+
+    篇幅偏差已由 verify 内独立的字数纪律处理，这里不再重复。返回 (issues, metrics)。
+    """
+    issues: list[dict[str, Any]] = []
+    placeholders = re.findall(r"\[TO CONFIRM[^\]]*\]", draft)
+    metrics: dict[str, Any] = {
+        "placeholder_count": len(placeholders),
+        "placeholder_overflow": len(placeholders) > PLACEHOLDER_BUDGET,
+    }
+    if re.search(r'\{\s*"sections"|"evidence_ids"\s*:|"title"\s*:\s*"|##\s*Outline|```json|```\s*$', draft):
+        issues.append({
+            "type": "style",
+            "severity": "soft",
+            "reason": "正文混入了大纲结构标记或代码块，破坏文书可读性",
+            "quote": "",
+            "fix": "删除文中残留的大纲 JSON / 代码块标记，只保留连贯的 Markdown 正文（## 小标题与段落）。",
+        })
+    return issues, metrics
 
 
 async def intake(state: GraphState, *, settings: Settings, **_: Any) -> dict[str, Any]:
@@ -136,8 +162,12 @@ async def intake(state: GraphState, *, settings: Settings, **_: Any) -> dict[str
     }
 
 
-def route_by_doc_type(state: GraphState) -> str:
-    return "cv" if state["request"]["doc_type"] == "cv" else "narrative"
+def route_after_intake(state: GraphState) -> str:
+    """intake 之后决定下一步：CV 走简历渲染；叙事类文书若用户已确认大纲则直接起草，
+    否则先规划大纲。"""
+    if state["request"]["doc_type"] == "cv":
+        return "cv_render"
+    return "draft" if state["request"].get("outline") else "outline"
 
 
 async def outline(state: GraphState, *, llm: LLMClient, **_: Any) -> dict[str, Any]:
@@ -294,6 +324,10 @@ async def verify(state: GraphState, *, llm: LLMClient, **_: Any) -> dict[str, An
             "fix": f"压缩到 {int(limit * 0.9)}-{int(limit * 1.1)} 词：优先删冗余修饰、重复论据与总结性段落",
         })
 
+    # 确定性后检：占位符超预算与结构泄漏（不依赖模型）。
+    post_issues, post_metrics = _post_check(state["draft"])
+    issues.extend(post_issues)
+
     # 总分一律由六维均值换算（score = 六维平均 × 20），保证总分可解释、与六维一致、
     # 跨轮稳定可比；模型直接给的 score 仅在其未返回维度时兜底。
     score = round(sum(dimensions.values()) / len(dimensions) / 5 * 100) if dimensions else llm_score
@@ -327,6 +361,9 @@ async def verify(state: GraphState, *, llm: LLMClient, **_: Any) -> dict[str, An
         "summary": summary,
         "numeric_warnings": number_warnings,
         "word_count": words,
+        "word_limit": limit,
+        "placeholder_count": post_metrics.get("placeholder_count"),
+        "placeholder_overflow": post_metrics.get("placeholder_overflow", False),
         "revision_check": revision_check,
     }
     # 数字待核对只进 critique（每轮复检覆盖更新），不进全局 warnings：
@@ -354,6 +391,9 @@ async def verify(state: GraphState, *, llm: LLMClient, **_: Any) -> dict[str, An
                 dimensions=dimensions,
                 numeric_warnings=number_warnings,
                 word_count=words,
+                word_limit=limit,
+                placeholder_count=post_metrics.get("placeholder_count"),
+                placeholder_overflow=post_metrics.get("placeholder_overflow", False),
             )
         ],
     }

@@ -14,6 +14,7 @@ const props = defineProps<{
   myLlm: UserLLMConfig | null
   quota: QuotaInfo | null
   generating: boolean
+  planning: boolean
   events: NodeEvent[]
   issues: Issue[]
   outline: any[]
@@ -27,6 +28,8 @@ const props = defineProps<{
   selectedReferenceIds: string[]
   skills: SkillInfo[]
   selectedSkillIds: string[]
+  wordCount: number | null
+  placeholderCount: number | null
   /** 本地部署版（免登录、单用户）为 true：计费口径显示为本地 API Key。 */
   standalone: boolean
 }>()
@@ -132,11 +135,16 @@ const billingLabel = computed(() => {
   return `系统共享 Key · 今日剩 ${freeRemaining.value ?? freeLimit.value} 次`
 })
 const canGenerate = computed(() =>
-  !!props.profileId && llmReady.value && !props.generating && !freeExhausted.value,
+  !!props.profileId && llmReady.value && !props.generating && !props.planning && !freeExhausted.value,
 )
 const buttonLabel = computed(() => {
   const names: Record<DocType, string> = { ps: '个人陈述', recommendation: '推荐信', cv: '学术 CV' }
   return `生成${names[docType.value]}`
+})
+const runLabel = computed(() => {
+  if (props.planning) return '规划大纲中…'
+  if (props.generating) return '生成中…'
+  return buttonLabel.value
 })
 const blockReason = computed(() => {
   if (!props.profileId) return '请先创建或选择一个申请人档案'
@@ -360,11 +368,11 @@ function submit() {
 
       <div class="generate-row">
         <button class="btn primary" :disabled="!canGenerate" @click="submit">
-          {{ generating ? '生成中…' : buttonLabel }}
+          {{ runLabel }}
         </button>
         <div v-if="blockReason" class="reason">{{ blockReason }}</div>
         <p class="hint">
-          生成会先保存当前档案，再调用 {{ effectiveModel }}（{{ billingLabel }}）；完成后自动打开文书库。
+          生成会先规划大纲供你确认，再起草正文；全程调用 {{ effectiveModel }}（{{ billingLabel }}），完成后自动打开文书库。
         </p>
       </div>
     </section>
@@ -425,6 +433,15 @@ function submit() {
           <p v-if="score != null || dimensionRows.length" class="quality-note">
             总分由六维评分等权换算（六维平均 × 20），与下方各维度一致；存在事实安全硬错误时封顶 70 分。
           </p>
+
+          <div v-if="wordCount != null" class="selfcheck">
+            <span class="sc-label">确定性自检</span>
+            <span class="sc-item">约 <b>{{ wordCount }}</b> 词（目标 {{ wordLimit }}）</span>
+            <span class="sc-item" :class="{ warn: (placeholderCount ?? 0) > 3 }">
+              <b>{{ placeholderCount ?? 0 }}</b> 个待确认占位符
+            </span>
+            <small class="hint">篇幅与占位符由程序直接核对，不依赖模型判断。</small>
+          </div>
 
           <div v-if="knowledgeSources.length" class="kb-sources">
             <header>已引用项目官方资料 · {{ knowledgeSources.length }} 份</header>

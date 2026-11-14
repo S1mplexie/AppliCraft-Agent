@@ -220,6 +220,14 @@ export interface GeneratePayload {
   emphasis: string[]; extra_instructions: string
   reference_doc_ids: string[]
   skill_ids: string[]
+  /** 大纲预检确认过的段落结构；提供时后端跳过大纲规划直接起草。 */
+  outline?: any[] | null
+}
+/** 大纲预检结果：模型规划的结构与素材图例，供用户确认 / 微调后再起草。 */
+export interface GeneratePlanResult {
+  outline: any[]
+  evidence: Record<string, string>
+  warnings: string[]
 }
 /** 用户上传的参考文档元信息（不含正文）。 */
 export interface ReferenceDoc {
@@ -278,6 +286,9 @@ export interface NodeEvent {
   hard_issue_count?: number | null; soft_issue_count?: number | null
   /** verify 节点每轮复检覆盖更新：文中出现但事实清单没有的数字。 */
   numeric_warnings?: string[] | null
+  /** 确定性后检指标：约 X 词（目标 Y）、[TO CONFIRM] 占位符个数。 */
+  word_count?: number | null; word_limit?: number | null
+  placeholder_count?: number | null; placeholder_overflow?: boolean | null
 }
 export interface ResumeParseResult {
   profile: ApplicantProfile

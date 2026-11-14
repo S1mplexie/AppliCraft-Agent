@@ -241,6 +241,10 @@ export const api = {
   generateStream: (payload: GeneratePayload, onEvent: (e: StreamEnvelope) => void) =>
     sseStream('/api/generate/stream', payload, onEvent),
 
+  /** 大纲预检：只规划结构与素材，不消耗额度，返回 outline 与证据图例。 */
+  generatePlan: (payload: GeneratePayload) =>
+    request<GeneratePlanResult>('/generate/plan', { method: 'POST', body: JSON.stringify(payload) }),
+
   /** 按逐项审核建议重新生成文档：修订 → 复审 → 定稿，返回新版本 meta。 */
   regenerateStream: (documentId: string, payload: RegenPayload, onEvent: (e: StreamEnvelope) => void) =>
     sseStream(

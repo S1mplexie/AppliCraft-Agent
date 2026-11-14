@@ -41,6 +41,21 @@ class GenerateRequest(BaseModel):
     reference_doc_ids: list[str] = Field(default_factory=list)
     # 生成时启用的写作技能 id（builtin:xxx / user:xxx），为空则不注入。
     skill_ids: list[str] = Field(default_factory=list)
+    # 大纲预检：用户在前端确认过的段落结构。提供时工作流跳过 outline 节点，
+    # 直接据此起草；为空则仍由模型规划大纲。
+    outline: list[dict[str, Any]] | None = None
+
+
+class GeneratePlanResponse(BaseModel):
+    """大纲预检结果：模型规划的结构与素材选取，供用户确认 / 微调后再起草。
+
+    不消耗额度、不写审计、不归档；仅作为正式生成前的便宜预览。
+    """
+
+    outline: list[dict[str, Any]] = Field(default_factory=list)
+    # 证据图例：把大纲里引用的证据编号（E1 / ED1 / A1 …）映射成可读标签。
+    evidence: dict[str, str] = Field(default_factory=dict)
+    warnings: list[str] = Field(default_factory=list)
 
 
 # ------------------------------------------------- 导入后补充元数据（弹窗填写）
