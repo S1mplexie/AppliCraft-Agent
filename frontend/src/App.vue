@@ -120,7 +120,8 @@ const verdict = ref<string | null>(null)
 const knowledge = ref<KnowledgeRef | null>(null)
 const generating = ref(false)
 // 大纲预检：handleGenerate 先规划大纲并展示给用户确认 / 微调，确认后再正式起草。
-// planReview 非空即表示处于「等待用户确认大纲」阶段，此时 generating 为假。
+// planReview 是「大纲草稿」本身：收起弹窗后依然保留，并按档案写入 localStorage；
+// planOpen 只控制弹窗显隐。两者解耦，避免点一下别处就把已规划的大纲丢掉。
 const planReview = ref<{
   outline: any[]
   evidence: Record<string, string>
@@ -129,7 +130,37 @@ const planReview = ref<{
   planError?: string
 } | null>(null)
 const planOutline = ref<any[]>([])      // 用户可编辑的副本
+const planOpen = ref(false)              // 预检弹窗是否显示
 const planning = ref(false)              // 正在调用 /generate/plan
+let planSeq = 0                          // 规划请求序号：旧请求返回不覆盖新草稿
+const PLAN_DRAFT_KEY = 'applicraft.plan-draft.v1'
+const draftKey = (profileId: string) => `${PLAN_DRAFT_KEY}.${profileId}`
+let restoringDraft = false
+/** 草稿落盘：按档案隔离，刷新 / 切档案后仍可继续编辑。隐私模式下静默降级为内存保留。 */
+function persistPlanDraft() {
+  if (restoringDraft || !currentProfileId.value) return
+  try {
+    const key = draftKey(currentProfileId.value)
+    if (!planReview.value) { localStorage.removeItem(key); return }
+    localStorage.setItem(key, JSON.stringify({
+      review: planReview.value, outline: planOutline.value, savedAt: Date.now(),
+    }))
+  } catch { /* 存储不可用时仅内存保留，不影响生成 */ }
+}
+function restorePlanDraft(profileId: string) {
+  restoringDraft = true
+  try {
+    const raw = profileId ? localStorage.getItem(draftKey(profileId)) : null
+    const data = raw ? JSON.parse(raw) : null
+    planReview.value = data?.review ?? null
+    planOutline.value = Array.isArray(data?.outline) ? data.outline : []
+    planOpen.value = false
+  } catch {
+    planReview.value = null; planOutline.value = []; planOpen.value = false
+  } finally { restoringDraft = false }
+}
+watch([planReview, planOutline], persistPlanDraft, { deep: true })
+watch(currentProfileId, (id) => restorePlanDraft(id))
 // 确定性后检指标：verify 节点随事件上报，供「事实校验」页展示自检行。
 const wordCount = ref<number | null>(null)
 const placeholderCount = ref<number | null>(null)
@@ -530,11 +561,13 @@ async function onResumeFile(event: Event) {
 async function handleGenerate(payload: GeneratePayload) {
   if (!currentProfileId.value) { toast('请先创建或选择档案', true); return }
   // 阶段一：先规划大纲（不消耗额度），展示给用户确认 / 微调后再起草。
+  const seq = ++planSeq
   planning.value = true
-  planReview.value = null
+  planOpen.value = false   // 收起旧草稿弹窗，但不清空：新规划失败时旧大纲仍可用
   try {
     await saveProfile(true)
     const plan = await api.generatePlan({ ...payload, profile_id: currentProfileId.value })
+    if (seq !== planSeq) return
     planOutline.value = JSON.parse(JSON.stringify(plan.outline || []))
     planReview.value = {
       outline: plan.outline || [],
@@ -542,10 +575,11 @@ async function handleGenerate(payload: GeneratePayload) {
       warnings: plan.warnings || [],
       payload: { ...payload, profile_id: currentProfileId.value },
     }
+    planOpen.value = true
   } catch (error) {
-    toast((error as Error).message, true)
+    if (seq === planSeq) toast((error as Error).message, true)
   } finally {
-    planning.value = false
+    if (seq === planSeq) planning.value = false
   }
 }
 
@@ -570,7 +604,7 @@ async function startGenerationWithOutline(edited: any[] | null) {
   const pr = planReview.value
   if (!pr) return
   const payload = { ...pr.payload, outline: edited ?? pr.outline }
-  planReview.value = null
+  clearPlanDraft()
   events.value = []; issues.value = []; outline.value = []; warnings.value = []
   numericWarnings.value = []; wordCount.value = null; placeholderCount.value = null
   score.value = null; dimensions.value = null; knowledge.value = null
@@ -612,31 +646,41 @@ function confirmPlan() { startGenerationWithOutline(planOutline.value) }
 async function replan() {
   const pr = planReview.value
   if (!pr) return
+  const seq = ++planSeq
   planning.value = true
   try {
     const plan = await api.generatePlan(pr.payload)
-    // 用户在重新规划期间关闭了预检：丢弃这次结果，不要把弹窗又弹回来。
-    if (!planReview.value) return
+    // 用户在重新规划期间收起了预检：丢弃这次结果，保留原草稿，不把弹窗弹回来。
+    if (seq !== planSeq || !planOpen.value) return
     planOutline.value = JSON.parse(JSON.stringify(plan.outline || []))
     planReview.value = {
       outline: plan.outline || [], evidence: plan.evidence || {},
       warnings: plan.warnings || [], payload: pr.payload,
     }
-  } catch (error) { toast((error as Error).message, true) }
-  finally { planning.value = false }
+  } catch (error) { if (seq === planSeq) toast((error as Error).message, true) }
+  finally { if (seq === planSeq) planning.value = false }
 }
 /** 跳过预检，直接让模型自行规划并起草（等同旧流程）。 */
 function skipPlan() { startGenerationWithOutline(null) }
-/** 关闭预检：点遮罩 / 关闭按钮 / ESC 都只取消本次生成，绝不顺手触发生成。
- *  旧实现把遮罩绑成 skipPlan，点一下弹窗外空白就直接开始起草（还会扣额度）。 */
-function cancelPlan() {
+/** 清空草稿：仅在正式开始生成、或用户主动点「丢弃」时调用。 */
+function clearPlanDraft() {
   planReview.value = null
   planOutline.value = []
+  planOpen.value = false
+  try { if (currentProfileId.value) localStorage.removeItem(draftKey(currentProfileId.value)) } catch {}
 }
+/** 收起预检：点遮罩 / 关闭按钮 / ESC 都只关弹窗，大纲草稿完整保留，
+ *  生成页出现「继续编辑」入口。绝不顺手触发生成（旧实现错绑 skipPlan，会直接扣额度）。 */
+function cancelPlan() {
+  planOpen.value = false
+  toast('大纲已保留，可在生成页继续编辑')
+}
+function resumePlan() { if (planReview.value) planOpen.value = true }
+function discardPlan() { clearPlanDraft(); toast('已丢弃大纲草稿') }
 function onPlanKeydown(e: KeyboardEvent) {
-  if (e.key === 'Escape' && planReview.value) cancelPlan()
+  if (e.key === 'Escape' && planOpen.value) cancelPlan()
 }
-watch(planReview, (open) => {
+watch(planOpen, (open) => {
   if (open) window.addEventListener('keydown', onPlanKeydown)
   else window.removeEventListener('keydown', onPlanKeydown)
 })
@@ -933,6 +977,16 @@ onUnmounted(() => window.removeEventListener('hashchange', onHashChange))
                 <button class="btn" @click="goTab('documents')">查看文书库</button>
               </div>
             </div>
+            <!-- 收起预检后大纲草稿仍在：一键继续编辑，不重新调用规划接口。 -->
+            <div v-if="planReview && !planOpen" class="plan-draft-bar">
+              <span class="plan-draft-dot"></span>
+              <div class="plan-draft-text">
+                <strong>上次规划的大纲已保留</strong>
+                <small>{{ planOutline.length }} 段 · 按上次的参数继续，无需重新规划</small>
+              </div>
+              <button class="btn small" @click="discardPlan">丢弃</button>
+              <button class="btn small primary" @click="resumePlan">继续编辑</button>
+            </div>
             <!-- 切换档案时重挂载，清掉上一份档案的目标项目 / 推荐人选择。 -->
             <GeneratePanel
               :key="currentProfileId"
@@ -953,12 +1007,12 @@ onUnmounted(() => window.removeEventListener('hashchange', onHashChange))
         </div>
 
         <!-- 大纲预检弹窗：确认 / 微调结构后再起草 -->
-        <div v-if="planReview" class="plan-overlay" @click.self="cancelPlan">
+        <div v-if="planReview && planOpen" class="plan-overlay" @click.self="cancelPlan">
           <div class="plan-modal">
             <div class="plan-head">
-              <button class="icon-btn plan-close" title="取消本次生成" @click="cancelPlan">×</button>
+              <button class="icon-btn plan-close" title="收起（大纲会保留）" @click="cancelPlan">×</button>
               <h2>大纲预检</h2>
-              <p>确认每段的结构与素材，或微调后再起草。改完后点「确认并开始撰写」。</p>
+              <p>确认每段的结构与素材，或微调后再起草。收起或点弹窗外都不会丢失大纲，可在生成页继续编辑。</p>
             </div>
 
             <div v-if="planReview.warnings.length" class="plan-warnings">
@@ -988,7 +1042,7 @@ onUnmounted(() => window.removeEventListener('hashchange', onHashChange))
             </div>
 
             <div class="plan-foot">
-              <button class="btn plan-cancel" @click="cancelPlan">取消</button>
+              <button class="btn plan-cancel" @click="cancelPlan">收起，稍后继续</button>
               <button class="btn" :disabled="planning" @click="replan">
                 {{ planning ? '规划中…' : '重新规划大纲' }}
               </button>
