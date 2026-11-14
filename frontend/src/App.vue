@@ -703,14 +703,35 @@ function cancelPlan() {
   toast('大纲已保留，可在生成页继续编辑')
 }
 function resumePlan() { if (planReview.value) planOpen.value = true }
-function discardPlan() { clearPlanDraft(); toast('已丢弃大纲草稿') }
-function onPlanKeydown(e: KeyboardEvent) {
-  if (e.key === 'Escape' && planOpen.value) cancelPlan()
+// 丢弃不可撤销：先弹二次确认。点外部 / ESC / 回车一律视为「保留草稿」，绝不直接清空。
+const discardConfirmOpen = ref(false)
+const discardCancelBtn = ref<HTMLButtonElement | null>(null)
+function discardPlan() { if (planReview.value) discardConfirmOpen.value = true }
+function cancelDiscardPlan() { discardConfirmOpen.value = false }
+function confirmDiscardPlan() {
+  if (!planReview.value) { discardConfirmOpen.value = false; return }
+  discardConfirmOpen.value = false
+  clearPlanDraft()
+  toast('已丢弃大纲草稿')
 }
-watch(planOpen, (open) => {
-  if (open) window.addEventListener('keydown', onPlanKeydown)
+function onPlanKeydown(e: KeyboardEvent) {
+  if (e.key !== 'Escape') return
+  if (discardConfirmOpen.value) { cancelDiscardPlan(); return }
+  if (planOpen.value) cancelPlan()
+}
+watch([planOpen, discardConfirmOpen], ([open, confirming]) => {
+  if (open || confirming) window.addEventListener('keydown', onPlanKeydown)
   else window.removeEventListener('keydown', onPlanKeydown)
 })
+// 默认焦点给「保留草稿」，避免误按回车把大纲删掉。
+watch(discardConfirmOpen, async (open) => {
+  if (!open) return
+  await nextTick()
+  discardCancelBtn.value?.focus()
+})
+// 草稿被开始生成 / 切换档案清掉时，确认框不能悬空指向另一份草稿。
+watch(planReview, (review) => { if (!review) discardConfirmOpen.value = false })
+watch(currentProfileId, () => { discardConfirmOpen.value = false })
 
 async function handleRegenerate(payload: RegenPayload) {
   const doc = activeDoc.value
@@ -1082,6 +1103,22 @@ onUnmounted(() => window.removeEventListener('hashchange', onHashChange))
               <button class="btn primary" :disabled="!planOutline.length || planning" @click="confirmPlan">
                 确认并开始撰写
               </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 丢弃大纲草稿：二次确认。点遮罩 / ESC 只「保留草稿」，不会误删。 -->
+        <div v-if="discardConfirmOpen" class="confirm-overlay" @click.self="cancelDiscardPlan">
+          <div class="confirm-modal" role="alertdialog" aria-modal="true" aria-labelledby="discard-title">
+            <div class="confirm-icon" aria-hidden="true">!</div>
+            <h2 id="discard-title">确认丢弃这份大纲？</h2>
+            <p>
+              将删除当前档案下保存的 {{ planOutline.length }} 段大纲与本次规划参数，之后需要重新规划。
+              此操作不可撤销，已生成的文书不受影响。
+            </p>
+            <div class="confirm-actions">
+              <button ref="discardCancelBtn" class="btn" @click="cancelDiscardPlan">保留草稿</button>
+              <button class="btn danger-solid" @click="confirmDiscardPlan">确认丢弃</button>
             </div>
           </div>
         </div>
