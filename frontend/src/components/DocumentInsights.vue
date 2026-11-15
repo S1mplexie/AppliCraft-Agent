@@ -10,6 +10,7 @@
  */
 import { computed, ref, watch } from 'vue'
 import { DIMENSION_LABELS, NODE_LABELS } from '../types'
+import { requestRegenPanel } from '../utils/regenPanel'
 import type { DocumentDetail, Issue, KnowledgeRef, NodeEvent } from '../types'
 
 const props = defineProps<{
@@ -31,6 +32,12 @@ const props = defineProps<{
   modelName?: string
 }>()
 const emit = defineEmits<{ go: [tab: 'documents'] }>()
+
+/** 用户明确要去给审核建议：跳转文书库，并请求展开默认折叠的建议面板。 */
+function goAdvise() {
+  emit('go', 'documents')
+  requestRegenPanel()
+}
 
 const trace = computed(() => props.document?.trace || null)
 const critique = computed(() => trace.value?.critique || null)
@@ -374,7 +381,7 @@ const emptyText = computed(() => ({
             <p>{{ issue.reason }}</p>
             <small>「{{ issue.quote }}」→ {{ issue.fix }}</small>
           </div>
-          <button v-if="live" class="btn small full" @click="emit('go', 'documents')">逐项给建议并重新生成</button>
+          <button v-if="live" class="btn small full" @click="goAdvise">逐项给建议并重新生成</button>
         </div>
         <div v-if="view.warnings.length" class="warnings">
           <div v-for="(warning, i) in view.warnings" :key="i">⚠ {{ warning }}</div>

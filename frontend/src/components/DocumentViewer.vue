@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { computed, reactive, ref, watch } from 'vue'
+import { computed, onMounted, onUnmounted, reactive, ref, watch } from 'vue'
 import { marked } from 'marked'
 import DocumentInsights from './DocumentInsights.vue'
 import type { DocumentDetail, Issue, RegenPayload } from '../types'
+import { regenPanelRequest } from '../utils/regenPanel'
 
 const props = defineProps<{
   document: DocumentDetail | null
@@ -27,7 +28,8 @@ const currentVersionName = computed(() => 'v' + (props.document?.meta.version ??
 // 逐项审核建议：key 为待核项序号，值是该条的用户修改意见。
 const suggestions = reactive<Record<number, string>>({})
 const overallFeedback = ref('')
-// 审核建议卡默认折叠；有待核项或正在重新生成时自动展开。
+// 审核建议卡默认折叠：打开文书时只保留底部一条标题栏，把版面留给正文。
+// 有待核项也不自动展开——工具栏的「审核建议 · N 项待核」与标题栏都可手动展开。
 const regenOpen = ref(false)
 
 function resetFeedback() {
@@ -42,21 +44,23 @@ watch(
     editing.value = false
     selectedVersion.value = currentVersionName.value
     resetFeedback()
-    regenOpen.value = false
+    // 生成过程中新版本落库不打断进度展示；其余情况一律回到折叠态。
+    regenOpen.value = props.regenerating
   },
 )
-// 手机视口下不自动展开审核面板：正文自然滚动本身就很长，8 条意见再自动展开
-// 会让页面膨胀到 5000px+；入口由吸附工具栏的「审核建议 · N 项待核」按钮承担。
-const isMobileView = window.matchMedia('(max-width: 760px)')
 // 校验意见变化（如重新生成后）时清空旧建议，避免序号错配。
 watch(() => props.issues.map(issue => issue.quote + issue.type).join('|'), () => resetFeedback())
-watch(() => props.issues.length, (count) => {
-  if (count > 0 && !editing.value && !isMobileView.matches) regenOpen.value = true
-})
+// 只有「开始按建议重新生成」才自动展开以显示进度；结束后保留用户当前的展开/折叠状态。
 watch(() => props.regenerating, (busy) => {
   if (busy) regenOpen.value = true
-  else regenOpen.value = !isMobileView.matches && props.issues.length > 0
 })
+// 来自洞察区「逐项给建议并重新生成」的显式展开请求，消费一次后清零。
+// immediate 保证生成中查看器尚未挂载时发出的请求，在挂载后仍能生效。
+watch(regenPanelRequest, (pending) => {
+  if (pending <= 0) return
+  regenOpen.value = true
+  regenPanelRequest.value = 0
+}, { immediate: true })
 
 const displayMarkdown = computed(() => {
   const doc = props.document
@@ -210,15 +214,91 @@ const canRegenerate = computed(() =>
   !props.regenerating && (advisedCount.value > 0 || !!overallFeedback.value.trim()),
 )
 
+/* ---------- 审核建议面板高度：拖动顶部手柄调整，按浏览器记住 ---------- */
+const REGEN_HEIGHT_KEY = 'applicraft.regen-panel-height.v1'
+const REGEN_MIN_HEIGHT = 160
+const REGEN_DEFAULT_HEIGHT = 320
+
+function clampRegenHeight(px: number): number {
+  // 上限与 CSS 的 max-height 对齐：桌面 72vh，窄屏 60vh，避免状态值和实际高度不一致。
+  const ratio = window.innerWidth <= 760 ? 0.6 : 0.72
+  const upper = Math.max(REGEN_MIN_HEIGHT + 40, Math.round(window.innerHeight * ratio))
+  return Math.min(upper, Math.max(REGEN_MIN_HEIGHT, Math.round(px)))
+}
+function readRegenHeight(): number {
+  try {
+    const saved = Number(window.localStorage.getItem(REGEN_HEIGHT_KEY))
+    if (Number.isFinite(saved) && saved > 0) return clampRegenHeight(saved)
+  } catch { /* 隐私模式下 localStorage 不可用，回退到默认高度 */ }
+  return clampRegenHeight(REGEN_DEFAULT_HEIGHT)
+}
+const regenHeight = ref(readRegenHeight())
+const regenResizing = ref(false)
+let stopResize: (() => void) | null = null
+
+function persistRegenHeight() {
+  try { window.localStorage.setItem(REGEN_HEIGHT_KEY, String(regenHeight.value)) } catch { /* ignore */ }
+}
+function setRegenHeight(px: number) {
+  regenHeight.value = clampRegenHeight(px)
+}
+/** 手柄贴在面板上沿：向上拖加高、向下拖压低。Pointer Events 同时覆盖鼠标与触屏。 */
+function onRegenResizeStart(event: PointerEvent) {
+  if (event.pointerType === 'mouse' && event.button !== 0) return
+  // 鼠标端不 preventDefault：那会连带阻止 click/dblclick，双击恢复默认就收不到事件。
+  // 拖拽中的文本选择由 body.regen-resizing 处理，触屏滚动由 touch-action:none 处理。
+  if (event.pointerType !== 'mouse') event.preventDefault()
+  const startY = event.clientY
+  const startHeight = regenHeight.value
+  regenResizing.value = true
+  document.body.classList.add('regen-resizing')
+  const onMove = (e: PointerEvent) => setRegenHeight(startHeight + (startY - e.clientY))
+  const onEnd = () => {
+    window.removeEventListener('pointermove', onMove)
+    window.removeEventListener('pointerup', onEnd)
+    window.removeEventListener('pointercancel', onEnd)
+    document.body.classList.remove('regen-resizing')
+    regenResizing.value = false
+    stopResize = null
+    persistRegenHeight()
+  }
+  stopResize = onEnd
+  window.addEventListener('pointermove', onMove)
+  window.addEventListener('pointerup', onEnd)
+  window.addEventListener('pointercancel', onEnd)
+}
+/** 键盘可达：↑/↓ 每次 20px（Shift 加速到 60px），Home 或双击手柄恢复默认。 */
+function onRegenResizeKey(event: KeyboardEvent) {
+  if (event.key !== 'ArrowUp' && event.key !== 'ArrowDown' && event.key !== 'Home') return
+  event.preventDefault()
+  const step = event.shiftKey ? 60 : 20
+  setRegenHeight(
+    event.key === 'Home'
+      ? REGEN_DEFAULT_HEIGHT
+      : regenHeight.value + (event.key === 'ArrowUp' ? step : -step),
+  )
+  persistRegenHeight()
+}
+function resetRegenHeight() {
+  setRegenHeight(REGEN_DEFAULT_HEIGHT)
+  persistRegenHeight()
+}
+function onWindowResize() { setRegenHeight(regenHeight.value) }
+onMounted(() => window.addEventListener('resize', onWindowResize))
+onUnmounted(() => {
+  window.removeEventListener('resize', onWindowResize)
+  stopResize?.()
+})
+
 function startEdit() {
   if (selectedVersion.value !== currentVersionName.value) selectedVersion.value = currentVersionName.value
   draft.value = displayMarkdown.value
   editing.value = true
   regenOpen.value = false
 }
-/** 工具栏入口：展开审核建议面板（固定在底部，与正文独立滚动，无需滚动定位）。 */
-function showRegen() {
-  regenOpen.value = true
+/** 工具栏入口：展开/收起审核建议面板（固定在底部，与正文独立滚动，无需滚动定位）。 */
+function toggleRegen() {
+  regenOpen.value = !regenOpen.value
 }
 function save() {
   emit('save', draft.value)
@@ -253,9 +333,9 @@ function submitRegenerate() {
       <button class="btn small" @click="download('md')">.md</button>
       <button class="btn small" @click="download('docx')">.docx</button>
       <button
-        v-if="!editing" class="btn small" :class="{ 'regen-entry': issues.length }"
-        title="逐项填写修改意见，按建议重新生成"
-        @click="showRegen"
+        v-if="!editing" class="btn small" :class="{ 'regen-entry': issues.length, active: regenOpen }"
+        :aria-expanded="regenOpen" :title="regenOpen ? '收起审核建议面板' : '逐项填写修改意见，按建议重新生成'"
+        @click="toggleRegen"
       >
         审核建议{{ issues.length ? ` · ${issues.length} 项待核` : '' }}
       </button>
@@ -348,9 +428,9 @@ function submitRegenerate() {
       </details>
     </div>
 
-    <!-- 逐项审核建议：独立于正文滚动区的底部面板，展开时内部滚动，不挤占正文阅读位置 -->
+    <!-- 逐项审核建议：独立于正文滚动区的底部面板，默认折叠；展开后上沿可拖动调高，内部独立滚动 -->
     <details
-      v-if="!editing" class="regen-card" :class="{ busy: regenerating }"
+      v-if="!editing" class="regen-card" :class="{ busy: regenerating, resizing: regenResizing }"
       :open="regenOpen" @toggle="(e: Event) => regenOpen = (e.target as HTMLDetailsElement).open"
     >
       <summary>
@@ -359,8 +439,18 @@ function submitRegenerate() {
           {{ issues.length ? `${issues.length} 项待核 · 已填 ${advisedCount} 项` : '无待核项 · 可填写整体修改要求后重新生成' }}<template v-if="lastResolvedCount"> · 上轮已裁决 {{ lastResolvedCount }} 项</template>
         </span>
         <span class="hint" v-else>{{ regenStage || '正在调用模型…' }}</span>
+        <span class="regen-size-tools">
+          <span class="hint">拖动上沿可调高度</span>
+          <button class="regen-size-reset" type="button" title="恢复默认高度" @click.stop.prevent="resetRegenHeight">恢复默认</button>
+        </span>
       </summary>
-      <div class="regen-card-inner">
+      <div
+        class="regen-resizer" role="separator" aria-orientation="horizontal" tabindex="0"
+        aria-label="拖动调整审核建议面板高度，双击恢复默认" :aria-valuenow="regenHeight"
+        :aria-valuemin="REGEN_MIN_HEIGHT" title="上下拖动调整高度 · 双击恢复默认"
+        @pointerdown="onRegenResizeStart" @keydown="onRegenResizeKey" @dblclick="resetRegenHeight"
+      ><span></span></div>
+      <div class="regen-card-inner" :style="{ height: regenHeight + 'px' }">
         <div v-if="issues.length" class="issue-advisories">
           <div v-for="(issue, i) in issues" :key="i" class="issue-advisory">
             <div class="issue-advisory-head">

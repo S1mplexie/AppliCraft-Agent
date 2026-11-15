@@ -698,8 +698,33 @@ label.bi-toggle-row > .bi-toggle-input {
 .regen-card > summary strong { color: var(--ink); font-size: 13px; }
 .regen-card.busy { border-top-color: var(--accent); }
 .regen-card.busy > summary strong::after { content: "（进行中）"; color: var(--accent); font-weight: 400; font-size: 11.5px; }
+.regen-card > summary .regen-size-tools { margin-left: auto; display: inline-flex; align-items: center; gap: 9px; white-space: nowrap; }
+.regen-card > summary .regen-size-tools .hint { color: var(--faint); font-size: 11px; }
+.regen-size-reset {
+  border: 1px solid var(--line); border-radius: 6px; padding: 2px 8px;
+  background: var(--surface); color: var(--muted);
+  font-family: inherit; font-size: 11px; line-height: 1.6; cursor: pointer;
+}
+.regen-size-reset:hover { border-color: var(--accent); color: var(--accent); }
+/* 面板上沿的拖拽手柄：向上拖加高、向下拖压低；双击或 Home 键恢复默认高度。 */
+.regen-resizer {
+  height: 9px; cursor: row-resize; touch-action: none;
+  display: grid; place-items: center;
+  background: var(--surface-2); border-bottom: 1px solid var(--line);
+}
+.regen-resizer > span {
+  display: block; width: 46px; height: 3px; border-radius: 3px;
+  background: var(--line-strong); transition: background .15s;
+}
+.regen-resizer:hover > span,
+.regen-resizer:focus-visible > span,
+.regen-card.resizing .regen-resizer > span { background: var(--accent); }
+.regen-resizer:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+body.regen-resizing, body.regen-resizing * { cursor: row-resize !important; user-select: none !important; }
 .regen-card-inner {
-  max-height: 40vh; overflow-y: auto;
+  /* 高度由组件按用户拖拽结果内联给定；max-height 保证窗口变矮时面板不顶满屏幕。 */
+  height: 320px; min-height: 160px; max-height: 72vh;
+  overflow-y: auto; overscroll-behavior: contain;
   padding: 10px 18px 14px;
 }
 .regen-card textarea {
@@ -913,6 +938,8 @@ label.bi-toggle-row > .bi-toggle-input {
   .library-side { padding: 10px; }
   .regen-card-inner { max-height: 60vh; padding: 10px 12px 12px; }
   .regen-card > summary { padding: 10px 12px; }
+  .regen-card > summary .regen-size-tools .hint { display: none; }
+  .regen-resizer { height: 14px; }
 
   /* 设置页 kv 值换行 */
   .kv-list > div { flex-wrap: wrap; }
