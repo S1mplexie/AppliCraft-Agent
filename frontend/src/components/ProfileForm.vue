@@ -21,6 +21,11 @@ const emit = defineEmits<{
 
 // 切换当前档案时，父组件通过 :key 重新挂载本组件；p 始终指向同一个响应式档案对象。
 const p = props.profile
+// 新增「百分制均分」之前保存的旧档案可能缺这两个字段，补默认值以免 v-model 绑到 undefined。
+for (const ed of p.education || []) {
+  if (ed.gpa_average == null) ed.gpa_average = ''
+  if (!ed.gpa_scale) ed.gpa_scale = '4.0'
+}
 const activeSection = ref<ProfileSection>(props.section || 'basics')
 watch(() => props.section, (value) => { if (value) activeSection.value = value })
 function switchSection(key: ProfileSection) {
@@ -52,7 +57,7 @@ const joined = (list: string[] = [], separator = ', ') => list.join(separator)
 
 const newEducation = (): Education => ({
   id: uid(), school: '', degree: 'Bachelor', major: '', gpa: '', gpa_scale: '4.0',
-  ranking: '', start_date: '', end_date: '', relevant_courses: [], thesis: '', highlights: '',
+  gpa_average: '', ranking: '', start_date: '', end_date: '', relevant_courses: [], thesis: '', highlights: '',
 })
 const newExperience = (): Experience => ({
   id: uid(), type: 'project', org: '', role: '', location: '', start_date: '', end_date: '',
@@ -121,15 +126,17 @@ const newRecommender = (): Recommender => ({
 
         <!-- 教育背景 -->
         <section v-show="activeSection === 'education'" class="form-section">
-          <div class="section-title"><h3>教育背景</h3><span>按时间倒序填写，GPA 与排名需与成绩单一致</span></div>
+          <div class="section-title"><h3>教育背景</h3><span>按时间倒序填写；港新院校多审核百分制均分，请与成绩单口径一致</span></div>
+          <p class="hint" style="margin: 0 0 12px;">绩点与百分制均分按成绩单原样填写，系统不会互相换算；两者都填时，选校评估优先采用百分制均分。</p>
           <div v-for="(item, i) in p.education" :key="item.id" class="entry">
             <div class="entry-head"><strong>ED{{ i + 1 }}</strong><button class="link danger" @click="p.education.splice(i, 1)">删除</button></div>
             <div class="grid2">
               <label class="field"><span>学校</span><input v-model="item.school" /></label>
               <label class="field"><span>学位</span><input v-model="item.degree" /></label>
               <label class="field"><span>专业</span><input v-model="item.major" /></label>
-              <label class="field"><span>GPA / 满分</span><input v-model="item.gpa" placeholder="3.7 / 4.0" /></label>
-              <label class="field"><span>均分（百分制）</span><input v-model="item.gpa_average" placeholder="85 / 100" /></label>
+              <label class="field"><span>GPA（绩点）</span><input v-model="item.gpa" placeholder="3.7" /></label>
+              <label class="field"><span>GPA 满分制</span><input v-model="item.gpa_scale" placeholder="4.0 / 5.0" /></label>
+              <label class="field"><span>均分（百分制）</span><input v-model="item.gpa_average" placeholder="88 / 100" /></label>
               <label class="field"><span>排名</span><input v-model="item.ranking" placeholder="Top 15%" /></label>
               <label class="field"><span>起止时间</span><input v-model="item.start_date" placeholder="2022-09 ~ 2026-06" /></label>
             </div>

@@ -117,6 +117,12 @@ PARSE_SYSTEM = """你是一名严谨的简历信息抽取引擎。你会收到�
 6. 目标项目 degree_type 按简历推断，如 Taught Master / Research Master / PhD，不确定留空。
 7. 列表字段（education / experiences / awards / skill_groups / test_scores / target_programs）
    中每一项的字段请尽量填全；skill_groups 按类别分组（如 Programming、Languages）。
+8. 教育背景的成绩字段严格区分两种口径，禁止互相换算或推断：
+   - gpa 只填绩点制成绩（如 3.7），满分制填 gpa_scale（如 4.0 / 5.0）；
+   - gpa_average 只填简历里明确写出的百分制均分，包括「均分 88/100」「加权平均分 88.5」
+     「算术平均分：86.4 分」「Cumulative Average 87」等，原样保留数值与写法；
+   - 只出现其中一种时另一种留空字符串；简历写「GPA 3.7/4.0」时 gpa 为 3.7、
+     gpa_scale 为 4.0、gpa_average 留空。
 
 JSON Schema：
 {
@@ -126,7 +132,7 @@ JSON Schema：
   },
   "education": [
     {"school": "", "degree": "", "major": "", "gpa": "", "gpa_scale": "4.0",
-     "ranking": "", "start_date": "", "end_date": "", "relevant_courses": [], "thesis": "", "highlights": ""}
+     "gpa_average": "", "ranking": "", "start_date": "", "end_date": "", "relevant_courses": [], "thesis": "", "highlights": ""}
   ],
   "experiences": [
     {"type": "", "org": "", "role": "", "location": "", "start_date": "", "end_date": "",
@@ -160,6 +166,12 @@ class ResumePatch(BaseModel):
     additional_notes: str = ""
 
 
+_AVERAGE_ALIASES = (
+    "average_score", "average", "mean_score", "weighted_average", "gpa_100",
+    "score_average", "average_mark", "cumulative_average", "百分制均分", "均分", "平均分",
+)
+
+
 def _normalize_raw_patch(raw: dict[str, Any]) -> dict[str, Any]:
     """对 LLM 输出做少量容错：常见异名字段归一到规范 schema。"""
     if not isinstance(raw, dict):
@@ -179,7 +191,64 @@ def _normalize_raw_patch(raw: dict[str, Any]) -> dict[str, Any]:
             if isinstance(val, list) and val:
                 norm["target_programs"] = val
                 break
+    # 教育背景：模型常把百分制均分换成别的字段名，或误塞进 gpa；两处都归位。
+    if isinstance(norm.get("education"), list):
+        normalized: list[Any] = []
+        for item in norm["education"]:
+            if not isinstance(item, dict):
+                normalized.append(item)
+                continue
+            ed = dict(item)
+            if not str(ed.get("gpa_average") or "").strip():
+                for alias in _AVERAGE_ALIASES:
+                    val = ed.get(alias)
+                    if isinstance(val, (str, int, float)) and str(val).strip():
+                        ed["gpa_average"] = str(val).strip()
+                        break
+            gpa_raw = str(ed.get("gpa") or "").strip()
+            misplaced = re.search(r"(\d{2,3}(?:\.\d+)?)\s*/\s*100", gpa_raw)
+            if misplaced:
+                if not str(ed.get("gpa_average") or "").strip():
+                    ed["gpa_average"] = f"{misplaced.group(1)} / 100"
+                ed["gpa"] = ""
+            normalized.append(ed)
+        norm["education"] = normalized
     return norm
+
+
+# 简历原文里明确标注的百分制均分。只认带「均分 / 平均分 / average」字样的写法，
+# 避免把 TOEFL 100、年份 2024、排名 15% 之类数字误当成成绩。
+_AVERAGE_TEXT_RE = re.compile(
+    r"(?:加权|算术|学分|综合|累计)?\s*(?:平均(?:分|成绩|绩点)?|均分|"
+    r"(?:cumulative\s+)?(?:average|mean)\s*(?:score|mark)?)"
+    r"\s*[:：为]?\s*(\d{2,3}(?:\.\d+)?)\s*(?:分)?\s*(?:/\s*100)?",
+    re.IGNORECASE,
+)
+
+
+def _find_average_in_text(text: str) -> str:
+    """从简历原文提取明确写出的百分制均分，统一为「88 / 100」形式；找不到返回空串。"""
+    for match in _AVERAGE_TEXT_RE.finditer(text):
+        value = float(match.group(1))
+        if 40 <= value <= 100:
+            return f"{match.group(1)} / 100"
+    return ""
+
+
+def _backfill_average(patch: ResumePatch, resume_text: str) -> None:
+    """LLM 漏抽均分时的确定性兜底。
+
+    只在仅有一段教育经历时补写（多段时无法确定均分归属，宁可留空让用户核对），
+    且只采用简历原文明确标注的数值，绝不做 GPA 与百分制之间的换算。
+    """
+    if len(patch.education) != 1:
+        return
+    ed = patch.education[0]
+    if (ed.gpa_average or "").strip():
+        return
+    value = _find_average_in_text(resume_text)
+    if value:
+        ed.gpa_average = value
 
 
 async def parse_resume_text(resume_text: str, llm: Any) -> ResumePatch:
@@ -191,7 +260,9 @@ async def parse_resume_text(resume_text: str, llm: Any) -> ResumePatch:
         user=f"以下是一份简历的纯文本内容，请抽取结构化信息：\n\n{truncated}",
         temperature=0.0,
     )
-    return ResumePatch.model_validate(_normalize_raw_patch(data))
+    patch = ResumePatch.model_validate(_normalize_raw_patch(data))
+    _backfill_average(patch, truncated)
+    return patch
 
 
 # --------------------------------------------------------------------------- 覆盖合并
@@ -250,6 +321,15 @@ def _merge_list(
         return
     merged[key] = [item.model_dump() for item in items]
     changes.append(f"{label}：以简历内容覆盖，共 {len(items)} {unit}")
+    if key == "education":
+        # 均分是港新申请的关键指标，解析结果单独列出，方便用户对照成绩单核对。
+        averages = []
+        for item in items:
+            value = str(getattr(item, "gpa_average", "") or "").strip()
+            if value:
+                averages.append(value)
+        if averages:
+            changes.append(f"教育背景·百分制均分：{'、'.join(averages)}（请与成绩单核对）")
 
 
 _BASICS_LABELS: dict[str, str] = {
