@@ -7,7 +7,7 @@ from datetime import datetime, timezone
 from typing import Any
 
 from app.config import Settings
-from app.graph import prompts
+from app.graph import bilingual, prompts
 from app.graph.state import GraphState
 from app.knowledge.retriever import get_retriever
 from app.llm.client import LLMClient
@@ -668,11 +668,23 @@ async def revise(state: GraphState, *, llm: LLMClient, **_: Any) -> dict[str, An
     }
 
 
-async def finalize(state: GraphState, **_: Any) -> dict[str, Any]:
+async def finalize(state: GraphState, *, llm: LLMClient | None = None, **_: Any) -> dict[str, Any]:
     final = _clean_markdown(state.get("draft") or "")
     if not final:
         raise RuntimeError("生成结果为空，未生成文档")
-    words = len(re.findall(r"\b[\w'-]+\b", final)) + len(re.findall(r"[\u4e00-\u9fff]", final))
+    # 双语文档：模型常把 PS 的 ## 小标题当作大纲结构原样照搬而漏写译块，
+    # 定稿前确定性地补齐缺失译块，保证对照视图里每个英文块都有中文。
+    request = state.get("request") or {}
+    is_bilingual = bool(request.get("bilingual")) and request.get("language", "en") == "en"
+    added, missing, fill_failed = 0, 0, False
+    if is_bilingual:
+        final, info = await bilingual.ensure_translation_blocks(final, llm)
+        added = int(info.get("added") or 0)
+        missing = int(info.get("missing") or 0)
+        fill_failed = bool(info.get("failed"))
+    # 词数只统计递交用的英文正文：中文译块是对照辅助，不应虚增篇幅。
+    body = bilingual.strip_translation_blocks(final) if is_bilingual else final
+    words = len(re.findall(r"\b[\w'-]+\b", body)) + len(re.findall(r"[\u4e00-\u9fff]", body))
     # 定稿文案区分「用户按审核建议重生成」与「系统自修复」两种链路。
     critique = state.get("critique") or {}
     rounds = state.get("revision_count", 0)
@@ -715,12 +727,19 @@ async def finalize(state: GraphState, **_: Any) -> dict[str, Any]:
         gain_note = f"，质量分 {initial_score} → {final_score}（持平）"
     else:
         gain_note = f"，质量分 {initial_score} → {final_score}（{score_gain:+d}）"
-    return {
+    fill_note = f"，已补齐 {added} 处中文对照" if added else ""
+    result: dict[str, Any] = {
         "final": final,
         "events": [_event(
-            "finalize", f"{verdict}，约 {words} 词{gain_note}",
+            "finalize", f"{verdict}，约 {words} 词{gain_note}{fill_note}",
             word_count=words, verdict=verdict,
             initial_score=initial_score, final_score=final_score,
             score_gain=score_gain, revision_count=rounds,
+            translations_added=added,
         )],
     }
+    if fill_failed and missing:
+        result["warnings"] = [
+            f"有 {missing} 处中文对照译块未能自动补齐，英文正文不受影响，可在编辑器中手动补充。",
+        ]
+    return result

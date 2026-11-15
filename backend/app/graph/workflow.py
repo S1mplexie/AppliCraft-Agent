@@ -23,7 +23,7 @@ def build_graph(llm: LLMClient, settings: Settings):
     builder.add_node("cv_render", partial(nodes.cv_render, llm=llm))
     builder.add_node("verify", partial(nodes.verify, llm=llm))
     builder.add_node("revise", partial(nodes.revise, llm=llm))
-    builder.add_node("finalize", nodes.finalize)
+    builder.add_node("finalize", partial(nodes.finalize, llm=llm))
 
     builder.add_edge(START, "intake")
     builder.add_conditional_edges(

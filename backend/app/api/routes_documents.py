@@ -269,7 +269,7 @@ async def regenerate_document(
                     update = await nodes.revise(state, llm=llm)
                     merge_updates(state, update)
                     yield _sse("node", _node_payload(nodes.revise.__name__, update))
-            update = await nodes.finalize(state)
+            update = await nodes.finalize(state, llm=llm)
             merge_updates(state, update)
             yield _sse("node", _node_payload(nodes.finalize.__name__, update))
 

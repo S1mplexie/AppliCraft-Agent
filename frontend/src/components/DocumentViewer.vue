@@ -118,10 +118,38 @@ function _stripZhBlocks(md: string): string {
   return out.join('\n')
 }
 
-// 中英对照：按空行把正文切成「块」，逐块配对。
-// 规则：仅有「英文块紧跟其译块」时才渲染成左右一对；标题 / 列表等未翻译结构、
-// 或模型漏译的段落，一律整宽渲染（不进双栏，避免空白右栏）；译块只配对紧邻的
-// 上一个英文块，从根本上杜绝左右错位。
+// 中英对照：把正文切成「英文块 / 译块」，逐块配对。
+// 译块以 `> 译：` 起始，可带多行 `> ` 续行。这里按行扫描而不是单纯按空行切分：
+// 模型偶尔把译块紧贴英文行、或与下一段英文挤在同一块，按空行切会让该段右栏缺失、
+// 中文被当成引用渲染进英文栏。无论前后有没有空行，译块都拆成独立块。
+function _splitBilingualBlocks(md: string): string[] {
+  const blocks: string[] = []
+  let buf: string[] = []
+  let inZh = false
+  const flush = () => {
+    const text = buf.join('\n').trim()
+    if (text) blocks.push(text)
+    buf = []
+  }
+  for (const line of md.replace(/\r\n/g, '\n').split('\n')) {
+    const zhStart = /^\s*>\s*译[:：]/.test(line)
+    const quote = /^\s*>/.test(line)
+    if (zhStart) {
+      flush()
+      inZh = true
+      buf.push(line)
+    } else if (inZh && quote) {
+      buf.push(line)
+    } else {
+      if (inZh) { flush(); inZh = false }
+      if (!line.trim()) flush()
+      else buf.push(line)
+    }
+  }
+  flush()
+  return blocks
+}
+
 function _cleanZh(block: string): string {
   return block
     .replace(/^\s*>\s*译[:：]\s?/gm, '')
@@ -129,16 +157,21 @@ function _cleanZh(block: string): string {
     .trim()
 }
 
+// 规则：仅有「英文块紧跟其译块」时才渲染成左右一对；标题 / 列表等未翻译结构、
+// 或模型漏译的段落，一律整宽渲染（不进双栏，避免空白右栏）；译块只配对紧邻的
+// 上一个英文块，从根本上杜绝左右错位。
 function _buildBilingual(md: string): string {
-  const norm = md.replace(/\r\n/g, '\n')
-  const blocks = norm.split(/\n{2,}/).map(b => b.trim()).filter(b => b !== '')
+  const blocks = _splitBilingualBlocks(md)
   const out: string[] = []
   let pendingEn = ''
   const renderFull = (enText: string) =>
     `<div class="bi-full">${sanitize(String(marked.parse(enText, { breaks: true })))}</div>`
-  const renderPair = (enText: string, zhText: string) =>
-    `<div class="bi-pair"><div class="bi-en">${sanitize(String(marked.parse(enText, { breaks: true })))}</div>` +
-    `<div class="bi-zh">${sanitize(String(marked.parse(zhText, { breaks: true })))}</div></div>`
+  const renderPair = (enText: string, zhText: string) => {
+    // 小标题型对照行单独标记，CSS 里让左右两栏的标题视觉对齐。
+    const cls = /^\s*#{1,6}\s/.test(enText) ? 'bi-pair bi-pair-heading' : 'bi-pair'
+    return `<div class="${cls}"><div class="bi-en">${sanitize(String(marked.parse(enText, { breaks: true })))}</div>` +
+      `<div class="bi-zh">${sanitize(String(marked.parse(zhText, { breaks: true })))}</div></div>`
+  }
   const isZh = (b: string) => /^\s*>\s*译[:：]/.test(b)
   for (const block of blocks) {
     if (isZh(block)) {
