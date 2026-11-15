@@ -55,6 +55,73 @@ def test_retriever_school_disambiguation():
     assert not any(s["school"] == "香港大学" for s in ref.sources)
 
 
+def test_retriever_chinese_program_and_school():
+    # 从参考文档库（系统项目库）导入的项目：program 是中文、university 是中文校名。
+    # 早期检索器只认英文名 / 英文校名，会误报「不在知识库覆盖范围内」。
+    r = get_retriever(Settings())
+    ref = r.retrieve(
+        {"university": "香港科技大学", "program": "人工智能理学硕士"},
+        {"doc_type": "ps", "emphasis": []},
+        "",
+    )
+    assert ref.enabled and ref.context and not ref.note
+    assert "Artificial Intelligence" in ref.matched_program
+    assert all(s["school"] == "香港科技大学" for s in ref.sources)
+
+
+def test_retriever_source_program_id_exact_match():
+    # 带知识库 program_id 时精确命中，即使申请人把项目名改写了也不会漏召回。
+    r = get_retriever(Settings())
+    ref = r.retrieve(
+        {
+            "university": "香港科技大学",
+            "program": "我自己改的项目名",
+            "source_program_id": "hkust-msc-ai",
+        },
+        {"doc_type": "ps", "emphasis": []},
+        "",
+    )
+    assert ref.context and "Artificial Intelligence" in ref.matched_program
+    assert all(s["school"] == "香港科技大学" for s in ref.sources)
+
+
+def test_retriever_english_program_with_chinese_school():
+    # 选校评估「加入档案」写入的是英文项目名 + 中文校名；学校须能识别，
+    # 否则会把 6 所学校的同名 AI 项目资料混进同一篇 PS。
+    r = get_retriever(Settings())
+    ref = r.retrieve(
+        {"university": "香港科技大学", "program": "MSc in Artificial Intelligence"},
+        {"doc_type": "ps", "emphasis": []},
+        "",
+    )
+    assert ref.context
+    assert all(s["school"] == "香港科技大学" for s in ref.sources)
+
+
+def test_retriever_ambiguous_same_name_without_school():
+    # 无学校线索且多校同名：宁可不注入，也不能串味。
+    r = get_retriever(Settings())
+    ref = r.retrieve(
+        {"program": "MSc in Artificial Intelligence"},
+        {"doc_type": "ps", "emphasis": []},
+        "",
+    )
+    assert ref.enabled and not ref.context and not ref.sources
+    assert "多所学校" in ref.note
+
+
+def test_detect_school_chinese_and_full_english_names():
+    from app.knowledge.retriever import _detect_school
+
+    assert _detect_school("香港科技大学 人工智能理学硕士") == "HKUST"
+    assert _detect_school("香港中文大学 计算机科学理学硕士") == "CUHK"
+    assert _detect_school("香港城市大学 人工智能理学硕士") == "CITYU"
+    assert _detect_school("Hong Kong Polytechnic University") == "POLYU"
+    assert _detect_school("Hong Kong University of Science and Technology") == "HKUST"
+    assert _detect_school("The University of Hong Kong") == "HKU"
+    assert _detect_school("University of Oxford") == ""
+
+
 def test_retriever_unknown_program_safe_noop():
     r = get_retriever(Settings())
     ref = r.retrieve(

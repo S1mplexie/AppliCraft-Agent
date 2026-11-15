@@ -26,14 +26,28 @@ from typing import Any
 
 from app.config import Settings
 
-# 学校缩写 → 可用于英文查询命中的关键词（覆盖申请人自由填写的校名写法）。
+# 学校缩写 → 中英文校名 / 简称关键词。
+# 注意：系统项目库与选校评估导入档案时，university 写的是「香港科技大学」这类中文名，
+# 早期只认英文缩写，学校识别会直接失败：轻则报「不在覆盖范围内」，重则把同名项目
+# 的其它学校资料串味注入。CITYU / POLYU 也在知识库内，必须一并识别。
 SCHOOL_KEYWORDS: dict[str, list[str]] = {
-    "HKU": ["hong kong", "hku", "hk"],
-    "CUHK": ["chinese university", "cuhk"],
-    "HKUST": ["hong kong university of science", "hkust"],
-    "NUS": ["national university of singapore", "nus"],
-    "NTU": ["nanyang", "ntu"],
+    "HKUST": ["hong kong university of science", "hkust", "香港科技大学", "香港科大", "港科大"],
+    "CUHK": ["chinese university of hong kong", "cuhk", "香港中文大学", "香港中大", "港中文", "中大"],
+    "HKU": ["university of hong kong", "hku", "香港大学", "港大"],
+    "CITYU": ["city university of hong kong", "cityu", "香港城市大学", "香港城大", "港城大", "城大"],
+    "POLYU": ["hong kong polytechnic university", "polyu", "香港理工大学", "香港理工", "港理工"],
+    "NUS": ["national university of singapore", "nus", "新加坡国立大学", "新国大"],
+    "NTU": ["nanyang technological university", "ntu", "南洋理工大学", "南洋理工"],
 }
+
+# 学校判定按「关键词长度降序」全局匹配：不能再按学校顺序逐个试，
+# 否则 "Hong Kong Polytechnic University" 会先被 HKU 的 "hong kong" 抢走，
+# "hkust" 也会被 "hku" 抢走。
+_SCHOOL_PATTERNS: list[tuple[str, str]] = sorted(
+    ((kw, sid) for sid, kws in SCHOOL_KEYWORDS.items() for kw in kws),
+    key=lambda pair: len(pair[0]),
+    reverse=True,
+)
 
 
 # 学位 / 套话前缀（最长优先剥离），用于把「Master of Science in Computer Science (MSc(CompSc))」
@@ -97,13 +111,28 @@ def _normalize_discipline(text: str) -> str:
     return " ".join(toks)
 
 
+# 中文项目名清洗：官方中文名带「（非官方译名）」这类校验注记，
+# 而档案里 project 字段已去掉该注记；双向字面包含会因此永远不相等。
+_ZH_NOISE = re.compile(r"[（(][^）)]*[）)]|\s+|[·・,，、/\\\-—_:：;；.。]")
+_ZH_CHAR = re.compile(r"[\u4e00-\u9fff]")
+
+
+def _clean_zh_name(text: str) -> str:
+    return _ZH_NOISE.sub("", (text or "").lower())
+
+
 def _name_match(c: dict[str, Any], program_name: str) -> bool:
-    """项目匹配：字面双向包含，或学科归一化后互相包含（桥接官方长名与申请人简写）。"""
+    """项目匹配：中英文字面双向包含，或学科归一化后互相包含。
+
+    支持三种写法：官方英文长名、申请人英文简写、系统项目库导入的中文名
+    （如「人工智能理学硕士 香港科技大学」）。
+    """
     meta = c.get("meta") or {}
     pn = program_name.lower()
     if not pn:
         return False
     pn_disc = _normalize_discipline(pn)
+    pn_zh = _clean_zh_name(program_name) if _ZH_CHAR.search(program_name) else ""
     for name in (meta.get("program_name_en", ""), meta.get("program_name_zh", "")):
         if not name:
             continue
@@ -113,23 +142,27 @@ def _name_match(c: dict[str, Any], program_name: str) -> bool:
         nl_disc = _normalize_discipline(nl)
         if pn_disc and nl_disc and (pn_disc in nl_disc or nl_disc in pn_disc):
             return True
+        # 中文名：去掉括号注记 / 标点 / 空白后双向包含。
+        # 限长 4 字以上，避免「AI」「CS」之类极短片段误命中。
+        if pn_zh and _ZH_CHAR.search(nl):
+            nl_zh = _clean_zh_name(nl)
+            if len(nl_zh) >= 4 and (nl_zh in pn_zh or pn_zh in nl_zh):
+                return True
     return False
 
 
 def _detect_school(text: str) -> str:
-    """从查询文本里识别学校缩写（HKUST/NTU/HKU/CUHK/NUS）。
+    """从查询文本里识别学校缩写（支持中英文校名与简称）。
 
-    优先匹配更具体的缩写，避免「hk」误命中「hkust」这类子串包含导致的串校。
-    识别不到时返回空串（交由名称匹配跨校回退）。
+    按关键词长度降序全局匹配：长而具体的校名优先，避免
+    「香港中文大学」被「港大」类短词、或 "Polytechnic" 被 "hong kong" 抢先误判。
+    识别不到时返回空串。
     """
     text = (text or "").lower()
     if not text:
         return ""
-    # 把更具体的学校放在前面，先匹配长缩写 / 专有词，减少歧义：
-    # 例如「香港中文大学」全名含「hong kong」，须在 HKU 之前用「chinese university」判定为 CUHK，
-    # 否则会被 HKU 的「hong kong」误命中。
-    for sid in ("HKUST", "CUHK", "HKU", "NTU", "NUS"):
-        if any(kw in text for kw in SCHOOL_KEYWORDS.get(sid, [])):
+    for kw, sid in _SCHOOL_PATTERNS:
+        if kw in text:
             return sid
     return ""
 
@@ -242,12 +275,39 @@ class KnowledgeRetriever:
         def _chunk_school(c: dict[str, Any]) -> str:
             return (c.get("meta") or {}).get("school_id", "").upper()
 
-        program_hits = [
+        # 从系统项目库 / 选校评估导入的条目带知识库 program_id，优先精确命中：
+        # 不受申请人把项目名写成中文、简写或改了校名写法的影响。
+        source_id = str(target.get("source_program_id") or "").strip()
+        exact_hits = [
             c
             for c in writing
-            if _name_match(c, program_name)
-            and (not target_school or _chunk_school(c) == target_school)
+            if source_id and (c.get("meta") or {}).get("program_id") == source_id
         ]
+        exact_used = bool(exact_hits) and (
+            not target_school or all(_chunk_school(c) == target_school for c in exact_hits)
+        )
+        if exact_used:
+            program_hits = exact_hits
+        else:
+            program_hits = [
+                c
+                for c in writing
+                if _name_match(c, program_name)
+                and (not target_school or _chunk_school(c) == target_school)
+            ]
+
+        # 名称命中多所学校的同名项目、又无法判定目标学校时，宁可不注入：
+        # 不能把港大 / 中大 / NUS 的课程资料混进同一篇 PS。
+        hit_schools = {_chunk_school(c) for c in program_hits if _chunk_school(c)}
+        if not exact_used and not target_school and len(hit_schools) > 1:
+            return KnowledgeRef(
+                enabled=True,
+                note=(
+                    f"「{program_name or '未命名项目'}」在知识库中对应多所学校的同名项目，未注入官方资料；"
+                    "请在档案的目标项目里补充学校名称，或从参考文档库重新导入该项目"
+                ),
+            )
+
         # 仅当能识别到具体学校、且项目名称未命中时，才退到学校级匹配（同校其它项目），
         # 避免把其它学校的同名项目（如港大 / 中文大学的 MSc in Computer Science）串味注入。
         school_hits = [

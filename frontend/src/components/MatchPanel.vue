@@ -156,6 +156,9 @@ async function addToTargets(item: MatchItem) {
   // push 进共享的响应式档案对象会触发自动保存；此处再手动落盘一次确保即时生效。
   props.profile.target_programs.push({
     id: uid(),
+    // 与系统项目库导入一致：保留知识库 program_id，生成时才能精确命中官方资料，
+    // 不受中英文项目名写法影响（同名项目也不会串到别的学校）。
+    source_program_id: item.program_id,
     university: item.school_name_zh,
     program: item.name_en,
     degree_type: 'Taught Master',
