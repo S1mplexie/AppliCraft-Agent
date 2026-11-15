@@ -680,7 +680,8 @@ async def finalize(state: GraphState, *, llm: LLMClient | None = None, **_: Any)
     if is_bilingual:
         final, info = await bilingual.ensure_translation_blocks(final, llm)
         added = int(info.get("added") or 0)
-        missing = int(info.get("missing") or 0)
+        # 补译后仍缺的数量（用于 warning 文案），兼容只返回 missing 的旧结构。
+        missing = int(info.get("remaining") if info.get("remaining") is not None else info.get("missing") or 0)
         fill_failed = bool(info.get("failed"))
     # 词数只统计递交用的英文正文：中文译块是对照辅助，不应虚增篇幅。
     body = bilingual.strip_translation_blocks(final) if is_bilingual else final

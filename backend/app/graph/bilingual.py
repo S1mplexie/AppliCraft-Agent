@@ -152,38 +152,52 @@ def _parse_translations(data: Any, count: int) -> dict[int, str]:
 async def ensure_translation_blocks(md: str, llm: Any) -> tuple[str, dict[str, Any]]:
     """为每个缺译块的英文块补上 `> 译：...`。
 
+    模型一次批量翻译偶尔会漏返回个别编号，故最多补两轮：第二轮只针对仍然缺失的块。
     返回 (新正文, 统计信息)。任何异常都吞掉并原样返回：对照译文是辅助内容，
     绝不能因为补译失败导致文书生成失败或正文被破坏。
     """
-    missing = missing_translation_blocks(md)
-    if not missing:
-        return md, {"added": 0, "failed": False, "missing": 0}
+    first_missing = len(missing_translation_blocks(md))
+    if not first_missing:
+        return md, {"added": 0, "failed": False, "missing": 0, "remaining": 0}
     if llm is None:
-        return md, {"added": 0, "failed": True, "missing": len(missing)}
-    numbered = "\n\n".join(f"[{i}] {text}" for i, (_, text) in enumerate(missing, 1))
-    try:
-        data = await llm.complete_json(
-            task="bilingual_fill",
-            system=TRANSLATE_SYSTEM,
-            user=TRANSLATE_SLUG + numbered,
-            temperature=0.0,
-        )
-    except Exception:  # noqa: BLE001 - 补译失败不影响交付
-        return md, {"added": 0, "failed": True, "missing": len(missing)}
-    parsed = _parse_translations(data, len(missing))
-    filled: dict[int, str] = {}
-    for seq, (block_index, original) in enumerate(missing):
-        zh = _clean_zh(parsed.get(seq, ""), original)
-        if zh:
-            filled[block_index] = zh
-    if not filled:
-        return md, {"added": 0, "failed": True, "missing": len(missing)}
-    blocks = split_blocks(md)
-    out: list[str] = []
-    for i, block in enumerate(blocks):
-        out.append(block)
-        if i in filled:
-            out.append(f"> 译：{filled[i]}")
-    return "\n\n".join(out) + "\n", {
-        "added": len(filled), "failed": False, "missing": len(missing),
+        return md, {"added": 0, "failed": True, "missing": first_missing, "remaining": first_missing}
+    current, added = md, 0
+    for _ in range(2):
+        missing = missing_translation_blocks(current)
+        if not missing:
+            break
+        numbered = "\n\n".join(f"[{i}] {text}" for i, (_, text) in enumerate(missing, 1))
+        try:
+            data = await llm.complete_json(
+                task="bilingual_fill",
+                system=TRANSLATE_SYSTEM,
+                user=TRANSLATE_SLUG + numbered,
+                temperature=0.0,
+            )
+        except Exception:  # noqa: BLE001 - 补译失败不影响交付
+            break
+        parsed = _parse_translations(data, len(missing))
+        filled: dict[int, str] = {}
+        for seq, (block_index, original) in enumerate(missing):
+            zh = _clean_zh(parsed.get(seq, ""), original)
+            if zh:
+                filled[block_index] = zh
+        if not filled:
+            break
+        blocks = split_blocks(current)
+        out: list[str] = []
+        for i, block in enumerate(blocks):
+            out.append(block)
+            if i in filled:
+                out.append(f"> 译：{filled[i]}")
+        current = "\n\n".join(out) + "\n"
+        added += len(filled)
+        if len(filled) == len(missing):
+            break
+    remaining = len(missing_translation_blocks(current))
+    if not added:
+        return md, {"added": 0, "failed": True, "missing": first_missing, "remaining": first_missing}
+    return current, {
+        "added": added, "failed": remaining > 0,
+        "missing": first_missing, "remaining": remaining,
     }
