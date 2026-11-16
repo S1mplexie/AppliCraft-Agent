@@ -43,10 +43,11 @@ _SYSTEM_PROMPT = """你是一位资深的香港与新加坡授课型 / 研究型
    港新各项目难度差异明显，务必拉开档次：除非申请人确实在所有项目上都存在已证实的硬性缺口，否则不得把所有（或绝大多数）项目判成同一档，reach / match / safety 应尽量都有分布。
 3. reasons 给出 2-3 条简明判断依据；gaps 列出申请人相对该项目的主要短板或需补强项（没有则为空数组）。
 4. 只使用给定信息，不要编造项目未提供的官方数据。申请人档案信息不足时按「信息不足」处理（偏向 reach / match），并在 gaps 中列出所缺信息；**绝不因信息缺失判 gap**。
-5. 若输入包含 "preferences"（申请人的择校与项目偏好，均为可选）：
-   - priority_regions 是优先地区（如 ["SG"] 优先新加坡、"HK" 优先香港）：符合偏好地区的项目，在 reasons 中明确呼应（例如「符合优先新加坡的择校偏好」），并在同级评估中给予倾向；
+5. 候选 programs 已按申请人勾选的地区 / 学校预先过滤，请只评估给定的这些项目，不要自行补充其它地区或学校的项目。
+   若输入包含 "preferences"：
+   - priority_regions / priority_schools 只说明本次筛选范围（学校名已写在每个项目的 school 字段），不需要再做地区或学校倾向；
    - preferred_fields 是优先的专业方向关键词：与项目名称 / 培养方向吻合时，在 reasons 中呼应（例如「项目方向符合优先计算机相关专业的偏好」）；
-   - 偏好不改变硬性门槛判定（语言未达标仍是 "gap"），只影响 reach / match / safety 之间的倾向与理由侧重。
+   - 偏好不改变硬性门槛判定（语言未达标仍是 "gap"）。
 6. 输出前自检：数组长度必须等于项目总数；检查等级是否退化成「几乎全部同一档」，若是，请依据项目间相对难度重新权衡后再输出。
 
 输出要求：只返回一个 JSON 数组，不要任何解释文字、不要使用代码块。数组每个元素形如：
@@ -94,6 +95,32 @@ def _profile_summary(profile: dict[str, Any]) -> dict[str, Any]:
         "career_goal": profile.get("career_goal"),
         "additional_notes": profile.get("additional_notes"),
     }
+
+
+def _filtered_programs(
+    requirements: dict[str, Any],
+    index_data: dict[str, Any],
+    preferences: dict[str, Any] | None,
+) -> tuple[dict[str, Any], list[str]]:
+    """按勾选的地区 / 学校筛选候选项目：两者取并集，专业方向不参与筛选。
+
+    未勾选任何地区 / 学校时保持全量，行为与改动前一致。
+    """
+    pref = preferences or {}
+    regions = {str(x).strip().upper() for x in (pref.get("priority_regions") or []) if str(x).strip()}
+    schools = {str(x).strip() for x in (pref.get("priority_schools") or []) if str(x).strip()}
+    all_ids = list((requirements.get("programs") or {}).keys())
+    if not regions and not schools:
+        return requirements, all_ids
+    meta = {str(p.get("id")): p for p in (index_data.get("programs") or []) if p.get("id")}
+    selected: dict[str, Any] = {}
+    for pid, req in (requirements.get("programs") or {}).items():
+        m = meta.get(str(pid)) or {}
+        region = str(m.get("region") or "").upper()
+        school = str(m.get("school_name_zh") or "")
+        if (regions and region in regions) or (schools and school in schools):
+            selected[str(pid)] = req
+    return {"programs": selected}, list(selected)
 
 
 def _programs_payload(requirements: dict[str, Any], index_data: dict[str, Any]) -> list[dict[str, Any]]:
@@ -148,16 +175,28 @@ async def ai_evaluate_profile(
     llm: LLMClient,
     preferences: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    """调用 LLM 评估全部候选项目的适配等级，返回与前端契约一致的结构。
+    """调用 LLM 评估候选项目的适配等级，返回与前端契约一致的结构。
 
-    preferences 为可选的择校 / 项目偏好（priority_regions / preferred_fields），
-    非空时会进入提示词，让模型在 reasons 中呼应偏好；为空时行为与既往一致。
+    priority_regions / priority_schools 是硬过滤：勾选后只评估对应地区 / 学校的
+    项目（两者并集），未勾选则评估全部；preferred_fields 只在 reasons 中呼应。
+    勾选范围内无项目时直接返回 no_candidates，不调用模型、不生成占位评级。
     失败时抛出 LLMCallError（模型调用失败 / 未返回合规 JSON），由路由层转成 HTTP 错误。
     """
     summary = _profile_summary(profile)
-    programs = _programs_payload(requirements, index_data)
-    payload_obj: dict[str, Any] = {"profile": summary, "programs": programs}
+    snapshot = _snapshot(profile)
     cleaned = {k: v for k, v in (preferences or {}).items() if v}
+    filtered_req, selected_ids = _filtered_programs(requirements, index_data, preferences)
+    programs = _programs_payload(filtered_req, index_data)
+    if not programs:
+        return {
+            "results": [],
+            "profile_snapshot": snapshot,
+            "tier_order": _TIER_ORDER,
+            "tier_labels": _TIER_LABELS,
+            "preferences_applied": bool(cleaned),
+            "no_candidates": True,
+        }
+    payload_obj: dict[str, Any] = {"profile": summary, "programs": programs}
     if cleaned:
         payload_obj["preferences"] = cleaned
     user_content = _json_dumps(payload_obj)
@@ -181,7 +220,8 @@ async def ai_evaluate_profile(
 
     results: list[dict[str, Any]] = []
     missing = 0
-    for pid, req in (requirements.get("programs") or {}).items():
+    for pid in selected_ids:
+        req = (filtered_req.get("programs") or {})[pid]
         m = meta.get(pid) or {}
         ai = by_id.get(pid) or {}
         tier = str(ai.get("tier") or "").strip().lower()
@@ -214,7 +254,6 @@ async def ai_evaluate_profile(
         })
 
     results.sort(key=lambda x: (_TIER_ORDER.index(x["tier"]), x["school_name_zh"], x["name_en"]))
-    snapshot = _snapshot(profile)
     if missing:
         snapshot["notes"].append(
             f"本次有 {missing} 个项目未获得模型评级，已暂按「稳妥」占位，建议重新评估。"
@@ -225,6 +264,7 @@ async def ai_evaluate_profile(
         "tier_order": _TIER_ORDER,
         "tier_labels": _TIER_LABELS,
         "preferences_applied": bool(cleaned),
+        "no_candidates": False,
     }
 
 

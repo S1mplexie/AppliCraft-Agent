@@ -32,9 +32,10 @@ router = APIRouter(prefix="/match", tags=["match"])
 
 
 class MatchPreferences(BaseModel):
-    """选校评估的可选偏好：优先地区与优先专业方向关键词；留空则对所有项目一视同仁。"""
+    """选校评估的可选偏好：地区 / 学校是硬过滤，专业方向只在理由中呼应。"""
 
     priority_regions: list[str] = Field(default_factory=list)
+    priority_schools: list[str] = Field(default_factory=list)
     preferred_fields: list[str] = Field(default_factory=list)
 
 
@@ -90,6 +91,10 @@ async def match_profile(
         )
     except LLMCallError as exc:
         raise HTTPException(status_code=502, detail=str(exc)) from exc
+
+    if result.get("no_candidates"):
+        # 勾选的地区 / 学校在项目库中没有收录：未调用模型，不计入配额。
+        return {**result, "billing_source": source, "quota": quota_info(db, user, settings=settings)}
 
     db.add(GenerationLog(user_id=user.id, doc_type="match", status="ok", llm_source=source))
     db.commit()

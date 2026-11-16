@@ -17,14 +17,29 @@ const loadError = ref('')
 const result = ref<MatchResult | null>(null)
 const addedIds = ref<Set<string>>(new Set())
 
-// 择校 / 项目偏好（可选）：优先地区与优先专业方向；localStorage 记忆，跨会话保持。
-const prefs = ref<MatchPreferences>({ priority_regions: [], preferred_fields: [] })
+// 择校 / 项目偏好（可选）：地区与学校是硬过滤，专业方向只影响理由；localStorage 记忆。
+const prefs = ref<MatchPreferences>({ priority_regions: [], priority_schools: [], preferred_fields: [] })
 const fieldInput = ref('')
 const PREFS_KEY = 'applicraft.match_preferences'
 
+// 「只看学校」的候选项直接取系统项目库，避免手输校名与库里写法对不上。
+const schools = ref<string[]>([])
+api.listSystemPrograms()
+  .then(({ items }) => {
+    schools.value = [...new Set(items.map(p => p.school_name_zh).filter(Boolean))]
+      .sort((a, b) => a.localeCompare(b, 'zh-CN'))
+  })
+  .catch(() => { /* 列表加载失败不影响手输方向、也不影响既有偏好 */ })
+
 try {
   const saved = JSON.parse(localStorage.getItem(PREFS_KEY) || 'null') as MatchPreferences | null
-  if (saved?.priority_regions?.length || saved?.preferred_fields?.length) prefs.value = saved
+  if (saved) {
+    prefs.value = {
+      priority_regions: saved.priority_regions || [],
+      priority_schools: saved.priority_schools || [],
+      preferred_fields: saved.preferred_fields || [],
+    }
+  }
 } catch { /* 损坏忽略 */ }
 watch(prefs, () => localStorage.setItem(PREFS_KEY, JSON.stringify(prefs.value)), { deep: true })
 
@@ -40,8 +55,9 @@ function removeField(v: string) {
 // 偏好文案：既用于结果页展示「本次按什么偏好评估」，也在回到偏好页时提示上次设置。
 const prefsText = computed(() => {
   const parts: string[] = []
-  if (prefs.value.priority_regions.includes('HK')) parts.push('优先香港')
-  if (prefs.value.priority_regions.includes('SG')) parts.push('优先新加坡')
+  if (prefs.value.priority_regions.includes('HK')) parts.push('只看香港')
+  if (prefs.value.priority_regions.includes('SG')) parts.push('只看新加坡')
+  if (prefs.value.priority_schools.length) parts.push(`只看学校：${prefs.value.priority_schools.join('、')}`)
   if (prefs.value.preferred_fields.length) parts.push(`优先方向：${prefs.value.preferred_fields.join('、')}`)
   return parts.join(' · ')
 })
@@ -219,20 +235,27 @@ async function addToTargets(item: MatchItem) {
       </p>
       <div class="pref-block">
         <div class="field">
-          <span>择校偏好：优先地区（可选）</span>
+          <span>择校偏好：只看地区（可选，勾选后只评估该地区的项目）</span>
           <div class="pref-checks">
-            <label class="pref-check"><input type="checkbox" value="HK" v-model="prefs.priority_regions" /> 优先香港</label>
-            <label class="pref-check"><input type="checkbox" value="SG" v-model="prefs.priority_regions" /> 优先新加坡</label>
+            <label class="pref-check"><input type="checkbox" value="HK" v-model="prefs.priority_regions" /> 只看香港</label>
+            <label class="pref-check"><input type="checkbox" value="SG" v-model="prefs.priority_regions" /> 只看新加坡</label>
           </div>
         </div>
         <div class="field">
-          <span>项目偏好：优先专业方向（可选，回车添加）</span>
+          <span>择校偏好：只看学校（可选，可多选；与地区同时勾选时取并集）</span>
+          <div v-if="schools.length" class="pref-checks">
+            <label v-for="s in schools" :key="s" class="pref-check"><input type="checkbox" :value="s" v-model="prefs.priority_schools" /> {{ s }}</label>
+          </div>
+          <p v-else class="hint">学校列表加载中…</p>
+        </div>
+        <div class="field">
+          <span>项目偏好：优先专业方向（可选，回车添加；只影响理由）</span>
           <input v-model="fieldInput" placeholder="例如：计算机、人工智能、金融科技" @keydown.enter.prevent="addField" />
           <div v-if="prefs.preferred_fields.length" class="tag-row">
             <span v-for="f in prefs.preferred_fields" :key="f" class="tag removable" @click="removeField(f)">{{ f }} ×</span>
           </div>
         </div>
-        <p class="hint">偏好会让大模型在评估理由中呼应你的倾向；留空则对所有项目一视同仁。调整偏好本身不消耗额度。</p>
+        <p class="hint">勾选地区或学校后，本次评估只覆盖所选范围；两者都不勾则评估全部项目。专业方向只在判断依据中呼应，不参与筛选。调整偏好本身不消耗额度。</p>
       </div>
       <div class="match-start-actions">
         <button class="btn primary" :disabled="state === 'loading' || !llmReady" @click="runMatch">
@@ -253,6 +276,12 @@ async function addToTargets(item: MatchItem) {
         <button class="btn" @click="backToPrefs">返回修改偏好</button>
         <button v-if="hasLastResult" class="btn" @click="showLastResult">查看上次结果</button>
       </div>
+    </div>
+
+    <div v-else-if="result?.no_candidates" class="card match-no-candidates">
+      <strong>当前选择下没有可评估的项目</strong>
+      <span>你勾选的地区 / 学校在系统项目库中暂无收录；这次没有调用模型，也没有消耗额度。</span>
+      <button class="btn primary" @click="backToPrefs">返回修改偏好</button>
     </div>
 
     <template v-else-if="result">

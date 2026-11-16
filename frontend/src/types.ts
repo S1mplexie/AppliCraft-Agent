@@ -190,6 +190,15 @@ export interface AuthUser {
   id: string; email: string; display_name: string; daily_quota: number; created_at: string
   is_admin?: boolean
 }
+/** 选校评估：申请人的择校与项目偏好（可选，评估前填写）。 */
+export interface MatchPreferences {
+  /** 只看地区（'HK' 香港 / 'SG' 新加坡）：勾选后只评估对应地区项目，可多选。 */
+  priority_regions: string[]
+  /** 只看学校（项目库中的中文校名）：勾选后只评估对应学校项目；与地区取并集。 */
+  priority_schools: string[]
+  /** 优先专业方向关键词，只在理由中呼应，不参与筛选。 */
+  preferred_fields: string[]
+}
 /** 选校评估：模型对档案硬指标与项目要求的适配评估结果。 */
 export interface MatchItem {
   program_id: string; school_name_zh: string; name_en: string; name_zh: string
@@ -206,6 +215,8 @@ export interface MatchResult {
     notes: string[]; watermark_note: string
   }
   tier_order: string[]; tier_labels: Record<string, string>
+  /** 勾选的地区/学校在项目库中无收录：本次未调用模型，也没有扣费。 */
+  no_candidates?: boolean
   /** 评估计费来源（admin/personal/system）：仅 system 来源占用免费额度。 */
   billing_source: 'admin' | 'personal' | 'system'
   quota: QuotaInfo
