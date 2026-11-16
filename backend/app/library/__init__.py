@@ -1,4 +1,4 @@
-"""参考文档库：用户上传的项目参考材料 + 系统自带港新项目信息。"""
+"""参考文档库：用户上传的项目参考材料 + 系统内置项目信息。"""
 from __future__ import annotations
 
 from app.library.service import (

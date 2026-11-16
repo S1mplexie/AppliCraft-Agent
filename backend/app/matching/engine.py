@@ -2,7 +2,7 @@
 
 比对口径与诚实边界：
 - 语言要求（IELTS/TOEFL 总分与单项）是官方硬性标准 → 不满足进入硬性缺口清单。
-- GPA/均分：多数港新项目不公布硬线，分级中的学术水位（87/82 分界）是通用经验
+- GPA/均分：多数项目不公布硬线，分级中的学术水位（87/82 分界）是通用经验
   参考，输出文案会明确标注；4.0 制 GPA 按线性折算并注明「仅供参考」。
 - 本科背景匹配是软参考（关键词命中才加分），不构成缺口或负评。
 """
@@ -204,7 +204,7 @@ def evaluate_profile(
         "ielts_total": ielts_total,
         "toefl_total": toefl_total,
         "notes": acad_notes,
-        "watermark_note": "语言要求为官方硬性标准；学术水位（保底/稳妥/冲刺分界）为通用经验参考，多数港新项目不公布 GPA 硬线。",
+        "watermark_note": "语言要求为官方硬性标准；学术水位（保底/稳妥/冲刺分界）为通用经验参考，多数项目不公布 GPA 硬线。",
     }
 
     meta = {str(p.get("id")): p for p in (index_data.get("programs") or []) if p.get("id")}

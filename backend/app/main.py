@@ -53,7 +53,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="AppliCraft API",
-    description="港新及申请制硕士材料生成 Agent（LangGraph + FastAPI）",
+    description="中国香港 / 新加坡 / 英国 / 澳洲申请制硕士材料生成 Agent（LangGraph + FastAPI）",
     version=__version__,
     lifespan=lifespan,
 )

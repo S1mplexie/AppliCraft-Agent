@@ -2,7 +2,7 @@
   "school_id": "SCHOOL_ID（大写缩写，如 HKU / CUHK / HKUST / NUS / NTU）",
   "school_name_zh": "学校中文名",
   "school_name_en": "官方英文校名",
-  "region": "HK 或 SG",
+  "region": "HK / SG / UK / AU（中国香港 / 新加坡 / 英国 / 澳洲）",
   "snapshot_date": "2026-11-09",
   "intake_target": "本批资料主要对应的入学季，如 2027/28 或 2027 Intake",
   "general": {

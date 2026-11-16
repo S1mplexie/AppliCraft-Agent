@@ -1,10 +1,10 @@
-# AppliCraft 初始知识库 · 港新 CS / 数据科学 / AI 授课型硕士
+# AppliCraft 项目知识库 · 中国香港 / 新加坡 / 英国 / 澳洲 CS / 数据科学 / AI 授课型硕士
 
-- **数据快照**：2026-11-09 / 2026-11-11
-- **覆盖范围**：7 所学校 / 39 个项目；香港 3 所（HKU / CUHK / HKUST）+ 新加坡 2 所（NUS / NTU）
+- **数据快照**：2026-11-09 / 2026-11-11 / 2026-11-16
+- **覆盖范围**：13 所学校 / 54 个项目；中国香港 5 所、新加坡 2 所、英国 3 所、澳洲 3 所
 - **方向**：计算机科学、数据科学、人工智能、商业分析、金融科技等授课型硕士
-- **分块数**：280（其中适合喂给文书生成的 156 块）
-- **编译时间**：2026-11-11T15:54:24+08:00
+- **分块数**：391（其中适合喂给文书生成的 216 块）
+- **编译时间**：2026-11-16T11:21:56+08:00
 
 > ⚠️ **免责声明**：本库全部事实字段来自各校官网公开页面，学费、申请截止日期、语言分数会随入学季滚动更新，且部分官网页面之间存在口径冲突（已在各卡片「核实状态与来源」列明）。字段值为「待核实」表示官网未列或页面访问受阻，**不得据此推断或补写数字**。提交申请前请以官网实时页面为最终准绳；生成文书时不得把本库内容当作个人经历。
 
@@ -22,6 +22,9 @@
 | 香港中文大学 | 信息工程理学硕士（非官方译名） | MSc in Information Engineering | Faculty of Engineering | `partial` | [cuhk-msc-information-engineering](programs/cuhk/cuhk-msc-information-engineering.md) |
 | 香港中文大学 | 商业分析理学硕士（非官方译名） | MSc in Business Analytics | Faculty of Business Administration（CUHK Business School） | `partial` | [cuhk-msc-business-analytics](programs/cuhk/cuhk-msc-business-analytics.md) |
 | 香港中文大学 | 金融科技理学硕士（非官方译名） | MSc in Financial Technology | Faculty of Engineering（重要纠偏：非 Faculty of Business Administration；同院另设 PgD in Financial Technology，为并行项目、非合并） | `partial` | [cuhk-msc-financial-technology](programs/cuhk/cuhk-msc-financial-technology.md) |
+| 爱丁堡大学 | 计算机科学理学硕士（非官方译名） | Computer Science MSc | College of Science and Engineering | `partial` | [edin-msc-computer-science](programs/edin/edin-msc-computer-science.md) |
+| 爱丁堡大学 | 数据科学理学硕士（非官方译名） | Data Science MSc | College of Science and Engineering | `partial` | [edin-msc-data-science](programs/edin/edin-msc-data-science.md) |
+| 爱丁堡大学 | 人工智能理学硕士（非官方译名） | Artificial Intelligence MSc | College of Science and Engineering | `partial` | [edin-msc-artificial-intelligence](programs/edin/edin-msc-artificial-intelligence.md) |
 | 香港大学 | 数据科学硕士（非官方译名） | Master of Data Science (MDASC) | School of Computing and Data Science | `partial` | [hku-master-data-science](programs/hku/hku-master-data-science.md) |
 | 香港大学 | 计算机科学理学硕士（非官方译名） | Master of Science in Computer Science (MSc(CompSc)) | School of Computing and Data Science | `partial` | [hku-msc-computer-science](programs/hku/hku-msc-computer-science.md) |
 | 香港大学 | 人工智能理学硕士（非官方译名） | Master of Science in Artificial Intelligence (MSc(AI)) | Faculty of Science | `partial` | [hku-msc-artificial-intelligence](programs/hku/hku-msc-artificial-intelligence.md) |
@@ -34,6 +37,11 @@
 | 香港科技大学 | 商业分析理学硕士（非官方译名） | Master of Science in Business Analytics | School of Business and Management | `partial` | [hkust-msc-ba](programs/hkust/hkust-msc-ba.md) |
 | 香港科技大学 | 数据驱动建模理学硕士（非官方译名） | Master of Science in Data-Driven Modeling | School of Science | `partial` | [hkust-msc-ddm](programs/hkust/hkust-msc-ddm.md) |
 | 香港科技大学 | 金融数学理学硕士（非官方译名） | Master of Science in Financial Mathematics | School of Science | `partial` | [hkust-msc-mafm](programs/hkust/hkust-msc-mafm.md) |
+| 帝国理工学院 | 计算机理学硕士（非官方译名） | MSc Computing | Faculty of Engineering | `partial` | [imperial-msc-computing](programs/imperial/imperial-msc-computing.md) |
+| 帝国理工学院 | 计算学理学硕士（人工智能与机器学习方向）（非官方译名） | MSc Computing (Artificial Intelligence and Machine Learning) | Faculty of Engineering | `partial` | [imperial-msc-computing-ai-ml](programs/imperial/imperial-msc-computing-ai-ml.md) |
+| 帝国理工学院 | 人工智能理学硕士（非官方译名） | MSc Artificial Intelligence | Faculty of Engineering | `partial` | [imperial-msc-artificial-intelligence](programs/imperial/imperial-msc-artificial-intelligence.md) |
+| 墨尔本大学 | 计算机科学硕士（非官方译名） | Master of Computer Science (MC-CS) | School of Computing and Information Systems | `partial` | [melbourne-master-computer-science](programs/melbourne/melbourne-master-computer-science.md) |
+| 墨尔本大学 | 数据科学硕士（非官方译名） | Master of Data Science (MC-DATASC) | School of Mathematics and Statistics | `partial` | [melbourne-master-data-science](programs/melbourne/melbourne-master-data-science.md) |
 | 新加坡南洋理工大学 | 人工智能理学硕士（非官方译名） | Master of Science in Artificial Intelligence (MSAI) | College of Computing and Data Science (CCDS) | `partial` | [ntu-msai](programs/ntu/ntu-msai.md) |
 | 新加坡南洋理工大学 | 数据科学理学硕士（非官方译名） | Master of Science in Data Science (MSDS) | College of Computing and Data Science (CCDS) | `partial` | [ntu-msds](programs/ntu/ntu-msds.md) |
 | 新加坡南洋理工大学 | 应用网络安全理学硕士（非官方译名） | Master of Science in Cybersecurity (Applied Cybersecurity) | College of Computing and Data Science (CCDS) | `partial` | [ntu-msc-cybersecurity-applied](programs/ntu/ntu-msc-cybersecurity-applied.md) |
@@ -51,14 +59,21 @@
 | 香港理工大学 | 网络安全理学硕士（非官方译名） | Master of Science in Cybersecurity | Faculty of Computer and Mathematical Sciences | `pending` | [polyu-msc-cybersecurity](programs/polyu/polyu-msc-cybersecurity.md) |
 | 香港理工大学 | 信息技术理学硕士（非官方译名） | Master of Science in Information Technology | Faculty of Computer and Mathematical Sciences | `pending` | [polyu-msc-information-technology](programs/polyu/polyu-msc-information-technology.md) |
 | 香港理工大学 | 元宇宙技术理学硕士（非官方译名） | Master of Science in Metaverse Technology | Faculty of Computer and Mathematical Sciences | `pending` | [polyu-msc-metaverse-technology](programs/polyu/polyu-msc-metaverse-technology.md) |
+| 悉尼大学 | 计算机科学硕士（非官方译名） | Master of Computer Science | Faculty of Engineering | `partial` | [sydney-master-computer-science](programs/sydney/sydney-master-computer-science.md) |
+| 悉尼大学 | 数据科学硕士（非官方译名） | Master of Data Science | Faculty of Engineering | `partial` | [sydney-master-data-science](programs/sydney/sydney-master-data-science.md) |
+| 伦敦大学学院 | 计算机科学理学硕士（非官方译名） | Computer Science MSc | Faculty of Engineering Sciences | `partial` | [ucl-msc-computer-science](programs/ucl/ucl-msc-computer-science.md) |
+| 伦敦大学学院 | 数据科学与机器学习理学硕士（非官方译名） | Data Science and Machine Learning MSc | Faculty of Engineering Sciences | `partial` | [ucl-msc-data-science-machine-learning](programs/ucl/ucl-msc-data-science-machine-learning.md) |
+| 伦敦大学学院 | 机器学习理学硕士（非官方译名） | Machine Learning MSc | Faculty of Engineering Sciences | `partial` | [ucl-msc-machine-learning](programs/ucl/ucl-msc-machine-learning.md) |
+| 新南威尔士大学 | 信息技术硕士（非官方译名） | Master of Information Technology (8543) | Faculty of Engineering | `partial` | [unsw-master-information-technology](programs/unsw/unsw-master-information-technology.md) |
+| 新南威尔士大学 | 数据科学与决策硕士（非官方译名） | Master of Data Science and Decisions (8959) | Faculty of Engineering；Faculty of Science；UNSW Business School（联合） | `partial` | [unsw-master-data-science-decisions](programs/unsw/unsw-master-data-science-decisions.md) |
 
 ## 目录结构
 
 ```
 knowledge/
-├── _raw/                  五校原始调研 JSON（含完整来源清单，保留原始口径）
+├── _raw/                  各校原始调研 JSON（含完整来源清单，保留原始口径）
 │   └── schema.example.json 字段规范
-├── programs/<学校>/        30 份项目卡片（人读，带 frontmatter）
+├── programs/<学校>/        54 份项目卡片（人读，带 frontmatter）
 ├── index.json             项目级索引（机器可读）
 ├── chunks.jsonl           RAG 分块（每行一条 JSON）
 ├── build.py               本库的编译脚本（改 _raw 后重跑即可）
@@ -68,7 +83,7 @@ knowledge/
 
 ## 数据纪律
 
-1. 只采信学校官方域名（`hku.hk` / `cuhk.edu.hk` / `ust.hk` / `nus.edu.sg` / `ntu.edu.sg`）页面与官方 PDF；第三方内容仅作线索，未写入任何事实字段。
+1. 只采信学校官方域名（`hku.hk` / `cuhk.edu.hk` / `hkust.edu.hk` / `ust.hk` / `polyu.edu.hk` / `cityu.edu.hk` / `nus.edu.sg` / `ntu.edu.sg` / `imperial.ac.uk` / `ucl.ac.uk` / `ed.ac.uk` / `unimelb.edu.au` / `unsw.edu.au` / `sydney.edu.au`）页面与官方 PDF；第三方内容仅作线索，未写入任何事实字段。
 2. 学费必须带 `tuition.intake` 标签：NUS 部分项目是 AY2026/27 onwards，另一些是 AY2027/28，混用会全库数值错误。
 3. 命名消歧写在 `general.notes` 与 `aliases`：例如 NUS 不存在「MSc in Artificial Intelligence」，正确名称是 `Master of Computing in Artificial Intelligence`；HKUST 无「MSc in Data Science」授课硕士。
 4. 每个分块 `meta.has_unverified` 标记是否含「待核实」内容，`meta.suitable_for_writing` 标记是否适合直接喂给文书生成。

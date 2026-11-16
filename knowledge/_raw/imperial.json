@@ -1,0 +1,206 @@
+{
+  "school_id": "IMPERIAL",
+  "school_name_zh": "帝国理工学院",
+  "school_name_en": "Imperial College London",
+  "region": "UK",
+  "snapshot_date": "2026-11-16",
+  "intake_target": "2027 Intake（10 月入学）",
+  "general": {
+    "english_requirement": "Department of Computing 授课型硕士通常为 Imperial Higher Level：IELTS 7.0、单项 6.5；官网不接受 IELTS One Skill Retake。各项目页以英文分级表述，未逐项目列分数时按该级要求理解。",
+    "application_open": "2027入学 Round 2 于 2026-09-30 开放；分轮录取",
+    "notes": [
+      "MSc Computing 是转换型项目：面向本科非计算机背景，且非 STEM 背景需 A-level 数学至少 A；计算机本科背景不可申请。",
+      "MSc Computing (Artificial Intelligence and Machine Learning) 属 Specialist 路径，要求一等学位且本科含大量计算机内容，与 MSc Artificial Intelligence（面向数学/物理/工程等背景）不同。",
+      "2027 入学学费在官网不同页面与第三方口径出现 £46,000 / £48,300 并存，未能从各课程页 Fees 区块逐一确认，统一标待核实，提交申请前以官网实时页面为准。"
+    ]
+  },
+  "programs": [
+    {
+      "id": "imperial-msc-computing",
+      "name_en": "MSc Computing",
+      "name_zh": "计算机理学硕士（非官方译名）",
+      "aliases": ["Computing MSc", "MSc Computing (Conversion)"],
+      "degree_type": "授课型（coursework-based，转换型）",
+      "faculty": "Faculty of Engineering",
+      "department": "Department of Computing",
+      "official_urls": [
+        "https://imperial.ac.uk/study/pg/computing/computing",
+        "https://imperial.ac.uk/engineering/departments/computing/prospective-students/pg/msc-computing"
+      ],
+      "duration_ft": "1 年（2027 年 10 月入学，单一入学点）",
+      "duration_pt": "不设",
+      "credits": "待核实（官网课程页按模块列结构，未给总学分）",
+      "tuition": {
+        "amount": "£48,300（2027 入学海外生，课程页 Fees and funding；英国本土生 £25,850）",
+        "intake": "2027",
+        "applies_to": "海外生 / 本土生分列",
+        "note": "申请费 £90；每学年上调，提交前核对官网。"
+      },
+      "application": {
+        "open": "2026-09-30（Round 2 开放）",
+        "deadlines": [
+          "2027 入学 Round 2：2027-01-06 截止，2027-03-03 前出结果",
+          "Round 3：2027-03-10 截止，2027-05-05 前出结果",
+          "Round 4：2027-04-28 截止，2027-07-01 前出结果",
+          "Round 5（可选）：2027-06-16 截止；Round 6（仅非签证申请人，可选）：2027-08-18 截止"
+        ],
+        "note": "分轮审理，官网建议在 Round 1-4 内提交；该项目不需要 ATAS。"
+      },
+      "english": "官网按 Imperial Higher Level 要求（IELTS 7.0 / 单项 6.5；不接受 One Skill Retake）",
+      "admission": {
+        "background": "一等荣誉学位（或国际同等学历），本科不属于计算机 / 计算机科学；非 STEM 背景另需 A-level 数学至少 A（或同等）",
+        "prerequisites": "需具备完成本项目的数理或分析基础；官网要求申请中体现转专业动机",
+        "gre_gmat": "官网未提及（不推断为明确不要求）",
+        "work_experience": "待核实"
+      },
+      "curriculum": {
+        "structure": "秋季学期打基础，春季学期深化与分流，夏季学期完成大型软件项目与个人项目（论文 + 口头答辩）",
+        "core": ["Principles and Practice of Programming", "Computer Systems", "Software Systems Engineering"],
+        "electives": ["Databases", "Computer Vision", "Algorithms", "Quantum Computing", "AI Ventures", "Network and Web Security", "Introduction to Machine Learning"],
+        "tracks": []
+      },
+      "highlights": [
+        "官网：面向非计算机本科的 conversion 课程， Intensive training in computer science。",
+        "官网：A major focus is developing a large software project，并以 extended individual project 收尾。",
+        "Department of Computing 在研究评估中位居英国前列，设有 Dyson Robotics Lab、Data Science Institute 等中心。"
+      ],
+      "career": ["官网表述毕业生进入 Computing 相关行业，另有不少毕业生继续攻读 PhD"],
+      "writing_hooks": [
+        "若本科非计算机，可呼应官网「add computing qualifications / retrain as computing professionals」的定位，用真实课程或项目说明转专业准备，而非泛泛而谈兴趣。",
+        "呼应官网强调的 large software project：用你做过的具体软件 / 团队项目说明从需求、实现到交付的完整经历。",
+        "补充数学基础（A-level 数学 A 或同等）时给出可核查的课程与成绩，避免只写「数学基础扎实」。"
+      ],
+      "verification": {
+        "status": "partial",
+        "conflicts": ["Imperial 部分计算类项目 2027 学费在官网不同页面 / 第三方口径有 £46,000 与 £48,300 两种说法；本项目课程页列 £48,300。"],
+        "unverified": ["总学分", "工作经验要求"]
+      },
+      "sources": [
+        {"url": "https://imperial.ac.uk/study/pg/computing/computing", "supports": "项目名、入学背景、必修与选修模块、2027 学费、分轮截止"},
+        {"url": "https://imperial.ac.uk/engineering/departments/computing/prospective-students/pg/msc-computing", "supports": "转换型定位、A-level 数学要求、项目结构描述"}
+      ]
+    },
+    {
+      "id": "imperial-msc-computing-ai-ml",
+      "name_en": "MSc Computing (Artificial Intelligence and Machine Learning)",
+      "name_zh": "计算学理学硕士（人工智能与机器学习方向）（非官方译名）",
+      "aliases": ["MSc Computing AI and ML", "MSc Computing (AI & ML)", "MSc Computing (Specialist)"],
+      "degree_type": "授课型（coursework-based，专精型）",
+      "faculty": "Faculty of Engineering",
+      "department": "Department of Computing",
+      "official_urls": [
+        "https://imperial.ac.uk/study/courses/postgraduate-taught/2027/computing-artificial-intelligence-msc",
+        "https://imperial.ac.uk/engineering/departments/computing/prospective-students/pg/msc-specialist-degrees/aiml/"
+      ],
+      "duration_ft": "1 年（2027 年 10 月入学）",
+      "duration_pt": "不设",
+      "credits": "待核实（2-3 门必修 + 5-8 门 Group 1 选修 + 至多 3 门 Group 2 选修 + 个人项目）",
+      "tuition": {
+        "amount": "待核实（官网不同页面 / 第三方口径 £46,000 与 £48,300 并存）",
+        "intake": "2027",
+        "applies_to": "海外生 / 本土生分列，具体金额待官网确认",
+        "note": "申请费 £90。"
+      },
+      "application": {
+        "open": "2026-09-30（Round 2 开放）",
+        "deadlines": [
+          "2027 入学 Round 2：2027-01-06 截止",
+          "Round 3：2027-03-10 截止",
+          "Round 4：2027-04-28 截止"
+        ],
+        "note": "分轮审理，完整材料（含两封推荐信、成绩单、CV、PS）到达后才评估。"
+      },
+      "english": "官网按 Imperial Higher Level 要求（IELTS 7.0 / 单项 6.5；不接受 One Skill Retake）",
+      "admission": {
+        "background": "一等荣誉学位（或国际同等学历），且本科含大量计算机内容（substantial Computing component）",
+        "prerequisites": "需修过相当于计算机科学本科两年的计算机课程",
+        "gre_gmat": "官网未提及（不推断为明确不要求）",
+        "work_experience": "待核实"
+      },
+      "curriculum": {
+        "structure": "核心为人工智能与机器学习数学基础 + 个人研究项目，再从 Group 1 / Group 2 选修",
+        "core": ["MSc Computing (Specialist) Individual Project", "Mathematics for Machine Learning"],
+        "electives": ["Deep Learning", "Natural Language Processing", "Reinforcement Learning", "Computer Vision", "Probabilistic Inference", "Formal Methods for Safe AI", "Machine Learning Systems and Hardware"],
+        "tracks": []
+      },
+      "highlights": [
+        "官网：Deepen your knowledge and understanding of AI and ML to prepare for a career in the computing industry。",
+        "官网：以 substantial individual research project in AI 收尾，强调把 techniques 用于实际问题。",
+        "Department of Computing 在 AI、Data Science、Visual Computing 等方向设有专门研究组。"
+      ],
+      "career": ["官网表述面向 computing industry 的 AI / ML 专门岗位，亦适合作为 PhD 准备"],
+      "writing_hooks": [
+        "呼应官网「AI 专精 + 个体研究项目」的定位，用真实的机器学习 / 算法项目说明你如何从理论走到可运行系统。",
+        "数学是该项目核心（Mathematics for Machine Learning），用具体课程与成绩证明线性代数、概率统计基础。",
+        "注意与转换型 MSc Computing 区分：本项目要求大量计算机背景，写作中要体现已有 CS 训练。"
+      ],
+      "verification": {
+        "status": "partial",
+        "conflicts": ["2027 海外生学费 £46,000 / £48,300 口径并存，未能从课程页 Fees 区块确认。"],
+        "unverified": ["总学分", "工作经验要求", "精确学费"]
+      },
+      "sources": [
+        {"url": "https://imperial.ac.uk/study/courses/postgraduate-taught/2027/computing-artificial-intelligence-msc", "supports": "官方项目名、入学标准、核心与选修模块、项目结构"},
+        {"url": "https://imperial.ac.uk/engineering/departments/computing/prospective-students/pg/msc-specialist-degrees/aiml/", "supports": "两年计算机课程先修要求、专精型定位"}
+      ]
+    },
+    {
+      "id": "imperial-msc-artificial-intelligence",
+      "name_en": "MSc Artificial Intelligence",
+      "name_zh": "人工智能理学硕士（非官方译名）",
+      "aliases": ["MSc AI (Imperial)", "MAI"],
+      "degree_type": "授课型（coursework-based）",
+      "faculty": "Faculty of Engineering",
+      "department": "Department of Computing",
+      "official_urls": [
+        "https://imperial.ac.uk/engineering/departments/computing/prospective-students/courses/pg/mai"
+      ],
+      "duration_ft": "1 年（2027 年 9 月入学）",
+      "duration_pt": "不设",
+      "credits": "6 门必修（含小组项目与个人项目 / 实习）+ 5 门选修；总学分待核实",
+      "tuition": {
+        "amount": "待核实（官网不同页面 / 第三方口径 £46,000 与 £48,300 并存）",
+        "intake": "2027",
+        "applies_to": "海外生 / 本土生分列，具体金额待官网确认",
+        "note": "可以企业实习替代传统个人项目（AI 相关内容），需单独确认名额。"
+      },
+      "application": {
+        "open": "2026-09-30（Round 2 开放）",
+        "deadlines": ["2027 入学 Round 2：2027-01-06 截止", "Round 3：2027-03-10 截止", "Round 4：2027-04-28 截止"],
+        "note": "分轮审理。"
+      },
+      "english": "官网按 Imperial Higher Level 要求（IELTS 7.0 / 单项 6.5；不接受 One Skill Retake）",
+      "admission": {
+        "background": "一等荣誉学位（或国际同等学历），专业为数学、物理、工程分支、经济或其他数学含量高的学科；不接受已有大量计算机 / AI 本科教育者",
+        "prerequisites": "建议具备线性代数、微积分、概率统计基础；官网明确不要求先前编程 / CS / AI 知识",
+        "gre_gmat": "官网未提及（不推断为明确不要求）",
+        "work_experience": "待核实"
+      },
+      "curriculum": {
+        "structure": "6 门必修 + 5 门选修；小组项目在春季学期，个人项目 / 实习在夏季学期",
+        "core": ["Python Programming", "Mathematics for Machine Learning", "Software Engineering Group Project", "Individual Project or Internship"],
+        "electives": ["Reinforcement Learning", "Natural Language Processing", "Computer Vision", "Deep Learning", "Computational Optimisation", "Statistical Information Theory", "Generative AI"],
+        "tracks": []
+      },
+      "highlights": [
+        "官网：aimed at graduates of disciplines with a large mathematics component, other than computer science。",
+        "官网：intensive training in programming and AI with a wide choice of elective modules, a group project and a large individual project。",
+        "官网提到 personal project 可改为企业 AI 实习（internship）。"
+      ],
+      "career": ["官网列举毕业生进入 DeepMind、Facebook、Google、Twitter 等公司 AI 部门，也有毕业生继续读博或创业"],
+      "writing_hooks": [
+        "数学背景是该项目入口（数学 / 物理 / 工程 / 数量经济），文书应把数学课程与机器学习动机连起来，而非强调已有 CS 学历。",
+        "官网强调 Python 强化训练与小组 / 个人项目，可写你从零上手编程或跨团队合作的真实经历。",
+        "若有企业实习意向，可呼应官网 internship 替代个人项目的安排，但不要写成已获得名额。"
+      ],
+      "verification": {
+        "status": "partial",
+        "conflicts": ["2027 学费 £46,000 / £48,300 口径并存；项目页未列确定金额。"],
+        "unverified": ["精确学费", "总学分", "工作经验要求"]
+      },
+      "sources": [
+        {"url": "https://imperial.ac.uk/engineering/departments/computing/prospective-students/courses/pg/mai", "supports": "入学背景、数学先修、课程结构、项目定位与就业表述"}
+      ]
+    }
+  ]
+}

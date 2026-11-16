@@ -1,20 +1,28 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-11-11T15:54:24+08:00",
-  "snapshot_date": "2026-11-09 / 2026-11-11",
+  "generated_at": "2026-11-16T11:21:56+08:00",
+  "snapshot_date": "2026-11-09 / 2026-11-11 / 2026-11-16",
   "scope": {
     "regions": [
+      "AU",
       "HK",
-      "SG"
+      "SG",
+      "UK"
     ],
     "schools": [
       "CITYU",
       "CUHK",
+      "EDIN",
       "HKU",
       "HKUST",
+      "IMPERIAL",
+      "MELBOURNE",
       "NTU",
       "NUS",
-      "POLYU"
+      "POLYU",
+      "SYDNEY",
+      "UCL",
+      "UNSW"
     ],
     "discipline": "CS / 数据科学 / AI 及相关商业分析、金融科技授课型硕士",
     "degree_type": "taught / coursework-based master"
@@ -62,6 +70,24 @@
         ]
       },
       "raw_file": "_raw/cuhk.json"
+    },
+    {
+      "school_id": "EDIN",
+      "school_name_zh": "爱丁堡大学",
+      "school_name_en": "The University of Edinburgh",
+      "region": "UK",
+      "intake_target": "2027/28（2027 年 9 月入学）",
+      "program_count": 3,
+      "general": {
+        "english_requirement": "信息学院三项目口径一致：IELTS 总分 7.0，三个单项不低于 6.5、剩余一项不低于 6.0；不接受 IELTS One Skill Retake，不接受 TOEFL MyBest Score。",
+        "application_open": "待核实（官网学位页列 2027 年入学申请入口，未列统一开放日）",
+        "notes": [
+          "Computer Science、Data Science、Artificial Intelligence 三个项目均要求相关定量本科背景 + 编程课 + 60 SCQF / 30 ECTS 数学学分；爱丁堡没有面向非计算机背景的 CS 转换型硕士。",
+          "三项目竞争激烈，官网写明典型 offer 为一等学位；申请无申请费，每人最多申请 3 个项目。",
+          "2027/28 学费需按学位页的 tuition fees 链接到 Registry Services 费率表查询；Artificial Intelligence MSc 全日制国际生 £47,680，Computer Science / Data Science 的 2027/28 精确金额未在费率表中直接读到，标待核实。"
+        ]
+      },
+      "raw_file": "_raw/edin.json"
     },
     {
       "school_id": "HKU",
@@ -117,6 +143,42 @@
         ]
       },
       "raw_file": "_raw/hkust.json"
+    },
+    {
+      "school_id": "IMPERIAL",
+      "school_name_zh": "帝国理工学院",
+      "school_name_en": "Imperial College London",
+      "region": "UK",
+      "intake_target": "2027 Intake（10 月入学）",
+      "program_count": 3,
+      "general": {
+        "english_requirement": "Department of Computing 授课型硕士通常为 Imperial Higher Level：IELTS 7.0、单项 6.5；官网不接受 IELTS One Skill Retake。各项目页以英文分级表述，未逐项目列分数时按该级要求理解。",
+        "application_open": "2027入学 Round 2 于 2026-09-30 开放；分轮录取",
+        "notes": [
+          "MSc Computing 是转换型项目：面向本科非计算机背景，且非 STEM 背景需 A-level 数学至少 A；计算机本科背景不可申请。",
+          "MSc Computing (Artificial Intelligence and Machine Learning) 属 Specialist 路径，要求一等学位且本科含大量计算机内容，与 MSc Artificial Intelligence（面向数学/物理/工程等背景）不同。",
+          "2027 入学学费在官网不同页面与第三方口径出现 £46,000 / £48,300 并存，未能从各课程页 Fees 区块逐一确认，统一标待核实，提交申请前以官网实时页面为准。"
+        ]
+      },
+      "raw_file": "_raw/imperial.json"
+    },
+    {
+      "school_id": "MELBOURNE",
+      "school_name_zh": "墨尔本大学",
+      "school_name_en": "The University of Melbourne",
+      "region": "AU",
+      "intake_target": "2026 Intake（2027 入学以官网实时页面为准）",
+      "program_count": 2,
+      "general": {
+        "english_requirement": "官网课程页按 English Language Standard 分级，未直接列分数；常见口径为 IELTS 6.5、单项 6.0。按数据纪律标记为待核实，选校评估按 6.5 / 6.0 保守参考。",
+        "application_open": "待核实（2026 入学 Master of Data Science 申请截止曾延至 11 月 30 日；2027 入学待官网确认）",
+        "notes": [
+          "墨尔本大学采用 3 月单一入学季，授课硕士多为 200 学分 / 2 年全日制。",
+          "Master of Computer Science（MC-CS）是研究训练项目：100 学分研究项目占学位一半，面向读博 / 高阶研发，要求计算机相关本科 WAM ≥75。",
+          "Master of Data Science（MC-DATASC）由数学与统计学院开设，不限本科专业但要求编程 + 微积分 2 + 线性代数先修；学费按 2026 年指示性费率记录。"
+        ]
+      },
+      "raw_file": "_raw/melbourne.json"
     },
     {
       "school_id": "NTU",
@@ -193,6 +255,61 @@
         ]
       },
       "raw_file": "_raw/polyu.json"
+    },
+    {
+      "school_id": "SYDNEY",
+      "school_name_zh": "悉尼大学",
+      "school_name_en": "The University of Sydney",
+      "region": "AU",
+      "intake_target": "2026 Intake（2027 入学以官网实时页面为准）",
+      "program_count": 2,
+      "general": {
+        "english_requirement": "官网课程页列 Entry requirements 的 English language requirements 区块但未直接给分数；按数据纪律标待核实，选校评估按工程 / 计算机常见 IELTS 6.5 / 单项 6.0 保守参考。",
+        "application_open": "待核实（2 月 / 8 月两个入学季）",
+        "notes": [
+          "Master of Computer Science 面向任何专业本科（65% credit average），是明确的转码入口；另有 Advanced Entry 版本供已有计算机学历者缩短学制。",
+          "Master of Data Science 为 1.5 年 / 72 学分，要求相关学科 + 编程或统计背景，不适合零背景转专业。",
+          "2026 学费出现两套官方口径：课程页区间 A$41,300-60,800 与 2026 学费更新通知 A$57,900 / 年；本库并列标注，提交前以最新 Offer 为准。"
+        ]
+      },
+      "raw_file": "_raw/sydney.json"
+    },
+    {
+      "school_id": "UCL",
+      "school_name_zh": "伦敦大学学院",
+      "school_name_en": "University College London",
+      "region": "UK",
+      "intake_target": "2027/28（2027 年 9 月入学）",
+      "program_count": 3,
+      "general": {
+        "english_requirement": "以下计算机系项目均为 UCL English Level 2：IELTS 总分 7.0、单项 6.5；官网不接受 IELTS One Skill Retake。",
+        "application_open": "2026-10-19",
+        "notes": [
+          "Computer Science MSc 是转换型项目：要求本科非计算机 / 信息技术（含 AI、ML、软件工程等子方向也不接受），并需数学能力至少达 A-level 水平。",
+          "UCL 另设统计科学系 Data Science MSc，与计算机系的 Data Science and Machine Learning MSc 是不同项目，学费与侧重均不同，勿混淆。",
+          "2027/28 计算机系授课硕士国际生学费统一为 £44,400 / 年；申请费 £90，部分项目需 10% 押金。"
+        ]
+      },
+      "raw_file": "_raw/ucl.json"
+    },
+    {
+      "school_id": "UNSW",
+      "school_name_zh": "新南威尔士大学",
+      "school_name_en": "UNSW Sydney",
+      "region": "AU",
+      "intake_target": "2026 Intake（2027 入学以官网实时页面为准）",
+      "program_count": 2,
+      "general": {
+        "english_requirement": "官网课程页要求按背景判断英语能力与提交证明，未列具体分数；按数据纪律标待核实，选校评估按常见 IELTS 6.5 / 单项 6.0 保守参考。",
+        "application_open": "待核实（三学期制 Term 1 / 2 / 3 多次入学）",
+        "notes": [
+          "UNSW 计算机学院属工程学部，课程按 UOC 学分计费；2026 国际生指示性学费按首年 / 全程分别公布。",
+          "Master of Information Technology（8543）面向相关与非相关背景：非相关本科走 Graduate Certificate in IT → MIT 打包录取，总时长仍 2 年 / 96 UOC；官网另注明非 211 中国院校需 70% 均分。",
+          "Master of Data Science and Decisions（8959）与纯线上的 Master of Data Science（8646）是不同项目，校内全日制申请勿混淆。",
+          "UNSW 已公布 2028 年起改回双学期制（Flex-Semester）的过渡说明，不同入学批次毕业时长可能不同。"
+        ]
+      },
+      "raw_file": "_raw/unsw.json"
     }
   ],
   "programs": [
@@ -465,6 +582,85 @@
         "https://fintech.erg.cuhk.edu.hk/admission"
       ],
       "card_path": "programs/cuhk/cuhk-msc-financial-technology.md"
+    },
+    {
+      "id": "edin-msc-computer-science",
+      "school_id": "EDIN",
+      "school_name_zh": "爱丁堡大学",
+      "region": "UK",
+      "name_en": "Computer Science MSc",
+      "name_zh": "计算机科学理学硕士（非官方译名）",
+      "aliases": [
+        "Edinburgh CS MSc",
+        "MSc Computer Science (Edinburgh)"
+      ],
+      "faculty": "College of Science and Engineering",
+      "degree_type": "授课型（coursework-based）",
+      "duration_ft": "1 年（2027 年 9 月入学）",
+      "tuition_amount": "待核实（2027/28 具体金额需按学位页 Registry Services 费率表确认；2026/27 国际生参考 £45,410；2027/28 高档费率为 £47,680）",
+      "tuition_intake": "2027/28",
+      "deadlines": [
+        "2027 年入学 Round 1：2027-03-31 截止，2027-05-31 前出结果",
+        "Round 2：2027-05-31 截止，2027-07-31 前出结果"
+      ],
+      "verification_status": "partial",
+      "official_urls": [
+        "https://study.ed.ac.uk/programmes/postgraduate-taught/110-computer-science"
+      ],
+      "card_path": "programs/edin/edin-msc-computer-science.md"
+    },
+    {
+      "id": "edin-msc-data-science",
+      "school_id": "EDIN",
+      "school_name_zh": "爱丁堡大学",
+      "region": "UK",
+      "name_en": "Data Science MSc",
+      "name_zh": "数据科学理学硕士（非官方译名）",
+      "aliases": [
+        "Edinburgh Data Science MSc",
+        "MSc Data Science (Edinburgh)"
+      ],
+      "faculty": "College of Science and Engineering",
+      "degree_type": "授课型（coursework-based）",
+      "duration_ft": "1 年（2027 年 9 月入学）",
+      "tuition_amount": "待核实（2027/28 具体金额需按学位页 Registry Services 费率表确认；2026/27 参考 £45,410；2027/28 高档 £47,680）",
+      "tuition_intake": "2027/28",
+      "deadlines": [
+        "Round 1：2027-03-31 截止，2027-05-31 前出结果",
+        "Round 2：2027-05-31 截止，2027-07-31 前出结果"
+      ],
+      "verification_status": "partial",
+      "official_urls": [
+        "https://study.ed.ac.uk/programmes/postgraduate-taught/902-data-science"
+      ],
+      "card_path": "programs/edin/edin-msc-data-science.md"
+    },
+    {
+      "id": "edin-msc-artificial-intelligence",
+      "school_id": "EDIN",
+      "school_name_zh": "爱丁堡大学",
+      "region": "UK",
+      "name_en": "Artificial Intelligence MSc",
+      "name_zh": "人工智能理学硕士（非官方译名）",
+      "aliases": [
+        "Edinburgh AI MSc",
+        "MSc Artificial Intelligence (Edinburgh)"
+      ],
+      "faculty": "College of Science and Engineering",
+      "degree_type": "授课型（coursework-based）",
+      "duration_ft": "1 年（2027 年 9 月入学）",
+      "tuition_amount": "£47,680（2027/28 全日制国际生，Registry Services 费率表；兼读制 2 年约 £23,840 / 年）",
+      "tuition_intake": "2027/28",
+      "deadlines": [
+        "Round 1：2027-03-31 截止，2027-05-31 前出结果",
+        "Round 2：2027-05-31 截止，2027-07-31 前出结果"
+      ],
+      "verification_status": "partial",
+      "official_urls": [
+        "https://study.ed.ac.uk/programmes/postgraduate-taught/107-artificial-intelligence",
+        "https://registryservices.ed.ac.uk/tuition-fees/find/postgraduate-taught/2027-2028/taught-masters"
+      ],
+      "card_path": "programs/edin/edin-msc-artificial-intelligence.md"
     },
     {
       "id": "hku-master-data-science",
@@ -818,6 +1014,143 @@
         "https://prog-crs.hkust.edu.hk/pgprog/2027-28/msc-mafm"
       ],
       "card_path": "programs/hkust/hkust-msc-mafm.md"
+    },
+    {
+      "id": "imperial-msc-computing",
+      "school_id": "IMPERIAL",
+      "school_name_zh": "帝国理工学院",
+      "region": "UK",
+      "name_en": "MSc Computing",
+      "name_zh": "计算机理学硕士（非官方译名）",
+      "aliases": [
+        "Computing MSc",
+        "MSc Computing (Conversion)"
+      ],
+      "faculty": "Faculty of Engineering",
+      "degree_type": "授课型（coursework-based，转换型）",
+      "duration_ft": "1 年（2027 年 10 月入学，单一入学点）",
+      "tuition_amount": "£48,300（2027 入学海外生，课程页 Fees and funding；英国本土生 £25,850）",
+      "tuition_intake": "2027",
+      "deadlines": [
+        "2027 入学 Round 2：2027-01-06 截止，2027-03-03 前出结果",
+        "Round 3：2027-03-10 截止，2027-05-05 前出结果",
+        "Round 4：2027-04-28 截止，2027-07-01 前出结果",
+        "Round 5（可选）：2027-06-16 截止；Round 6（仅非签证申请人，可选）：2027-08-18 截止"
+      ],
+      "verification_status": "partial",
+      "official_urls": [
+        "https://imperial.ac.uk/study/pg/computing/computing",
+        "https://imperial.ac.uk/engineering/departments/computing/prospective-students/pg/msc-computing"
+      ],
+      "card_path": "programs/imperial/imperial-msc-computing.md"
+    },
+    {
+      "id": "imperial-msc-computing-ai-ml",
+      "school_id": "IMPERIAL",
+      "school_name_zh": "帝国理工学院",
+      "region": "UK",
+      "name_en": "MSc Computing (Artificial Intelligence and Machine Learning)",
+      "name_zh": "计算学理学硕士（人工智能与机器学习方向）（非官方译名）",
+      "aliases": [
+        "MSc Computing AI and ML",
+        "MSc Computing (AI & ML)",
+        "MSc Computing (Specialist)"
+      ],
+      "faculty": "Faculty of Engineering",
+      "degree_type": "授课型（coursework-based，专精型）",
+      "duration_ft": "1 年（2027 年 10 月入学）",
+      "tuition_amount": "待核实（官网不同页面 / 第三方口径 £46,000 与 £48,300 并存）",
+      "tuition_intake": "2027",
+      "deadlines": [
+        "2027 入学 Round 2：2027-01-06 截止",
+        "Round 3：2027-03-10 截止",
+        "Round 4：2027-04-28 截止"
+      ],
+      "verification_status": "partial",
+      "official_urls": [
+        "https://imperial.ac.uk/study/courses/postgraduate-taught/2027/computing-artificial-intelligence-msc",
+        "https://imperial.ac.uk/engineering/departments/computing/prospective-students/pg/msc-specialist-degrees/aiml/"
+      ],
+      "card_path": "programs/imperial/imperial-msc-computing-ai-ml.md"
+    },
+    {
+      "id": "imperial-msc-artificial-intelligence",
+      "school_id": "IMPERIAL",
+      "school_name_zh": "帝国理工学院",
+      "region": "UK",
+      "name_en": "MSc Artificial Intelligence",
+      "name_zh": "人工智能理学硕士（非官方译名）",
+      "aliases": [
+        "MSc AI (Imperial)",
+        "MAI"
+      ],
+      "faculty": "Faculty of Engineering",
+      "degree_type": "授课型（coursework-based）",
+      "duration_ft": "1 年（2027 年 9 月入学）",
+      "tuition_amount": "待核实（官网不同页面 / 第三方口径 £46,000 与 £48,300 并存）",
+      "tuition_intake": "2027",
+      "deadlines": [
+        "2027 入学 Round 2：2027-01-06 截止",
+        "Round 3：2027-03-10 截止",
+        "Round 4：2027-04-28 截止"
+      ],
+      "verification_status": "partial",
+      "official_urls": [
+        "https://imperial.ac.uk/engineering/departments/computing/prospective-students/courses/pg/mai"
+      ],
+      "card_path": "programs/imperial/imperial-msc-artificial-intelligence.md"
+    },
+    {
+      "id": "melbourne-master-computer-science",
+      "school_id": "MELBOURNE",
+      "school_name_zh": "墨尔本大学",
+      "region": "AU",
+      "name_en": "Master of Computer Science (MC-CS)",
+      "name_zh": "计算机科学硕士（非官方译名）",
+      "aliases": [
+        "MC-CS",
+        "Melbourne Master of Computer Science"
+      ],
+      "faculty": "School of Computing and Information Systems",
+      "degree_type": "授课型（coursework-based，含 100 学分研究项目）",
+      "duration_ft": "2 年全日制（24 个月）",
+      "tuition_amount": "约 A$132,250 / 全程（2026 年国际生指示性费率，2 年）",
+      "tuition_intake": "2026",
+      "deadlines": [
+        "待核实（墨尔本大学 3 月入学，2027 入学轮次以官网实时页面为准）"
+      ],
+      "verification_status": "partial",
+      "official_urls": [
+        "https://handbook.unimelb.edu.au/2026/courses/mc-cs",
+        "https://study.unimelb.edu.au/find/courses/graduate/master-of-computer-science/"
+      ],
+      "card_path": "programs/melbourne/melbourne-master-computer-science.md"
+    },
+    {
+      "id": "melbourne-master-data-science",
+      "school_id": "MELBOURNE",
+      "school_name_zh": "墨尔本大学",
+      "region": "AU",
+      "name_en": "Master of Data Science (MC-DATASC)",
+      "name_zh": "数据科学硕士（非官方译名）",
+      "aliases": [
+        "MC-DATASC",
+        "Melbourne Master of Data Science"
+      ],
+      "faculty": "School of Mathematics and Statistics",
+      "degree_type": "授课型（coursework-based，含 capstone）",
+      "duration_ft": "2 年全日制（24 个月）",
+      "tuition_amount": "约 A$66,125 / 年（2026 年国际生指示性费率；按当前费率静态估算 2 年约 A$132,250）",
+      "tuition_intake": "2026",
+      "deadlines": [
+        "2026 入学申请截止曾延长至 2026-11-30；2027 入学待官网确认"
+      ],
+      "verification_status": "partial",
+      "official_urls": [
+        "https://handbook.unimelb.edu.au/2026/courses/mc-datasc",
+        "https://study.unimelb.edu.au/find/courses/graduate/master-of-data-science/"
+      ],
+      "card_path": "programs/melbourne/melbourne-master-data-science.md"
     },
     {
       "id": "ntu-msai",
@@ -1281,14 +1614,192 @@
         "https://www.polyu.edu.hk/comp/study/taught-postgraduate-programme/mscmt/"
       ],
       "card_path": "programs/polyu/polyu-msc-metaverse-technology.md"
+    },
+    {
+      "id": "sydney-master-computer-science",
+      "school_id": "SYDNEY",
+      "school_name_zh": "悉尼大学",
+      "region": "AU",
+      "name_en": "Master of Computer Science",
+      "name_zh": "计算机科学硕士（非官方译名）",
+      "aliases": [
+        "USyd Master of Computer Science",
+        "MCS (Sydney)"
+      ],
+      "faculty": "Faculty of Engineering",
+      "degree_type": "授课型（coursework-based）",
+      "duration_ft": "2 年全日制",
+      "tuition_amount": "待核实：官网课程页全额付费区间 A$41,300-60,800；另有 2026 学费更新通知 A$57,900 / 年（indicative）",
+      "tuition_intake": "2026",
+      "deadlines": [
+        "待核实（2 月 / 8 月入学，按 semester start dates 轮次审理）"
+      ],
+      "verification_status": "partial",
+      "official_urls": [
+        "https://www.sydney.edu.au/courses/courses/pc/master-of-computer-science.html"
+      ],
+      "card_path": "programs/sydney/sydney-master-computer-science.md"
+    },
+    {
+      "id": "sydney-master-data-science",
+      "school_id": "SYDNEY",
+      "school_name_zh": "悉尼大学",
+      "region": "AU",
+      "name_en": "Master of Data Science",
+      "name_zh": "数据科学硕士（非官方译名）",
+      "aliases": [
+        "USyd Master of Data Science",
+        "MDS (Sydney)"
+      ],
+      "faculty": "Faculty of Engineering",
+      "degree_type": "授课型（coursework-based）",
+      "duration_ft": "1.5 年全日制",
+      "tuition_amount": "待核实：2026 indicative A$57,900 / 年；第三方汇总有 A$53,000-60,800 不同说法",
+      "tuition_intake": "2026",
+      "deadlines": [
+        "待核实（2 月 / 8 月入学）"
+      ],
+      "verification_status": "partial",
+      "official_urls": [
+        "https://www.sydney.edu.au/courses/courses/pc/master-of-data-science0.html"
+      ],
+      "card_path": "programs/sydney/sydney-master-data-science.md"
+    },
+    {
+      "id": "ucl-msc-computer-science",
+      "school_id": "UCL",
+      "school_name_zh": "伦敦大学学院",
+      "region": "UK",
+      "name_en": "Computer Science MSc",
+      "name_zh": "计算机科学理学硕士（非官方译名）",
+      "aliases": [
+        "MSc Computer Science (UCL)",
+        "UCL CS Conversion"
+      ],
+      "faculty": "Faculty of Engineering Sciences",
+      "degree_type": "授课型（coursework-based，转换型）",
+      "duration_ft": "1 个日历年（2027 年 9 月开学）",
+      "tuition_amount": "国际生 £44,400 / 年（2027/28）；英国本土生 £21,500 / 年",
+      "tuition_intake": "2027/28",
+      "deadlines": [
+        "需签证申请者：2027-03-22 17:00（英国时间）截止",
+        "无需签证申请者：2027-08-27 10:00 截止"
+      ],
+      "verification_status": "partial",
+      "official_urls": [
+        "https://www.ucl.ac.uk/prospective-students/graduate/taught-degrees/computer-science-msc"
+      ],
+      "card_path": "programs/ucl/ucl-msc-computer-science.md"
+    },
+    {
+      "id": "ucl-msc-data-science-machine-learning",
+      "school_id": "UCL",
+      "school_name_zh": "伦敦大学学院",
+      "region": "UK",
+      "name_en": "Data Science and Machine Learning MSc",
+      "name_zh": "数据科学与机器学习理学硕士（非官方译名）",
+      "aliases": [
+        "UCL DSML",
+        "Data Science and Machine Learning MSc"
+      ],
+      "faculty": "Faculty of Engineering Sciences",
+      "degree_type": "授课型（coursework-based）",
+      "duration_ft": "1 个日历年（2027 年 9 月开学）",
+      "tuition_amount": "国际生 £44,400 / 年（2027/28）；英国本土生 £21,500 / 年",
+      "tuition_intake": "2027/28",
+      "deadlines": [
+        "需签证申请者：2027-03-22 17:00（英国时间）截止",
+        "无需签证申请者：2027-08-27 17:00 截止"
+      ],
+      "verification_status": "partial",
+      "official_urls": [
+        "https://www.ucl.ac.uk/study/prospective-students/graduate/courses/data-science-and-machine-learning-msc"
+      ],
+      "card_path": "programs/ucl/ucl-msc-data-science-machine-learning.md"
+    },
+    {
+      "id": "ucl-msc-machine-learning",
+      "school_id": "UCL",
+      "school_name_zh": "伦敦大学学院",
+      "region": "UK",
+      "name_en": "Machine Learning MSc",
+      "name_zh": "机器学习理学硕士（非官方译名）",
+      "aliases": [
+        "UCL ML",
+        "Machine Learning MSc (UCL)"
+      ],
+      "faculty": "Faculty of Engineering Sciences",
+      "degree_type": "授课型（coursework-based）",
+      "duration_ft": "1 个日历年（2027 年 9 月开学）",
+      "tuition_amount": "国际生 £44,400 / 年（2027/28）；英国本土生 £21,500 / 年",
+      "tuition_intake": "2027/28",
+      "deadlines": [
+        "需签证申请者：2027-03-22 17:00（英国时间）截止",
+        "无需签证申请者：2027-08-27 截止"
+      ],
+      "verification_status": "partial",
+      "official_urls": [
+        "https://www.ucl.ac.uk/prospective-students/graduate/taught-degrees/machine-learning-msc"
+      ],
+      "card_path": "programs/ucl/ucl-msc-machine-learning.md"
+    },
+    {
+      "id": "unsw-master-information-technology",
+      "school_id": "UNSW",
+      "school_name_zh": "新南威尔士大学",
+      "region": "AU",
+      "name_en": "Master of Information Technology (8543)",
+      "name_zh": "信息技术硕士（非官方译名）",
+      "aliases": [
+        "UNSW MIT",
+        "MIT 8543"
+      ],
+      "faculty": "Faculty of Engineering",
+      "degree_type": "授课型（coursework-based）",
+      "duration_ft": "2 年全日制（96 UOC）；相关荣誉学位可减至 1 年，3 年相关本科可减至 1.7 年",
+      "tuition_amount": "2026 国际生指示性学费：首年 A$63,000，全程约 A$130,500（本土 CSP 首年 A$9,500）",
+      "tuition_intake": "2026",
+      "deadlines": [
+        "待核实（Term 1 / 2 / 3 多次入学，按轮次审理）"
+      ],
+      "verification_status": "partial",
+      "official_urls": [
+        "https://www.unsw.edu.au/study/postgraduate/master-of-information-technology"
+      ],
+      "card_path": "programs/unsw/unsw-master-information-technology.md"
+    },
+    {
+      "id": "unsw-master-data-science-decisions",
+      "school_id": "UNSW",
+      "school_name_zh": "新南威尔士大学",
+      "region": "AU",
+      "name_en": "Master of Data Science and Decisions (8959)",
+      "name_zh": "数据科学与决策硕士（非官方译名）",
+      "aliases": [
+        "UNSW DS&D",
+        "8959"
+      ],
+      "faculty": "Faculty of Engineering；Faculty of Science；UNSW Business School（联合）",
+      "degree_type": "授课型（coursework-based）",
+      "duration_ft": "2 年全日制（96 UOC），可经 RPL 减至 1.3 年",
+      "tuition_amount": "2026 国际生指示性学费：首年 A$62,000，全程约 A$128,000（本土 CSP 首年 A$10,000）",
+      "tuition_intake": "2026",
+      "deadlines": [
+        "待核实（Term 1 与 Term 3 入学）"
+      ],
+      "verification_status": "partial",
+      "official_urls": [
+        "https://www.unsw.edu.au/study/postgraduate/master-of-data-science-and-decisions"
+      ],
+      "card_path": "programs/unsw/unsw-master-data-science-decisions.md"
     }
   ],
   "stats": {
-    "snapshot_date": "2026-11-09 / 2026-11-11",
-    "school_count": 7,
-    "program_count": 39,
-    "chunk_count": 280,
-    "writing_chunk_count": 156,
-    "generated_at": "2026-11-11T15:54:24+08:00"
+    "snapshot_date": "2026-11-09 / 2026-11-11 / 2026-11-16",
+    "school_count": 13,
+    "program_count": 54,
+    "chunk_count": 391,
+    "writing_chunk_count": 216,
+    "generated_at": "2026-11-16T11:21:56+08:00"
   }
 }

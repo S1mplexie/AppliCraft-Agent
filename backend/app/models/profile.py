@@ -37,7 +37,7 @@ class Education(BaseModel):
     major: str = ""
     gpa: str = ""
     gpa_scale: str = "4.0"
-    # 港新院校普遍审核百分制均分；留空表示未提供，事实清单只在有值时展示。
+    # 港新英澳院校普遍审核百分制均分；留空表示未提供，事实清单只在有值时展示。
     gpa_average: str = ""
     ranking: str = ""
     start_date: str = ""

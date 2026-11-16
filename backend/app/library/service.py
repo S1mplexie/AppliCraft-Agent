@@ -6,7 +6,7 @@
   只在生成时作为「补充背景」注入，使用守则明确：不得与申请人事实清单冲突、
   不得把第三方信息当成申请人自身成就、清单外的事实一律 [TO CONFIRM] 占位。
 - 系统项目信息来自知识库 chunks.jsonl，按 program_id 聚合，只读、全局共享，
-  用于让用户直观看到系统已覆盖哪些港新项目（也便于核对官方资料）。
+  用于让用户直观看到系统已覆盖哪些项目（也便于核对官方资料）。
 """
 from __future__ import annotations
 
@@ -104,7 +104,7 @@ def build_reference_context(
 
 
 def list_system_programs(settings: Settings) -> list[dict[str, Any]]:
-    """聚合知识库 chunks.jsonl，按 program_id 返回系统已覆盖的港新项目清单。
+    """聚合知识库 chunks.jsonl，按 program_id 返回系统已覆盖的项目清单。
 
     每个项目包含学校、项目名（中英）、学院、地区、入学批次、官方链接与已覆盖资料板块，
     供前端「参考文档库」页展示系统自带的官方项目信息，也便于用户核对。

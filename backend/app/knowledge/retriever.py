@@ -13,7 +13,7 @@ retrieve() 内的排序替换为向量相似度，外层（提示词注入、审
 1. 只召回 meta.suitable_for_writing = true 的分块（课程 / 特色 / 文书要点 / 概览），
    绝不把学费、截止日期、语言分数等易过期数字喂给文书生成。
 2. 只有明确指定了「目标项目」且能在库中匹配到学校 / 项目时，才注入资料；
-   目标项目不在覆盖范围内（如英美项目）时安全降级为空，绝不注入无关项目资料。
+   目标项目不在覆盖范围内时安全降级为空，绝不注入无关项目资料。
 3. 命中分块优先按与目标查询的相关度排序，再用字符预算截断，避免提示词过长。
 """
 from __future__ import annotations
@@ -38,6 +38,12 @@ SCHOOL_KEYWORDS: dict[str, list[str]] = {
     "POLYU": ["hong kong polytechnic university", "polyu", "香港理工大学", "香港理工", "港理工"],
     "NUS": ["national university of singapore", "nus", "新加坡国立大学", "新国大"],
     "NTU": ["nanyang technological university", "ntu", "南洋理工大学", "南洋理工"],
+    "IMPERIAL": ["imperial college london", "imperial college", "帝国理工学院", "帝国理工"],
+    "UCL": ["university college london", "ucl", "伦敦大学学院", "ucl 学院"],
+    "EDIN": ["university of edinburgh", "edinburgh", "爱丁堡大学", "爱丁堡"],
+    "MELBOURNE": ["university of melbourne", "melbourne", "墨尔本大学", "墨尔本"],
+    "UNSW": ["unsw sydney", "new south wales", "unsw", "新南威尔士大学", "新南威尔士"],
+    "SYDNEY": ["university of sydney", "sydney", "悉尼大学", "悉尼"],
 }
 
 # 学校判定按「关键词长度降序」全局匹配：不能再按学校顺序逐个试，

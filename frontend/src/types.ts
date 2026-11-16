@@ -192,7 +192,7 @@ export interface AuthUser {
 }
 /** 选校评估：申请人的择校与项目偏好（可选，评估前填写）。 */
 export interface MatchPreferences {
-  /** 只看地区（'HK' 香港 / 'SG' 新加坡）：勾选后只评估对应地区项目，可多选。 */
+  /** 只看地区（'HK' 中国香港 / 'SG' 新加坡 / 'UK' 英国 / 'AU' 澳洲）：勾选后只评估对应地区项目，可多选。 */
   priority_regions: string[]
   /** 只看学校（项目库中的中文校名）：勾选后只评估对应学校项目；与地区取并集。 */
   priority_schools: string[]
@@ -264,7 +264,7 @@ export interface SkillInfo {
 export interface SkillDetail extends SkillInfo {
   content: string; examples?: string; instructions?: string
 }
-/** 系统自带的港新项目官方信息（来自知识库，只读）。 */
+/** 系统内置项目官方信息（来自知识库，只读，覆盖港新英澳）。 */
 export interface SystemProgram {
   program_id: string; school_id: string; school_name_zh: string
   program_name_en: string; program_name_zh: string; faculty: string
@@ -284,7 +284,7 @@ export function systemProgramToTarget(p: SystemProgram): TargetProgram {
     university: p.school_name_zh || p.school_id,
     program: zhName || p.program_name_en,
     degree_type: '',
-    region: p.region === 'HK' ? '中国香港' : p.region === 'SG' ? '新加坡' : '',
+    region: p.region === 'HK' ? '中国香港' : p.region === 'SG' ? '新加坡' : p.region === 'UK' ? '英国' : p.region === 'AU' ? '澳洲' : '',
     intake: p.intake,
     deadline: '',
     language_requirement: '',

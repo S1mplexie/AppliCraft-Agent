@@ -126,7 +126,7 @@ const newRecommender = (): Recommender => ({
 
         <!-- 教育背景 -->
         <section v-show="activeSection === 'education'" class="form-section">
-          <div class="section-title"><h3>教育背景</h3><span>按时间倒序填写；港新院校多审核百分制均分，请与成绩单口径一致</span></div>
+          <div class="section-title"><h3>教育背景</h3><span>按时间倒序填写；港新英澳院校多审核百分制均分，请与成绩单口径一致</span></div>
           <p class="hint" style="margin: 0 0 12px;">绩点与百分制均分按成绩单原样填写，系统不会互相换算；两者都填时，选校评估优先采用百分制均分。</p>
           <div v-for="(item, i) in p.education" :key="item.id" class="entry">
             <div class="entry-head"><strong>ED{{ i + 1 }}</strong><button class="link danger" @click="p.education.splice(i, 1)">删除</button></div>
@@ -227,16 +227,16 @@ const newRecommender = (): Recommender => ({
             </div>
             <button
               class="btn small primary" type="button" :disabled="!props.systemProgramCount"
-              :title="props.systemProgramCount ? '从系统收录的港新官方项目批量导入' : '系统项目库未加载'"
+              :title="props.systemProgramCount ? '从系统收录的官方项目批量导入' : '系统项目库未加载'"
               @click="emit('importTargets')"
             >从系统项目库导入</button>
           </div>
           <p class="hint import-lead">
-            系统项目库已收录 {{ props.systemProgramCount || 0 }} 个港新官方项目，可批量带入学校、项目名、学院与入学季；
+            系统项目库已收录 {{ props.systemProgramCount || 0 }} 个官方项目（覆盖港新英澳），可批量带入学校、项目名、学院与入学季；
             导入后再补充课程要点与「你与项目的契合点」，也可以完全手动填写。
           </p>
           <datalist id="target-region-options">
-            <option value="中国香港"></option><option value="新加坡"></option><option value="其他"></option>
+            <option value="中国香港"></option><option value="新加坡"></option><option value="英国"></option><option value="澳洲"></option><option value="其他"></option>
           </datalist>
           <div v-for="(item, i) in p.target_programs" :key="item.id" class="entry">
             <div class="entry-head">

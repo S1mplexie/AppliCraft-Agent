@@ -153,7 +153,18 @@ function sourceLabel(p: ApplicationProject) { return p.source === 'imported' ? '
 function shortRegion(r: string) {
   if (r === 'HK' || r === '香港') return '香港'
   if (r === 'SG' || r === '新加坡') return '新加坡'
+  if (r === 'UK' || r === '英国') return '英国'
+  if (r === 'AU' || r === '澳洲' || r === '澳大利亚') return '澳洲'
   return r || ''
+}
+/** 地区徽标配色 class：代码或中文地区名都能命中，未识别返回空。 */
+function regionClass(r: string) {
+  const k = String(r || '').trim().toUpperCase()
+  if (k === 'HK' || k === '香港') return 'hk'
+  if (k === 'SG' || k === '新加坡') return 'sg'
+  if (k === 'UK' || k === '英国') return 'uk'
+  if (k === 'AU' || k === '澳洲' || k === '澳大利亚') return 'au'
+  return ''
 }
 function officialLinks(p: ApplicationProject) {
   return (p.official_urls || []).map(u => {
@@ -220,7 +231,7 @@ function officialLinks(p: ApplicationProject) {
             <header class="bd-card-top">
               <span class="bd-card-idx">{{ String(idx + 1).padStart(2, '0') }}</span>
               <span class="proj-badge" :class="p.source">{{ sourceLabel(p) }}</span>
-              <span v-if="shortRegion(p.region)" class="bd-region" :class="shortRegion(p.region) === '香港' ? 'hk' : 'sg'">
+              <span v-if="shortRegion(p.region)" class="bd-region" :class="regionClass(p.region)">
                 {{ shortRegion(p.region) }}
               </span>
               <span class="bd-card-go" aria-hidden="true">↗</span>

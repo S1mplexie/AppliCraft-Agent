@@ -1,0 +1,195 @@
+{
+  "school_id": "EDIN",
+  "school_name_zh": "爱丁堡大学",
+  "school_name_en": "The University of Edinburgh",
+  "region": "UK",
+  "snapshot_date": "2026-11-16",
+  "intake_target": "2027/28（2027 年 9 月入学）",
+  "general": {
+    "english_requirement": "信息学院三项目口径一致：IELTS 总分 7.0，三个单项不低于 6.5、剩余一项不低于 6.0；不接受 IELTS One Skill Retake，不接受 TOEFL MyBest Score。",
+    "application_open": "待核实（官网学位页列 2027 年入学申请入口，未列统一开放日）",
+    "notes": [
+      "Computer Science、Data Science、Artificial Intelligence 三个项目均要求相关定量本科背景 + 编程课 + 60 SCQF / 30 ECTS 数学学分；爱丁堡没有面向非计算机背景的 CS 转换型硕士。",
+      "三项目竞争激烈，官网写明典型 offer 为一等学位；申请无申请费，每人最多申请 3 个项目。",
+      "2027/28 学费需按学位页的 tuition fees 链接到 Registry Services 费率表查询；Artificial Intelligence MSc 全日制国际生 £47,680，Computer Science / Data Science 的 2027/28 精确金额未在费率表中直接读到，标待核实。"
+    ]
+  },
+  "programs": [
+    {
+      "id": "edin-msc-computer-science",
+      "name_en": "Computer Science MSc",
+      "name_zh": "计算机科学理学硕士（非官方译名）",
+      "aliases": ["Edinburgh CS MSc", "MSc Computer Science (Edinburgh)"],
+      "degree_type": "授课型（coursework-based）",
+      "faculty": "College of Science and Engineering",
+      "department": "School of Informatics",
+      "official_urls": ["https://study.ed.ac.uk/programmes/postgraduate-taught/110-computer-science"],
+      "duration_ft": "1 年（2027 年 9 月入学）",
+      "duration_pt": "最长 3 年",
+      "credits": "待核实（约一半授课学分来自核心计算机科学，另含 dissertation）",
+      "tuition": {
+        "amount": "待核实（2027/28 具体金额需按学位页 Registry Services 费率表确认；2026/27 国际生参考 £45,410；2027/28 高档费率为 £47,680）",
+        "intake": "2027/28",
+        "applies_to": "国际生 / 本土生分列",
+        "note": "获录后需缴 £1,500 押金；爱丁堡校友享 10% 学费减免。"
+      },
+      "application": {
+        "open": "待核实",
+        "deadlines": [
+          "2027 年入学 Round 1：2027-03-31 截止，2027-05-31 前出结果",
+          "Round 2：2027-05-31 截止，2027-07-31 前出结果"
+        ],
+        "note": "官网注明需求极高时可能提前关闭；提交后 28 天内补齐材料。"
+      },
+      "english": "IELTS 7.0（三个单项 6.5、一个 6.0）；不接受 One Skill Retake",
+      "admission": {
+        "background": "英国 2:1 或以上（国际同等），信息学、AI、认知科学、计算机科学、计量经济学、电子工程、语言学、数学、哲学、物理、心理学等；典型 offer 为一等学位",
+        "prerequisites": "本科修过 C/C++、Java、Python、R、Matlab、Haskell、Julia 中至少一门编程课；60 SCQF / 30 ECTS 数学学分，尤其强调概率统计",
+        "gre_gmat": "官网未提及（不推断为明确不要求）",
+        "work_experience": "待核实"
+      },
+      "curriculum": {
+        "structure": "核心 CS（系统与理论）+ 大量选修 + 论文；约一半授课学分来自核心计算机科学",
+        "core": ["Computer Systems 基础与系统类核心课", "Algorithms", "Programming Languages", "Cryptography", "Quantum Informatics"],
+        "electives": ["Parallel and Distributed Systems", "Security and Privacy", "Theoretical Computer Science"],
+        "tracks": []
+      },
+      "highlights": [
+        "官网：Edinburgh 的 CS 研究在 REF 2021 被评为英国第一（research power），QS 2026 学科排名全球第 22 / 英国第 5。",
+        "官网：from computer architecture to theoretical computer science，可在系统与理论两个方向自由选课。",
+        "官网：School of Informatics 约 2000 名学生、150 名学术人员，来自 100 多个国家。"
+      ],
+      "career": ["官网表述为 many career settings，未给岗位统计"],
+      "writing_hooks": [
+        "爱丁堡强调核心 CS 的系统 + 理论训练，文书可结合你做过的系统 / 算法 / 安全项目说明为何看重这两条线。",
+        "官网写明 REF 第一与 QS 排名，可作为 why-school 的客观依据，但要和你自己的研究兴趣挂钩。",
+        "数学（尤其概率统计）与编程先修是硬门槛，用具体课程与成绩证明，不要笼统说「基础扎实」。"
+      ],
+      "verification": {
+        "status": "partial",
+        "conflicts": ["2027/28 学费未从官方费率表直接读到对应行；2026/27 £45,410 与 2027/28 高档 £47,680 不可混用。"],
+        "unverified": ["2027/28 精确学费", "总学分", "工作经验要求"]
+      },
+      "sources": [
+        {"url": "https://study.ed.ac.uk/programmes/postgraduate-taught/110-computer-science", "supports": "项目名、入学要求、课程侧重、申请轮次、语言要求、排名与学院规模"},
+        {"url": "https://registryservices.ed.ac.uk/tuition-fees/find/postgraduate-taught/2027-2028/taught-masters", "supports": "2027/28 各项目学费查询入口"}
+      ]
+    },
+    {
+      "id": "edin-msc-data-science",
+      "name_en": "Data Science MSc",
+      "name_zh": "数据科学理学硕士（非官方译名）",
+      "aliases": ["Edinburgh Data Science MSc", "MSc Data Science (Edinburgh)"],
+      "degree_type": "授课型（coursework-based）",
+      "faculty": "College of Science and Engineering",
+      "department": "School of Informatics",
+      "official_urls": ["https://study.ed.ac.uk/programmes/postgraduate-taught/902-data-science"],
+      "duration_ft": "1 年（2027 年 9 月入学）",
+      "duration_pt": "最长 3 年（2 年 / 3 年两种路径）",
+      "credits": "Informatics Project Proposal 20 学分 + MSc Dissertation 60 学分 + 100 学分选修（至少 80 分来自三大领域之一）",
+      "tuition": {
+        "amount": "待核实（2027/28 具体金额需按学位页 Registry Services 费率表确认；2026/27 参考 £45,410；2027/28 高档 £47,680）",
+        "intake": "2027/28",
+        "applies_to": "国际生 / 本土生分列",
+        "note": "获录后需缴 £1,500 押金；爱丁堡校友享 10% 折扣。"
+      },
+      "application": {
+        "open": "待核实",
+        "deadlines": ["Round 1：2027-03-31 截止，2027-05-31 前出结果", "Round 2：2027-05-31 截止，2027-07-31 前出结果"],
+        "note": "需求极高时可能提前关闭；提交后 28 天内补齐材料。"
+      },
+      "english": "IELTS 7.0（三个单项 6.5、一个 6.0）；不接受 One Skill Retake",
+      "admission": {
+        "background": "英国 2:1 或以上（国际同等），信息学、AI、认知科学、CS、计量经济学、电子工程、语言学、数学、哲学、物理、心理学或其他定量学科；官网写明竞争激烈、通常实际录取为一等学位",
+        "prerequisites": "相当于一门入门编程课的经验；60 SCQF / 30 ECTS 数学学分（微积分、线性代数、离散数学与推理、概率统计）",
+        "gre_gmat": "官网未提及（不推断为明确不要求）",
+        "work_experience": "待核实"
+      },
+      "curriculum": {
+        "structure": "三大选修领域：(1) 机器学习、统计与优化；(2) 数据库与数据管理；(3) 非结构化数据与应用（NLP / CV 等）；至少 80 学分集中在一个领域，每个领域至少 10 学分",
+        "core": ["Informatics Project Proposal", "MSc Dissertation"],
+        "electives": ["Machine Learning, Statistics and Optimisation 领域课程", "Databases and Data Management 领域课程", "Unstructured Data and Applications 领域课程"],
+        "tracks": ["Machine Learning, Statistics and Optimisation", "Databases and Data Management", "Unstructured Data and Applications"]
+      },
+      "highlights": [
+        "官网：Data science 是从大规模数据中抽取与结构化知识的计算原理、方法和系统。",
+        "官网：可自由选课，从理论到应用；研究驱动教学。",
+        "QS 2026 Data Science and AI 全球前 30；REF 2021 信息学院研究实力英国第一。"
+      ],
+      "career": ["官网以数据分析 / 数据科学相关岗位为主，未给系统就业统计"],
+      "writing_hooks": [
+        "该项目要求在一个选修领域集中至少 80 学分，文书中明确你选择机器学习 / 数据库 / 非结构化数据哪条线以及理由。",
+        "呼应官网「统计 + 计算」交叉定位，写你做过的统计建模与可复用数据管道，而不是只写工具清单。",
+        "数学 60 SCQF 与编程入门是硬门槛，用课程名与成绩对应官网口径。"
+      ],
+      "verification": {
+        "status": "partial",
+        "conflicts": ["2027/28 学费未从官方费率表直接读到对应行。"],
+        "unverified": ["2027/28 精确学费", "工作经验要求"]
+      },
+      "sources": [
+        {"url": "https://study.ed.ac.uk/programmes/postgraduate-taught/902-data-science", "supports": "项目定位、课程结构、入学要求、申请轮次、语言要求"}
+      ]
+    },
+    {
+      "id": "edin-msc-artificial-intelligence",
+      "name_en": "Artificial Intelligence MSc",
+      "name_zh": "人工智能理学硕士（非官方译名）",
+      "aliases": ["Edinburgh AI MSc", "MSc Artificial Intelligence (Edinburgh)"],
+      "degree_type": "授课型（coursework-based）",
+      "faculty": "College of Science and Engineering",
+      "department": "School of Informatics",
+      "official_urls": [
+        "https://study.ed.ac.uk/programmes/postgraduate-taught/107-artificial-intelligence",
+        "https://registryservices.ed.ac.uk/tuition-fees/find/postgraduate-taught/2027-2028/taught-masters"
+      ],
+      "duration_ft": "1 年（2027 年 9 月入学）",
+      "duration_pt": "最长 3 年",
+      "credits": "待核实（官网按 taught courses + dissertation 描述，未给总学分）",
+      "tuition": {
+        "amount": "£47,680（2027/28 全日制国际生，Registry Services 费率表；兼读制 2 年约 £23,840 / 年）",
+        "intake": "2027/28",
+        "applies_to": "国际生 / 本土生分列",
+        "note": "获录后需缴 £1,500 押金；爱丁堡校友享 10% 折扣。"
+      },
+      "application": {
+        "open": "待核实",
+        "deadlines": ["Round 1：2027-03-31 截止，2027-05-31 前出结果", "Round 2：2027-05-31 截止，2027-07-31 前出结果"],
+        "note": "需求极高时可能提前关闭。"
+      },
+      "english": "IELTS 7.0（三个单项 6.5、一个 6.0）；不接受 One Skill Retake",
+      "admission": {
+        "background": "英国 2:1 或以上（国际同等），信息学、AI、认知科学、CS、计量经济学、电子工程、语言学、数学、哲学、物理、心理学等；典型 offer 为一等学位",
+        "prerequisites": "本科修过 C/C++、Java、Python、R、Matlab、Haskell、ML 中至少一门；60 SCQF / 30 ECTS 数学学分，官网强调概率知识在日常录取评估中权重最高",
+        "gre_gmat": "官网未提及（不推断为明确不要求）",
+        "work_experience": "待核实"
+      },
+      "curriculum": {
+        "structure": "机器学习、机器人、NLP、计算机视觉等方向选课 + dissertation",
+        "core": ["AI 核心课程", "MSc Dissertation"],
+        "electives": ["Machine Learning", "Robotics", "Natural Language Processing", "Computer Vision"],
+        "tracks": []
+      },
+      "highlights": [
+        "官网：taught at the UK's longest-established academic centre studying artificial intelligence。",
+        "官网：课程跨越 neuroscience、cognitive science、linguistics、mathematics 等交叉领域。",
+        "QS 2026 Data Science and AI 全球前 30；REF 2021 信息学院研究实力英国第一。"
+      ],
+      "career": ["官网未给系统就业统计"],
+      "writing_hooks": [
+        "官网强调 AI 的跨学科根基（神经科学 / 认知科学 / 语言学 / 数学），若你有交叉背景可写清它如何塑造你的 AI 问题意识。",
+        "概率是该项目的重点先修，文书里用具体概率论 / 统计课程与项目说明，而非一句「数学好」。",
+        "用真实的 NLP / CV / 机器人项目呼应官网列出的方向，说明你已验证过自己的兴趣。"
+      ],
+      "verification": {
+        "status": "partial",
+        "conflicts": [],
+        "unverified": ["总学分", "工作经验要求", "完整必修清单"]
+      },
+      "sources": [
+        {"url": "https://study.ed.ac.uk/programmes/postgraduate-taught/107-artificial-intelligence", "supports": "项目定位、跨学科方向、入学要求、申请轮次、语言要求"},
+        {"url": "https://registryservices.ed.ac.uk/tuition-fees/find/postgraduate-taught/2027-2028/taught-masters", "supports": "2027/28 国际生学费查询"}
+      ]
+    }
+  ]
+}

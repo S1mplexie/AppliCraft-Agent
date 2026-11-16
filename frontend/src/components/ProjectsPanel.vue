@@ -21,13 +21,15 @@ const loading = ref(false)
 const detailId = ref('')
 const modal = ref<'import' | 'create' | null>(null)
 const importSearch = ref('')
-const importRegion = ref<'all' | 'HK' | 'SG'>('all')
+const importRegion = ref<'all' | 'HK' | 'SG' | 'UK' | 'AU'>('all')
 const importChecked = ref<string[]>([])
 const importing = ref(false)
 const regionFilters = [
   { key: 'all', label: '全部' },
   { key: 'HK', label: '香港' },
   { key: 'SG', label: '新加坡' },
+  { key: 'UK', label: '英国' },
+  { key: 'AU', label: '澳洲' },
 ] as const
 const form = ref({ name: '', university: '', program: '', degree_type: '', region: '', intake: '', notes: '' })
 const editingName = ref(false)
@@ -53,6 +55,8 @@ const regionCounts = computed(() => ({
   all: props.systemPrograms.length,
   HK: props.systemPrograms.filter(p => p.region === 'HK').length,
   SG: props.systemPrograms.filter(p => p.region === 'SG').length,
+  UK: props.systemPrograms.filter(p => p.region === 'UK').length,
+  AU: props.systemPrograms.filter(p => p.region === 'AU').length,
 }))
 const matchedPrograms = computed(() => {
   const kw = importSearch.value.trim().toLowerCase()
@@ -92,7 +96,16 @@ function shortIntake(s: string) {
   return first.length > 18 ? `${first.slice(0, 18)}…` : first
 }
 function regionLabel(r: string) {
-  return r === 'HK' ? '香港' : r === 'SG' ? '新加坡' : r || '其他'
+  return r === 'HK' ? '香港' : r === 'SG' ? '新加坡' : r === 'UK' ? '英国' : r === 'AU' ? '澳洲' : r || '其他'
+}
+/** 地区徽标配色 class：代码或中文地区名都能命中，未识别返回空。 */
+function regionClass(r: string) {
+  const k = String(r || '').trim().toUpperCase()
+  if (k === 'HK' || k === '香港') return 'hk'
+  if (k === 'SG' || k === '新加坡') return 'sg'
+  if (k === 'UK' || k === '英国') return 'uk'
+  if (k === 'AU' || k === '澳洲' || k === '澳大利亚') return 'au'
+  return ''
 }
 function isChecked(pid: string) { return importChecked.value.includes(pid) }
 function isImported(pid: string) { return importedIds.value.has(pid) }
@@ -166,6 +179,8 @@ const visibleProjects = computed(() => {
 function shortRegion(r: string) {
   if (r === 'HK' || r === '香港') return '香港'
   if (r === 'SG' || r === '新加坡') return '新加坡'
+  if (r === 'UK' || r === '英国') return '英国'
+  if (r === 'AU' || r === '澳洲' || r === '澳大利亚') return '澳洲'
   return r || ''
 }
 function formatDate(s: string) { return s ? s.slice(0, 10) : '—' }
@@ -514,7 +529,7 @@ function sourceLabel(p: ApplicationProject) { return p.source === 'imported' ? '
               <span class="pl-card-top">
                 <span class="pl-card-idx">{{ String(idx + 1).padStart(2, '0') }}</span>
                 <span class="proj-badge" :class="p.source">{{ sourceLabel(p) }}</span>
-                <span v-if="shortRegion(p.region)" class="pl-region" :class="shortRegion(p.region) === '香港' ? 'hk' : 'sg'">{{ shortRegion(p.region) }}</span>
+                <span v-if="shortRegion(p.region)" class="pl-region" :class="regionClass(p.region)">{{ shortRegion(p.region) }}</span>
                 <span class="pl-card-go" aria-hidden="true">↗</span>
               </span>
               <span class="pl-card-title">
@@ -615,7 +630,7 @@ function sourceLabel(p: ApplicationProject) { return p.source === 'imported' ? '
                   <span>{{ shortIntake(p.intake) }}</span>
                 </span>
                 <span class="imp-card-foot">
-                  <span class="imp-region" :class="p.region === 'HK' ? 'hk' : 'sg'">{{ regionLabel(p.region) }}</span>
+                  <span class="imp-region" :class="regionClass(p.region)">{{ regionLabel(p.region) }}</span>
                   <span class="imp-fields">{{ p.fields?.length ? `${p.fields.length} 个资料板块` : '官方资料' }}</span>
                   <span v-if="isImported(p.program_id)" class="imp-done-tag">已导入</span>
                 </span>
@@ -659,7 +674,7 @@ function sourceLabel(p: ApplicationProject) { return p.source === 'imported' ? '
           <label>学位<input v-model="form.degree_type" placeholder="MSc" /></label>
           <label>地区<input v-model="form.region" list="project-region-options" /></label>
           <datalist id="project-region-options">
-            <option value="中国香港"></option><option value="新加坡"></option><option value="其他"></option>
+            <option value="中国香港"></option><option value="新加坡"></option><option value="英国"></option><option value="澳洲"></option><option value="其他"></option>
           </datalist>
           <label>入学季<input v-model="form.intake" placeholder="2027 FALL" /></label>
           <label>备注<textarea v-model="form.notes" rows="2" /></label>

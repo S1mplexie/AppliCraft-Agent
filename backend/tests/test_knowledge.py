@@ -119,7 +119,43 @@ def test_detect_school_chinese_and_full_english_names():
     assert _detect_school("Hong Kong Polytechnic University") == "POLYU"
     assert _detect_school("Hong Kong University of Science and Technology") == "HKUST"
     assert _detect_school("The University of Hong Kong") == "HKU"
+    assert _detect_school("Imperial College London") == "IMPERIAL"
+    assert _detect_school("伦敦大学学院 数据科学与机器学习理学硕士") == "UCL"
+    assert _detect_school("爱丁堡大学 人工智能理学硕士") == "EDIN"
+    assert _detect_school("墨尔本大学 数据科学硕士") == "MELBOURNE"
+    assert _detect_school("UNSW") == "UNSW"
+    assert _detect_school("悉尼大学 计算机科学硕士") == "SYDNEY"
+    # 同为 "sydney" 关键词：UNSW 的官方校名含 "Sydney"（UNSW Sydney），
+    # 必须按最长关键词先命中 UNSW，不能误判成悉尼大学。
+    assert _detect_school("UNSW Sydney") == "UNSW"
     assert _detect_school("University of Oxford") == ""
+
+
+def test_retriever_uk_au_programs():
+    # 英国 / 澳洲项目（含中文校名 + 中文项目名写法，与系统项目库导入一致）：
+    # 应命中对应学校，且不与港新同名项目（如 MSc in Data Science）串味。
+    r = get_retriever(Settings())
+    targets = [
+        ({"program": "Data Science and Machine Learning MSc", "university": "University College London"},
+         "伦敦大学学院"),
+        ({"program": "数据科学与机器学习理学硕士", "university": "伦敦大学学院"}, "伦敦大学学院"),
+        ({"program": "MSc Computing (Artificial Intelligence and Machine Learning)", "university": "Imperial College London"},
+         "帝国理工学院"),
+        ({"program": "人工智能理学硕士", "university": "爱丁堡大学"}, "爱丁堡大学"),
+        ({"program": "Master of Data Science", "university": "The University of Melbourne"}, "墨尔本大学"),
+        ({"program": "数据科学与决策硕士", "university": "新南威尔士大学"}, "新南威尔士大学"),
+        ({"program": "Master of Computer Science", "university": "The University of Sydney"}, "悉尼大学"),
+    ]
+    for target, school in targets:
+        ref = r.retrieve(target, {"doc_type": "ps", "emphasis": []}, "")
+        assert ref.enabled and ref.context, f"未命中：{target}"
+        assert all(s["school"] == school for s in ref.sources), f"学校不符：{target} -> {ref.sources}"
+    # 墨尔本 / 悉尼大学的 Master of Data Science 不得混入港新同名项目资料。
+    ref = r.retrieve(
+        {"program": "Master of Data Science", "university": "The University of Melbourne"},
+        {"doc_type": "ps", "emphasis": []}, "",
+    )
+    assert not any(s["school"] in ("新加坡国立大学", "南洋理工大学", "香港大学") for s in ref.sources)
 
 
 def test_retriever_unknown_program_safe_noop():

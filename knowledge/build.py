@@ -47,7 +47,10 @@ FIELD_GROUPS = [
 # 官方域名后缀白名单：知识库事实字段只允许来自这些域名。
 OFFICIAL_SUFFIXES = (
     "hku.hk", "cuhk.edu.hk", "hkust.edu.hk", "ust.hk",
+    "polyu.edu.hk", "cityu.edu.hk",
     "nus.edu.sg", "ntu.edu.sg",
+    "imperial.ac.uk", "ucl.ac.uk", "ed.ac.uk",
+    "unimelb.edu.au", "unsw.edu.au", "sydney.edu.au",
 )
 
 # 原始调研报告里带过内部来源编号（如「（U2）」「U1–U36」），
@@ -361,11 +364,15 @@ def make_chunk(school: dict, p: dict, field: str, label: str, suitable: bool) ->
 
 def render_index_md(schools: list[dict], stats: dict) -> str:
     lines = [
-        "# AppliCraft 初始知识库 · 港新 CS / 数据科学 / AI 授课型硕士",
+        "# AppliCraft 项目知识库 · 中国香港 / 新加坡 / 英国 / 澳洲 CS / 数据科学 / AI 授课型硕士",
         "",
         f"- **数据快照**：{stats['snapshot_date']}",
         f"- **覆盖范围**：{stats['school_count']} 所学校 / {stats['program_count']} 个项目；"
-        f"香港 3 所（HKU / CUHK / HKUST）+ 新加坡 2 所（NUS / NTU）",
+        + "、".join(
+            f"{label} {sum(1 for s in schools if s.get('region') == code)} 所"
+            for code, label in (("HK", "中国香港"), ("SG", "新加坡"), ("UK", "英国"), ("AU", "澳洲"))
+            if any(s.get("region") == code for s in schools)
+        ),
         f"- **方向**：计算机科学、数据科学、人工智能、商业分析、金融科技等授课型硕士",
         f"- **分块数**：{stats['chunk_count']}（其中适合喂给文书生成的 {stats['writing_chunk_count']} 块）",
         f"- **编译时间**：{stats['generated_at']}",
@@ -395,9 +402,9 @@ def render_index_md(schools: list[dict], stats: dict) -> str:
         "",
         "```",
         "knowledge/",
-        "├── _raw/                  五校原始调研 JSON（含完整来源清单，保留原始口径）",
+        "├── _raw/                  各校原始调研 JSON（含完整来源清单，保留原始口径）",
         "│   └── schema.example.json 字段规范",
-        "├── programs/<学校>/        30 份项目卡片（人读，带 frontmatter）",
+        f"├── programs/<学校>/        {stats['program_count']} 份项目卡片（人读，带 frontmatter）",
         "├── index.json             项目级索引（机器可读）",
         "├── chunks.jsonl           RAG 分块（每行一条 JSON）",
         "├── build.py               本库的编译脚本（改 _raw 后重跑即可）",
@@ -407,7 +414,7 @@ def render_index_md(schools: list[dict], stats: dict) -> str:
         "",
         "## 数据纪律",
         "",
-        "1. 只采信学校官方域名（`hku.hk` / `cuhk.edu.hk` / `ust.hk` / `nus.edu.sg` / `ntu.edu.sg`）页面与官方 PDF；"
+        "1. 只采信学校官方域名（" + " / ".join(f"`{d}`" for d in OFFICIAL_SUFFIXES) + "）页面与官方 PDF；"
         "第三方内容仅作线索，未写入任何事实字段。",
         "2. 学费必须带 `tuition.intake` 标签：NUS 部分项目是 AY2026/27 onwards，另一些是 AY2027/28，混用会全库数值错误。",
         "3. 命名消歧写在 `general.notes` 与 `aliases`：例如 NUS 不存在「MSc in Artificial Intelligence」，"
@@ -539,7 +546,7 @@ def main() -> None:
         "generated_at": stats["generated_at"],
         "snapshot_date": stats["snapshot_date"],
         "scope": {
-            "regions": ["HK", "SG"],
+            "regions": sorted({s.get("region", "") for s in schools if s.get("region")}),
             "schools": [s.get("school_id", "") for s in schools],
             "discipline": "CS / 数据科学 / AI 及相关商业分析、金融科技授课型硕士",
             "degree_type": "taught / coursework-based master",

@@ -133,7 +133,7 @@ const groupedPrograms = computed(() => {
     <div class="page-head">
       <div>
         <h1>参考文档库</h1>
-        <p>上传你自己的项目参考材料，并在生成文书时勾选使用；下方同时展示系统已覆盖的港新项目官方信息</p>
+        <p>上传你自己的项目参考材料，并在生成文书时勾选使用；下方同时展示系统已覆盖的港新英澳项目官方信息</p>
       </div>
     </div>
 
@@ -182,10 +182,10 @@ const groupedPrograms = computed(() => {
       </ul>
     </section>
 
-    <!-- 系统自带港新项目信息 -->
+    <!-- 系统内置项目信息 -->
     <section class="card">
       <div class="card-head">
-        <h2>系统自带港新项目信息 · {{ systemPrograms.length }} 个</h2>
+        <h2>系统内置项目信息（港新英澳）· {{ systemPrograms.length }} 个</h2>
         <div class="program-head-actions">
           <span class="hint">来自知识库，只读；生成对应项目文书时自动检索官方资料</span>
           <button

@@ -1,0 +1,131 @@
+{
+  "school_id": "SYDNEY",
+  "school_name_zh": "悉尼大学",
+  "school_name_en": "The University of Sydney",
+  "region": "AU",
+  "snapshot_date": "2026-11-16",
+  "intake_target": "2026 Intake（2027 入学以官网实时页面为准）",
+  "general": {
+    "english_requirement": "官网课程页列 Entry requirements 的 English language requirements 区块但未直接给分数；按数据纪律标待核实，选校评估按工程 / 计算机常见 IELTS 6.5 / 单项 6.0 保守参考。",
+    "application_open": "待核实（2 月 / 8 月两个入学季）",
+    "notes": [
+      "Master of Computer Science 面向任何专业本科（65% credit average），是明确的转码入口；另有 Advanced Entry 版本供已有计算机学历者缩短学制。",
+      "Master of Data Science 为 1.5 年 / 72 学分，要求相关学科 + 编程或统计背景，不适合零背景转专业。",
+      "2026 学费出现两套官方口径：课程页区间 A$41,300-60,800 与 2026 学费更新通知 A$57,900 / 年；本库并列标注，提交前以最新 Offer 为准。"
+    ]
+  },
+  "programs": [
+    {
+      "id": "sydney-master-computer-science",
+      "name_en": "Master of Computer Science",
+      "name_zh": "计算机科学硕士（非官方译名）",
+      "aliases": ["USyd Master of Computer Science", "MCS (Sydney)"],
+      "degree_type": "授课型（coursework-based）",
+      "faculty": "Faculty of Engineering",
+      "department": "School of Computer Science",
+      "official_urls": ["https://www.sydney.edu.au/courses/courses/pc/master-of-computer-science.html"],
+      "duration_ft": "2 年全日制",
+      "duration_pt": "可兼读，但不提供给学签持有者",
+      "credits": "96 credit points",
+      "tuition": {
+        "amount": "待核实：官网课程页全额付费区间 A$41,300-60,800；另有 2026 学费更新通知 A$57,900 / 年（indicative）",
+        "intake": "2026",
+        "applies_to": "全额付费国际生；本土 CSP 参考 A$9,254",
+        "note": "学校曾据 2026 学费更新重新发放 S1 / S2 Offer，以最新 Offer 为准。"
+      },
+      "application": {
+        "open": "待核实",
+        "deadlines": ["待核实（2 月 / 8 月入学，按 semester start dates 轮次审理）"],
+        "note": "Advanced Entry 版本面向已有计算机学历申请者。"
+      },
+      "english": "待核实（官网课程页未在文本中列具体分数；按工程 / 计算机常见口径 IELTS 6.5、单项 6.0 保守参考）",
+      "admission": {
+        "background": "任何专业本科学位，最低 credit average（65%）",
+        "prerequisites": "官网未列统一先修课；已有计算机学历者可申请 Advanced Entry",
+        "gre_gmat": "官网未提及（不推断为明确不要求）",
+        "work_experience": "待核实"
+      },
+      "curriculum": {
+        "structure": "4 门 foundation + 3 门 computing professional core + 4 门 specialist computing + 1 门 capstone / research project + 其余选修",
+        "core": ["Foundation units", "Computing professional core", "Professional capstone or research project"],
+        "electives": ["Algorithms and Theory", "Cybersecurity", "Data Science and AI", "Digital Media", "Human-Computer Interaction", "Networks and Distributed Systems", "Software Engineering"],
+        "tracks": ["Algorithms and Theory", "Cybersecurity", "Data Science and AI", "Digital Media", "Human-Computer Interaction", "Networks and Distributed Systems", "Software Engineering"]
+      },
+      "highlights": [
+        "官网：面向 generative AI、cybersecurity、programming、software engineering、network systems 等挑战培养解决方案。",
+        "官网：悉尼大学计算机科学与信息系统 QS 2025 全澳第 1、全球第 36。",
+        "官网：ACS 临时专业级别认证至 2029 年底；投入逾 A$200m 建设新工程与技术园区。"
+      ],
+      "career": ["官网指向 computer scientist 或 IT 行业岗位，强调真实经验与技术结合"],
+      "writing_hooks": [
+        "任何专业均可申请是该项目最鲜明的定位；转专业申请者应写清原专业如何与计算机结合，并给出真实编程 / 项目证据。",
+        "七个 specialisation 中选一个具体方向（如网络安全或数据科学与 AI），用已做过的项目证明兴趣不是临时起意。",
+        "若申请 Advanced Entry，要先交代已有计算机学历背景，避免与普通入口混写。"
+      ],
+      "verification": {
+        "status": "partial",
+        "conflicts": ["2026 学费有课程页区间与 A$57,900 / 年两套口径；以最新 Offer 为准。"],
+        "unverified": ["英语分数细则", "申请轮次与截止", "工作经验要求"]
+      },
+      "sources": [
+        {"url": "https://www.sydney.edu.au/courses/courses/pc/master-of-computer-science.html", "supports": "项目定位、Advanced Entry、学制、学分、入学要求、认证与课程结构"}
+      ]
+    },
+    {
+      "id": "sydney-master-data-science",
+      "name_en": "Master of Data Science",
+      "name_zh": "数据科学硕士（非官方译名）",
+      "aliases": ["USyd Master of Data Science", "MDS (Sydney)"],
+      "degree_type": "授课型（coursework-based）",
+      "faculty": "Faculty of Engineering",
+      "department": "School of Computer Science",
+      "official_urls": ["https://www.sydney.edu.au/courses/courses/pc/master-of-data-science0.html"],
+      "duration_ft": "1.5 年全日制",
+      "duration_pt": "可兼读，但不提供给学签持有者",
+      "credits": "72 credit points",
+      "tuition": {
+        "amount": "待核实：2026 indicative A$57,900 / 年；第三方汇总有 A$53,000-60,800 不同说法",
+        "intake": "2026",
+        "applies_to": "全额付费国际生",
+        "note": "以官网选年后的学费页与 Offer 为准。"
+      },
+      "application": {
+        "open": "待核实",
+        "deadlines": ["待核实（2 月 / 8 月入学）"],
+        "note": "持 AQF8 及以上相关学位可申请 RVL 减少最多 24 学分 / 0.5 年。"
+      },
+      "english": "待核实（官网课程页未列具体分数；按常见口径 IELTS 6.5、单项 6.0 保守参考）",
+      "admission": {
+        "background": "3 年澳大利亚本科学位或国际同等，相关学科且体现编程或统计背景，最低 credit average（65%）；或悉尼大学数据科学研究生文凭 / 证书同等条件",
+        "prerequisites": "编程或统计背景（cognate discipline）；相当于 24 学分核心 + 专业选修的 Graduate Diploma / Certificate 路径亦可",
+        "gre_gmat": "官网未提及（不推断为明确不要求）",
+        "work_experience": "待核实"
+      },
+      "curriculum": {
+        "structure": "3 门 Data Science 核心 + 2 门 Computing professional core + 3 门 specialist elective + 1 门 capstone / research project + 选修或基础课",
+        "core": ["Data Science core units", "Computing professional core units", "Capstone or research project"],
+        "electives": ["Data Engineering", "Machine Learning"],
+        "tracks": ["Data Engineering", "Machine Learning"]
+      },
+      "highlights": [
+        "官网：为具备数学或定量背景的专业人士设计，用数据科学支撑战略决策。",
+        "官网：悉尼大学计算机科学与信息系统 QS 2025 全澳第 1、全球第 36。",
+        "官网：ACS 条件性临时专业级别认证至 2026 年底，2027 复审结果待公布。"
+      ],
+      "career": ["官网列出 analytics consultant、business analyst、data engineer、machine learning engineer、statistician 等岗位"],
+      "writing_hooks": [
+        "与计算机硕士不同，本项目明确要求相关背景 + 编程 / 统计，文书要先证明背景匹配，再谈职业目标。",
+        "两个 specialisation（Data Engineering / Machine Learning）中选一个，用真实项目说明你对工程落地或建模的侧重。",
+        "官网强调向关键利益相关者传达数据洞察，可写你向非技术受众汇报分析结果的经历。"
+      ],
+      "verification": {
+        "status": "partial",
+        "conflicts": ["2026 学费口径不一；ACS 认证为条件性临时至 2026 年底，2027 状态待官网更新。"],
+        "unverified": ["英语分数细则", "申请轮次与截止", "工作经验要求"]
+      },
+      "sources": [
+        {"url": "https://www.sydney.edu.au/courses/courses/pc/master-of-data-science0.html", "supports": "学制、学分、入学要求、课程结构、专攻方向、认证与就业岗位"}
+      ]
+    }
+  ]
+}

@@ -9,7 +9,7 @@ from __future__ import annotations
 import json
 from typing import Any
 
-BASE_RULES = """你是一位资深申请文书编辑，专长于中国香港与新加坡高校的授课型硕士申请。
+BASE_RULES = """你是一位资深申请文书编辑，专长于中国香港、新加坡、英国与澳洲高校的授课型硕士申请。
 你的文字精确、以证据为准，读起来像真实的申请人，而不是 AI。
 
 不可违反的规则
@@ -107,8 +107,8 @@ TONE_GUIDE = {
 }
 
 LANGUAGE_GUIDE = {
-    # 港新申请默认递交英文文书；这里只规定输出语言，不改变提示词语言。
-    "en": "全文必须用英文撰写（这是中国香港 / 新加坡申请的默认语言）；专有名词保留原文，占位符、小标题与标签也一律用英文。",
+    # 港新英澳申请均默认递交英文文书；这里只规定输出语言，不改变提示词语言。
+    "en": "全文必须用英文撰写（这是中国香港 / 新加坡 / 英国 / 澳洲申请的默认语言）；专有名词保留原文，占位符、小标题与标签也一律用英文。",
     "zh": "用简体中文撰写全文；专有名词、学校与项目名称保留英文原文。",
 }
 
@@ -329,7 +329,7 @@ def render_facts(profile: dict[str, Any], request: dict[str, Any]) -> tuple[dict
             f"### [{key}] {_value(item.get('school'))}",
             f"- 学位 / 专业：{_value(item.get('degree'))} / {_value(item.get('major'))}",
             f"- GPA：{_value(item.get('gpa'))} / {_value(item.get('gpa_scale'))}；排名：{_value(item.get('ranking'))}",
-            # 百分制均分是港新院校审核的核心指标；未填写时不占位，避免事实清单噪声。
+            # 百分制均分是港新英澳院校审核的核心指标；未填写时不占位，避免事实清单噪声。
             *([f"- 均分（百分制）：{item.get('gpa_average')}"] if item.get("gpa_average") else []),
             f"- 起止时间：{_value(item.get('start_date'))} 至 {_value(item.get('end_date'))}",
             f"- 相关课程：{_value(item.get('relevant_courses'))}",

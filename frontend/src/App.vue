@@ -91,7 +91,7 @@ const profile = ref<ApplicantProfile>(emptyProfile())
 const currentProfileId = ref('')
 const documents = ref<DocumentMeta[]>([])
 const activeDoc = ref<DocumentDetail | null>(null)
-// 参考文档库：用户上传的参考文档 + 系统自带港新项目信息。
+// 参考文档库：用户上传的参考文档 + 系统内置项目信息。
 const references = ref<ReferenceDoc[]>([])
 const selectedReferenceIds = ref<string[]>([])
 const systemPrograms = ref<SystemProgram[]>([])

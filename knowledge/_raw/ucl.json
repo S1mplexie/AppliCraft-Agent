@@ -1,0 +1,197 @@
+{
+  "school_id": "UCL",
+  "school_name_zh": "伦敦大学学院",
+  "school_name_en": "University College London",
+  "region": "UK",
+  "snapshot_date": "2026-11-16",
+  "intake_target": "2027/28（2027 年 9 月入学）",
+  "general": {
+    "english_requirement": "以下计算机系项目均为 UCL English Level 2：IELTS 总分 7.0、单项 6.5；官网不接受 IELTS One Skill Retake。",
+    "application_open": "2026-10-19",
+    "notes": [
+      "Computer Science MSc 是转换型项目：要求本科非计算机 / 信息技术（含 AI、ML、软件工程等子方向也不接受），并需数学能力至少达 A-level 水平。",
+      "UCL 另设统计科学系 Data Science MSc，与计算机系的 Data Science and Machine Learning MSc 是不同项目，学费与侧重均不同，勿混淆。",
+      "2027/28 计算机系授课硕士国际生学费统一为 £44,400 / 年；申请费 £90，部分项目需 10% 押金。"
+    ]
+  },
+  "programs": [
+    {
+      "id": "ucl-msc-computer-science",
+      "name_en": "Computer Science MSc",
+      "name_zh": "计算机科学理学硕士（非官方译名）",
+      "aliases": ["MSc Computer Science (UCL)", "UCL CS Conversion"],
+      "degree_type": "授课型（coursework-based，转换型）",
+      "faculty": "Faculty of Engineering Sciences",
+      "department": "Department of Computer Science",
+      "official_urls": ["https://www.ucl.ac.uk/prospective-students/graduate/taught-degrees/computer-science-msc"],
+      "duration_ft": "1 个日历年（2027 年 9 月开学）",
+      "duration_pt": "不设",
+      "credits": "待核实（官网课程页按模块描述，未给总学分）",
+      "tuition": {
+        "amount": "国际生 £44,400 / 年（2027/28）；英国本土生 £21,500 / 年",
+        "intake": "2027/28",
+        "applies_to": "国际生 / 本土生分列",
+        "note": "申请费 £90；部分项目需 10% 学费押金。"
+      },
+      "application": {
+        "open": "2026-10-19",
+        "deadlines": [
+          "需签证申请者：2027-03-22 17:00（英国时间）截止",
+          "无需签证申请者：2027-08-27 10:00 截止"
+        ],
+        "note": "官网另有个别项目标注 2027-03-27，以所申项目 key information 为准。"
+      },
+      "english": "UCL Level 2：IELTS 7.0，单项 6.5；不接受 One Skill Retake",
+      "admission": {
+        "background": "英国 2:1 或以上（或国际同等学历），本科为非计算机 / 非信息技术专业（含 AI、ML、软件工程等子领域亦不接受）",
+        "prerequisites": "需证明数学能力至少达 Mathematics A-level 标准，并具备基本计算思维",
+        "gre_gmat": "官网未提及（不推断为明确不要求）",
+        "work_experience": "待核实"
+      },
+      "curriculum": {
+        "structure": "从编程到 AI 应用工程打基础，含公司或研究组的实质性项目",
+        "core": ["Programming", "Artificial Intelligence Application Engineering", "Computer Architecture", "Algorithmics"],
+        "electives": ["Interaction Design", "Machine Learning"],
+        "tracks": []
+      },
+      "highlights": [
+        "官网：Become a computer scientist in just one year through this conversion course。",
+        "官网：可承担 substantial project——与企业合作解决真实问题，或加入 UCL Computer Science 研究组。",
+        "官网强调课程随领域发展持续更新（curriculum based on the latest trends）。"
+      ],
+      "career": ["官网指向 developer、software engineer 等岗位；UCL 官方披露校友进入 Accenture、Amazon、Bloomberg、IBM、Morgan Stanley 等企业"],
+      "writing_hooks": [
+        "转换型定位要求讲清「为什么从原专业转向 CS」：用真实课程 / 项目体现计算思维与数学准备。",
+        "呼应官网的 industrial or research client project，写你能在团队中把技术落到实际问题的经历。",
+        "不要写成本科计算机背景；该项目明确不接受 CS 及其子方向本科申请者。"
+      ],
+      "verification": {
+        "status": "partial",
+        "conflicts": [],
+        "unverified": ["总学分", "工作经验要求"]
+      },
+      "sources": [
+        {"url": "https://www.ucl.ac.uk/prospective-students/graduate/taught-degrees/computer-science-msc", "supports": "项目名、转换型入学要求、课程结构、2027/28 学费、申请截止、语言等级"}
+      ]
+    },
+    {
+      "id": "ucl-msc-data-science-machine-learning",
+      "name_en": "Data Science and Machine Learning MSc",
+      "name_zh": "数据科学与机器学习理学硕士（非官方译名）",
+      "aliases": ["UCL DSML", "Data Science and Machine Learning MSc"],
+      "degree_type": "授课型（coursework-based）",
+      "faculty": "Faculty of Engineering Sciences",
+      "department": "Department of Computer Science；Department of Statistical Science（联合开设）",
+      "official_urls": ["https://www.ucl.ac.uk/study/prospective-students/graduate/courses/data-science-and-machine-learning-msc"],
+      "duration_ft": "1 个日历年（2027 年 9 月开学）",
+      "duration_pt": "不设",
+      "credits": "待核实（官网课程页按模块描述，未给总学分）",
+      "tuition": {
+        "amount": "国际生 £44,400 / 年（2027/28）；英国本土生 £21,500 / 年",
+        "intake": "2027/28",
+        "applies_to": "国际生 / 本土生分列",
+        "note": "申请费 £90。"
+      },
+      "application": {
+        "open": "2026-10-19",
+        "deadlines": [
+          "需签证申请者：2027-03-22 17:00（英国时间）截止",
+          "无需签证申请者：2027-08-27 17:00 截止"
+        ],
+        "note": "分不同签证身份截止。"
+      },
+      "english": "UCL Level 2：IELTS 7.0，单项 6.5；不接受 One Skill Retake",
+      "admission": {
+        "background": "英国 2:1 或以上（或国际同等学历），高度定量专业（计算机、数学、工程、物理、统计等）",
+        "prerequisites": "需掌握线性代数、微积分、概率统计（至少英国数学科学本科一年级水平）；有高级编程语言（如 Python）经验者优先",
+        "gre_gmat": "官网未提及（不推断为明确不要求）",
+        "work_experience": "官网表述 relevant work experience may also be considered"
+      },
+      "curriculum": {
+        "structure": "AI、深度学习、数字金融、概率建模等模块 + 暑期产业或学术研究项目",
+        "core": ["Machine Learning", "Statistical Modelling", "Computer Science 基础"],
+        "electives": ["Artificial Intelligence", "Deep Learning", "Digital Finance", "Probabilistic Modelling", "Google DeepMind 参与授课的选修模块"],
+        "tracks": []
+      },
+      "highlights": [
+        "官网：one of the most established Master's courses in this field。",
+        "官网：Offered in collaboration with UCL Statistical Science；含与 Google DeepMind 合作授课的 optional module。",
+        "官网：summer project either in industry or academic research。"
+      ],
+      "career": ["官网列出金融、银行、保险、零售、电商、制药、计算机安全、网页搜索等应用行业"],
+      "writing_hooks": [
+        "该项目由计算机系与统计系联合开设，文书可写你如何同时用到建模与工程实现，而非只偏一侧。",
+        "呼应官网的 summer project in industry or academic research，用真实项目说明研究或产业落地能力。",
+        "数学先修（线性代数、微积分、概率统计）是硬门槛，给出具体课程与成绩。"
+      ],
+      "verification": {
+        "status": "partial",
+        "conflicts": [],
+        "unverified": ["总学分", "必修课完整清单"]
+      },
+      "sources": [
+        {"url": "https://www.ucl.ac.uk/study/prospective-students/graduate/courses/data-science-and-machine-learning-msc", "supports": "项目名、联合开设、入学要求、课程与项目结构、2027/28 学费与截止、语言等级"}
+      ]
+    },
+    {
+      "id": "ucl-msc-machine-learning",
+      "name_en": "Machine Learning MSc",
+      "name_zh": "机器学习理学硕士（非官方译名）",
+      "aliases": ["UCL ML", "Machine Learning MSc (UCL)"],
+      "degree_type": "授课型（coursework-based）",
+      "faculty": "Faculty of Engineering Sciences",
+      "department": "Department of Computer Science",
+      "official_urls": ["https://www.ucl.ac.uk/prospective-students/graduate/taught-degrees/machine-learning-msc"],
+      "duration_ft": "1 个日历年（2027 年 9 月开学）",
+      "duration_pt": "不设",
+      "credits": "待核实（官网课程页按模块描述，未给总学分）",
+      "tuition": {
+        "amount": "国际生 £44,400 / 年（2027/28）；英国本土生 £21,500 / 年",
+        "intake": "2027/28",
+        "applies_to": "国际生 / 本土生分列",
+        "note": "申请费 £90。"
+      },
+      "application": {
+        "open": "2026-10-19",
+        "deadlines": [
+          "需签证申请者：2027-03-22 17:00（英国时间）截止",
+          "无需签证申请者：2027-08-27 截止"
+        ],
+        "note": "以项目页 key information 为准。"
+      },
+      "english": "UCL Level 2：IELTS 7.0，单项 6.5；不接受 One Skill Retake",
+      "admission": {
+        "background": "英国 2:1 或以上（或国际同等学历），高度定量专业",
+        "prerequisites": "需熟悉本科线性代数与微积分；编程经验有帮助",
+        "gre_gmat": "官网未提及（不推断为明确不要求）",
+        "work_experience": "待核实"
+      },
+      "curriculum": {
+        "structure": "机器学习专精，部分模块由 Gatsby Computational Neuroscience Unit 与 Google DeepMind 参与",
+        "core": ["Machine Learning 核心模块"],
+        "electives": ["Advanced Machine Learning", "Deep Learning", "Reinforcement Learning", "Gatsby / Google DeepMind 相关模块"],
+        "tracks": []
+      },
+      "highlights": [
+        "官网课程页定位 Machine Learning MSc，2027 年 9 月开学、Bloomsbury 校区、计算机系开设。",
+        "系里项目页列部分模块与 Gatsby 计算神经科学中心、Google DeepMind 合作。",
+        "与数据科学方向相比更聚焦机器学习方法本身。"
+      ],
+      "career": ["待核实（官网未在课程页给系统就业统计）"],
+      "writing_hooks": [
+        "精确区分本项目与 Data Science and Machine Learning MSc：前者聚焦 ML 方法，写「为什么专攻机器学习」要比笼统写数据科学更有说服力。",
+        "用课程与项目证明线性代数 / 微积分基础，呼应官网的高定量背景要求。",
+        "若参与过研究或开源项目，可写清问题设定、方法与评估指标，避免只有课程名。"
+      ],
+      "verification": {
+        "status": "partial",
+        "conflicts": [],
+        "unverified": ["完整必修 / 选修清单", "总学分", "工作经验要求"]
+      },
+      "sources": [
+        {"url": "https://www.ucl.ac.uk/prospective-students/graduate/taught-degrees/machine-learning-msc", "supports": "项目名、学费、截止日期、语言等级、开学时间、申请入口"},
+        {"url": "https://www.ucl.ac.uk/engineering/computer-science/study/postgraduate-taught", "supports": "系内项目清单与机器学习专精定位"}
+      ]
+    }
+  ]
+}

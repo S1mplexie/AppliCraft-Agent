@@ -57,6 +57,8 @@ const prefsText = computed(() => {
   const parts: string[] = []
   if (prefs.value.priority_regions.includes('HK')) parts.push('只看香港')
   if (prefs.value.priority_regions.includes('SG')) parts.push('只看新加坡')
+  if (prefs.value.priority_regions.includes('UK')) parts.push('只看英国')
+  if (prefs.value.priority_regions.includes('AU')) parts.push('只看澳洲')
   if (prefs.value.priority_schools.length) parts.push(`只看学校：${prefs.value.priority_schools.join('、')}`)
   if (prefs.value.preferred_fields.length) parts.push(`优先方向：${prefs.value.preferred_fields.join('、')}`)
   return parts.join(' · ')
@@ -178,7 +180,7 @@ async function addToTargets(item: MatchItem) {
     university: item.school_name_zh,
     program: item.name_en,
     degree_type: 'Taught Master',
-    region: item.region === 'HK' ? '中国香港' : item.region === 'SG' ? '新加坡' : '',
+    region: item.region === 'HK' ? '中国香港' : item.region === 'SG' ? '新加坡' : item.region === 'UK' ? '英国' : item.region === 'AU' ? '澳洲' : '',
     intake: '', deadline: item.deadline, language_requirement: '',
     curriculum_notes: '', faculty_notes: '', why_fit: '',
     notes: '来自选校评估，请核对官网最新要求后补充课程与师资信息',
@@ -214,7 +216,7 @@ async function addToTargets(item: MatchItem) {
       <div v-if="missingBasics.length" class="match-warn">
         当前档案还缺少：{{ missingBasics.join('、') }}。信息不足时模型难以拉开冲刺 / 稳妥 / 保底，建议先到左侧「申请人档案」补全后再评估。
       </div>
-      <p style="margin: 0 0 10px;">由大模型综合档案中的 GPA / 均分、语言成绩（含单项）、专业与课程匹配度、科研 / 实习等背景，对系统收录的港新项目评估适配等级：</p>
+      <p style="margin: 0 0 10px;">由大模型综合档案中的 GPA / 均分、语言成绩（含单项）、专业与课程匹配度、科研 / 实习等背景，对系统收录的港新英澳项目评估适配等级：</p>
       <ul class="match-idle-list">
         <li>四档适配等级（冲刺 / 稳妥 / 保底 / 硬性缺口），每条附判断依据</li>
         <li>硬性缺口清单（语言未达标等明显不满足官方门槛的项目会被单独标出）</li>
@@ -239,6 +241,8 @@ async function addToTargets(item: MatchItem) {
           <div class="pref-checks">
             <label class="pref-check"><input type="checkbox" value="HK" v-model="prefs.priority_regions" /> 只看香港</label>
             <label class="pref-check"><input type="checkbox" value="SG" v-model="prefs.priority_regions" /> 只看新加坡</label>
+            <label class="pref-check"><input type="checkbox" value="UK" v-model="prefs.priority_regions" /> 只看英国</label>
+            <label class="pref-check"><input type="checkbox" value="AU" v-model="prefs.priority_regions" /> 只看澳洲</label>
           </div>
         </div>
         <div class="field">

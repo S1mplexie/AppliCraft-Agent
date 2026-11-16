@@ -1,4 +1,4 @@
-"""参考文档库接口：用户上传 / 管理自己的项目参考材料，并查看系统自带的港新项目信息。"""
+"""参考文档库接口：用户上传 / 管理自己的项目参考材料，并查看系统内置项目信息。"""
 from __future__ import annotations
 
 import logging
@@ -109,7 +109,7 @@ def system_programs(
     user: User = Depends(get_current_user),
     settings: Settings = Depends(get_settings),
 ):
-    """系统自带的港新项目官方信息（来自知识库），只读、全站共享，供用户查看与核对。"""
+    """系统内置项目官方信息（来自知识库），只读、全站共享，供用户查看与核对。"""
     try:
         return {"items": list_system_programs(settings)}
     except StorageError as exc:

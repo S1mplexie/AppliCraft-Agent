@@ -13,13 +13,15 @@ const props = defineProps<{
 const emit = defineEmits<{ close: []; import: [ids: string[]] }>()
 
 const keyword = ref('')
-const region = ref<'all' | 'HK' | 'SG'>('all')
+const region = ref<'all' | 'HK' | 'SG' | 'UK' | 'AU'>('all')
 const checked = ref<string[]>([])
 
 const filters = [
   { key: 'all', label: '全部' },
   { key: 'HK', label: '中国香港' },
   { key: 'SG', label: '新加坡' },
+  { key: 'UK', label: '英国' },
+  { key: 'AU', label: '澳洲' },
 ] as const
 
 const existing = computed(() => new Set(props.existingIds))
@@ -27,6 +29,8 @@ const counts = computed(() => ({
   all: props.programs.length,
   HK: props.programs.filter(p => p.region === 'HK').length,
   SG: props.programs.filter(p => p.region === 'SG').length,
+  UK: props.programs.filter(p => p.region === 'UK').length,
+  AU: props.programs.filter(p => p.region === 'AU').length,
 }))
 const matched = computed(() => {
   const kw = keyword.value.trim().toLowerCase()
@@ -72,7 +76,16 @@ function shortIntake(s: string) {
   return first.length > 18 ? `${first.slice(0, 18)}…` : first
 }
 function regionLabel(r: string) {
-  return r === 'HK' ? '中国香港' : r === 'SG' ? '新加坡' : (r || '其他')
+  return r === 'HK' ? '中国香港' : r === 'SG' ? '新加坡' : r === 'UK' ? '英国' : r === 'AU' ? '澳洲' : (r || '其他')
+}
+/** 地区徽标配色 class：代码或中文地区名都能命中，未识别返回空。 */
+function regionClass(r: string) {
+  const k = String(r || '').trim().toUpperCase()
+  if (k === 'HK' || k === '香港') return 'hk'
+  if (k === 'SG' || k === '新加坡') return 'sg'
+  if (k === 'UK' || k === '英国') return 'uk'
+  if (k === 'AU' || k === '澳洲' || k === '澳大利亚') return 'au'
+  return ''
 }
 function isChecked(id: string) { return checked.value.includes(id) }
 function isImported(id: string) { return existing.value.has(id) }
@@ -162,7 +175,7 @@ function submit() {
                 <span>{{ shortIntake(p.intake) }}</span>
               </span>
               <span class="imp-card-foot">
-                <span class="imp-region" :class="p.region === 'HK' ? 'hk' : 'sg'">{{ regionLabel(p.region) }}</span>
+                <span class="imp-region" :class="regionClass(p.region)">{{ regionLabel(p.region) }}</span>
                 <span class="imp-fields">{{ p.fields?.length ? `${p.fields.length} 个资料板块` : '官方资料' }}</span>
                 <span v-if="isImported(p.program_id)" class="imp-done-tag">已在目标项目</span>
               </span>

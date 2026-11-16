@@ -1,0 +1,132 @@
+{
+  "school_id": "UNSW",
+  "school_name_zh": "新南威尔士大学",
+  "school_name_en": "UNSW Sydney",
+  "region": "AU",
+  "snapshot_date": "2026-11-16",
+  "intake_target": "2026 Intake（2027 入学以官网实时页面为准）",
+  "general": {
+    "english_requirement": "官网课程页要求按背景判断英语能力与提交证明，未列具体分数；按数据纪律标待核实，选校评估按常见 IELTS 6.5 / 单项 6.0 保守参考。",
+    "application_open": "待核实（三学期制 Term 1 / 2 / 3 多次入学）",
+    "notes": [
+      "UNSW 计算机学院属工程学部，课程按 UOC 学分计费；2026 国际生指示性学费按首年 / 全程分别公布。",
+      "Master of Information Technology（8543）面向相关与非相关背景：非相关本科走 Graduate Certificate in IT → MIT 打包录取，总时长仍 2 年 / 96 UOC；官网另注明非 211 中国院校需 70% 均分。",
+      "Master of Data Science and Decisions（8959）与纯线上的 Master of Data Science（8646）是不同项目，校内全日制申请勿混淆。",
+      "UNSW 已公布 2028 年起改回双学期制（Flex-Semester）的过渡说明，不同入学批次毕业时长可能不同。"
+    ]
+  },
+  "programs": [
+    {
+      "id": "unsw-master-information-technology",
+      "name_en": "Master of Information Technology (8543)",
+      "name_zh": "信息技术硕士（非官方译名）",
+      "aliases": ["UNSW MIT", "MIT 8543"],
+      "degree_type": "授课型（coursework-based）",
+      "faculty": "Faculty of Engineering",
+      "department": "School of Computer Science and Engineering",
+      "official_urls": ["https://www.unsw.edu.au/study/postgraduate/master-of-information-technology"],
+      "duration_ft": "2 年全日制（96 UOC）；相关荣誉学位可减至 1 年，3 年相关本科可减至 1.7 年",
+      "duration_pt": "待核实",
+      "credits": "96 UOC",
+      "tuition": {
+        "amount": "2026 国际生指示性学费：首年 A$63,000，全程约 A$130,500（本土 CSP 首年 A$9,500）",
+        "intake": "2026",
+        "applies_to": "国际生 full fee / 本土 CSP 分列；按 UOC 实际修读计费",
+        "note": "RPL 减学分后总学费相应下降；若注册学习时长少于 16 个月，会影响 485 毕业生工签资格。"
+      },
+      "application": {
+        "open": "待核实",
+        "deadlines": ["待核实（Term 1 / 2 / 3 多次入学，按轮次审理）"],
+        "note": "非相关背景申请走 GC in IT → MIT 打包录取。"
+      },
+      "english": "待核实（官网按英语背景 / 考试成绩 / 英文授课经历分类判定，未列具体分数）",
+      "admission": {
+        "background": "相关背景：AQF7 本科（AI、CS、软件工程、计算机工程、数据分析、数据库、网安、信息系统、工程等）均分 ≥65%；非相关背景：任何专业 3 年本科均分 ≥65%，经 Graduate Certificate in IT 衔接；官网注明非 211 中国院校需 70%",
+        "prerequisites": "非相关背景需先修 IT Graduate Certificate 阶段；具体先修课待核实",
+        "gre_gmat": "官网未提及（不推断为明确不要求）",
+        "work_experience": "待核实"
+      },
+      "curriculum": {
+        "structure": "核心 IT 课程 + 最多两个专攻方向 + IT Project 或双学期研究项目",
+        "core": ["IT 核心课程（官网按 UOC 列结构，具体课名待核实）", "IT Project"],
+        "electives": ["Artificial Intelligence", "Database Systems", "Cyber Security Engineering", "Information Technology", "Internetworking"],
+        "tracks": ["Artificial Intelligence", "Database Systems", "Cyber Security Engineering", "Information Technology", "Internetworking"]
+      },
+      "highlights": [
+        "官网：ACS Professional 级别认证。",
+        "官网：UNSW 工程与技术 QS 2026 全澳第 1、全球前列；计算机方向与产业伙伴联系紧密。",
+        "官网提供非相关背景的打包衔接路径，适合转专业申请。"
+      ],
+      "career": ["官网指向 IT 行业岗位，并强调 400+ 产业与研究合作伙伴网络"],
+      "writing_hooks": [
+        "转专业申请要写清「已有背景 + GC 衔接路径」如何支撑你完成 MIT 的 96 UOC，而不是把衔接项目当成无关信息。",
+        "若目标明确（AI / 数据库 / 网安 / 网络），在文书中对应官网列出的专攻方向，并给出真实课程或项目证据。",
+        "中国院校均分口径（211 / 非 211）是官网明示要求，文书中不要虚构均分。"
+      ],
+      "verification": {
+        "status": "partial",
+        "conflicts": ["2028 年起改双学期制，具体入学批次的毕业时长需按官网过渡说明核对。"],
+        "unverified": ["英语分数细则", "核心课完整清单", "申请轮次与截止"]
+      },
+      "sources": [
+        {"url": "https://www.unsw.edu.au/study/postgraduate/master-of-information-technology", "supports": "项目代码、学制、UOC、学费、入学背景与衔接路径、专攻方向、认证"}
+      ]
+    },
+    {
+      "id": "unsw-master-data-science-decisions",
+      "name_en": "Master of Data Science and Decisions (8959)",
+      "name_zh": "数据科学与决策硕士（非官方译名）",
+      "aliases": ["UNSW DS&D", "8959"],
+      "degree_type": "授课型（coursework-based）",
+      "faculty": "Faculty of Engineering；Faculty of Science；UNSW Business School（联合）",
+      "department": "School of Mathematics and Statistics；School of Computer Science and Engineering；School of Economics（联合）",
+      "official_urls": ["https://www.unsw.edu.au/study/postgraduate/master-of-data-science-and-decisions"],
+      "duration_ft": "2 年全日制（96 UOC），可经 RPL 减至 1.3 年",
+      "duration_pt": "待核实",
+      "credits": "96 UOC",
+      "tuition": {
+        "amount": "2026 国际生指示性学费：首年 A$62,000，全程约 A$128,000（本土 CSP 首年 A$10,000）",
+        "intake": "2026",
+        "applies_to": "国际生 full fee / 本土 CSP 分列；按 UOC 计费",
+        "note": "RPL 最多 36 UOC；注意少于 16 个月注册时长对 485 工签的影响。"
+      },
+      "application": {
+        "open": "待核实",
+        "deadlines": ["待核实（Term 1 与 Term 3 入学）"],
+        "note": "均分由 UNSW Postgraduate Coursework Entry Calculator 判定。"
+      },
+      "english": "待核实（官网课程页按英语背景分类判定，未列具体分数）",
+      "admission": {
+        "background": "认可的本科学位（或同等），具相关学科的大量定量成分：商科、工程、医学、社会科学、商经、数学、科学、技术；UNSW 计算器判定总均分 ≥70",
+        "prerequisites": "大学水平多元微积分至少 1 门 + 线性代数至少 1 门",
+        "gre_gmat": "官网未提及（不推断为明确不要求）",
+        "work_experience": "待核实"
+      },
+      "curriculum": {
+        "structure": "数学统计 + 计算机 + 经济三大块；四个 specialisation",
+        "core": ["Data strategy 与大规模数据分析核心课（具体课名待核实）"],
+        "electives": ["Computational 方向课程", "Business 方向课程", "Behavioural 方向课程", "Quantitative Data Science and Decisions 方向课程"],
+        "tracks": ["Computational", "Business", "Behavioural", "Quantitative Data Science and Decisions"]
+      },
+      "highlights": [
+        "官网：consolidate your skills across mathematics and statistics, computer science and economics to solve big-scale problems with data strategy。",
+        "官网：UNSW 数学 QS 2026 全澳第 2 / 全球第 42；有 400+ 产业与研究伙伴。",
+        "由数学统计、计算机、经济三方联合授课，是该项目区别于普通数据科学项目的核心。"
+      ],
+      "career": ["官网面向 STEM 毕业生与在职人士，强调 data strategy 相关问题解决能力"],
+      "writing_hooks": [
+        "该项目的三段交叉（数学统计 / 计算机 / 经济）是 why-program 的核心，文书应写清你如何把三者连起来，而非只写编程。",
+        "四个 specialisation 中选一个具体方向，用真实课程或实习案例说明你为什么需要经济 / 行为视角。",
+        "均分 ≥70 由官方计算器判定，多门微积分与线代是先修，给出可核查的课程与成绩。"
+      ],
+      "verification": {
+        "status": "partial",
+        "conflicts": ["与线上 Master of Data Science（8646）易混淆；本库仅收录校内 8959。"],
+        "unverified": ["英语分数细则", "完整必修清单", "申请轮次与截止"]
+      },
+      "sources": [
+        {"url": "https://www.unsw.edu.au/study/postgraduate/master-of-data-science-and-decisions", "supports": "项目代码、学制、学费、入学要求、先修课、专攻方向、联合授课学院"}
+      ]
+    }
+  ]
+}

@@ -1,0 +1,139 @@
+{
+  "school_id": "MELBOURNE",
+  "school_name_zh": "墨尔本大学",
+  "school_name_en": "The University of Melbourne",
+  "region": "AU",
+  "snapshot_date": "2026-11-16",
+  "intake_target": "2026 Intake（2027 入学以官网实时页面为准）",
+  "general": {
+    "english_requirement": "官网课程页按 English Language Standard 分级，未直接列分数；常见口径为 IELTS 6.5、单项 6.0。按数据纪律标记为待核实，选校评估按 6.5 / 6.0 保守参考。",
+    "application_open": "待核实（2026 入学 Master of Data Science 申请截止曾延至 11 月 30 日；2027 入学待官网确认）",
+    "notes": [
+      "墨尔本大学采用 3 月单一入学季，授课硕士多为 200 学分 / 2 年全日制。",
+      "Master of Computer Science（MC-CS）是研究训练项目：100 学分研究项目占学位一半，面向读博 / 高阶研发，要求计算机相关本科 WAM ≥75。",
+      "Master of Data Science（MC-DATASC）由数学与统计学院开设，不限本科专业但要求编程 + 微积分 2 + 线性代数先修；学费按 2026 年指示性费率记录。"
+    ]
+  },
+  "programs": [
+    {
+      "id": "melbourne-master-computer-science",
+      "name_en": "Master of Computer Science (MC-CS)",
+      "name_zh": "计算机科学硕士（非官方译名）",
+      "aliases": ["MC-CS", "Melbourne Master of Computer Science"],
+      "degree_type": "授课型（coursework-based，含 100 学分研究项目）",
+      "faculty": "School of Computing and Information Systems",
+      "department": "School of Computing and Information Systems",
+      "official_urls": [
+        "https://handbook.unimelb.edu.au/2026/courses/mc-cs",
+        "https://study.unimelb.edu.au/find/courses/graduate/master-of-computer-science/"
+      ],
+      "duration_ft": "2 年全日制（24 个月）",
+      "duration_pt": "4 年兼读制",
+      "credits": "200 学分 = 研究方法 12.5 + 计算机基础 25-37.5 + 选修 50-62.5 + 研究项目 100",
+      "tuition": {
+        "amount": "约 A$132,250 / 全程（2026 年国际生指示性费率，2 年）",
+        "intake": "2026",
+        "applies_to": "国际生指示性费率；每年复核",
+        "note": "CRICOS 0100884；学费按科目 EFTSL / 学科 / census date 计算，Offer 金额为最终准绳。"
+      },
+      "application": {
+        "open": "待核实",
+        "deadlines": ["待核实（墨尔本大学 3 月入学，2027 入学轮次以官网实时页面为准）"],
+        "note": "达到最低学术要求不保证录取，存在配额；研究项目还需导师愿意指导。"
+      },
+      "english": "待核实（官网课程页按 English Language Standard 分级，未列具体分数）",
+      "admission": {
+        "background": "计算机相关（cognate）本科学位，WAM ≥75%",
+        "prerequisites": "至少 25 学分大学水平数学或统计课程；建议具备形式逻辑、离散数学与二年级数学基础",
+        "gre_gmat": "官网未提及（不推断为明确不要求）",
+        "work_experience": "待核实"
+      },
+      "curriculum": {
+        "structure": "1 门研究方法（COMP90044）+ 2-3 门计算机基础 + 4-5 门选修 + 100 学分四段式研究项目（COMP90078-90081）",
+        "core": ["COMP90044 Research Methods", "COMP90078-90081 Research Project（四部分）"],
+        "electives": ["Advanced Computer Science", "Artificial Intelligence", "Cybersecurity", "Human-Computer Interaction", "Programming Languages and Distributed Systems", "Spatial Information Science"],
+        "tracks": ["Artificial Intelligence", "Cybersecurity", "Human-Computer Interaction", "Programming Languages and Distributed Systems", "Spatial Information Science"]
+      },
+      "highlights": [
+        "官网：research training program，a year-long research project in a field of choice。",
+        "官网：designed for people who want to gain significant experience in research, leading to further study in a PhD, and/or careers in high-level tech companies and R&D labs。",
+        "ACS 认证（官网项目信息）；澳洲计算机方向以研究项目占一半学分为显著特点。"
+      ],
+      "career": ["官网指向 PhD 深造、高阶科技公司研发岗位与 R&D labs"],
+      "writing_hooks": [
+        "该项目一半学分是研究项目，文书必须写清你做过的研究：问题、方法、评估与局限，不能只列课程。",
+        "呼应官网「leading to further study in a PhD」的定位，若确有读博计划应具体说明研究方向，而非套话。",
+        "WAM ≥75 与 25 学分数学是先修硬条件，用成绩单口径对应说明。"
+      ],
+      "verification": {
+        "status": "partial",
+        "conflicts": ["2026 与 2027 Handbook 费率可能不同；本库记录 2026 指示性总额。"],
+        "unverified": ["2027 入学学费与截止", "英语分数细则", "工作经验要求"]
+      },
+      "sources": [
+        {"url": "https://handbook.unimelb.edu.au/2026/courses/mc-cs", "supports": "项目定位、学分、学制、CRICOS、研究项目结构"},
+        {"url": "https://study.unimelb.edu.au/find/courses/graduate/master-of-computer-science/", "supports": "招生页面与入学季"}
+      ]
+    },
+    {
+      "id": "melbourne-master-data-science",
+      "name_en": "Master of Data Science (MC-DATASC)",
+      "name_zh": "数据科学硕士（非官方译名）",
+      "aliases": ["MC-DATASC", "Melbourne Master of Data Science"],
+      "degree_type": "授课型（coursework-based，含 capstone）",
+      "faculty": "School of Mathematics and Statistics",
+      "department": "School of Mathematics and Statistics",
+      "official_urls": [
+        "https://handbook.unimelb.edu.au/2026/courses/mc-datasc",
+        "https://study.unimelb.edu.au/find/courses/graduate/master-of-data-science/"
+      ],
+      "duration_ft": "2 年全日制（24 个月）",
+      "duration_pt": "4 年兼读制",
+      "credits": "200 学分；含四个 specialisation stream 与最终 capstone / major data science project",
+      "tuition": {
+        "amount": "约 A$66,125 / 年（2026 年国际生指示性费率；按当前费率静态估算 2 年约 A$132,250）",
+        "intake": "2026",
+        "applies_to": "国际生指示性费率；每年复核",
+        "note": "CRICOS 092791B；以 Offer 金额为最终准绳。"
+      },
+      "application": {
+        "open": "待核实",
+        "deadlines": ["2026 入学申请截止曾延长至 2026-11-30；2027 入学待官网确认"],
+        "note": "需提交先修课程的官方 syllabus 供审核。"
+      },
+      "english": "待核实（官网课程页按 English Language Standard 分级，未列具体分数；常见口径 IELTS 6.5 / 6.0）",
+      "admission": {
+        "background": "本科学位不限专业，WAM ≥65%",
+        "prerequisites": "12.5 学分（1 门）重编程计算机课程；MAST10006 微积分 2 与 MAST10007 线性代数（或同等）；需提交课程大纲",
+        "gre_gmat": "官网未提及（不推断为明确不要求）",
+        "work_experience": "待核实"
+      },
+      "curriculum": {
+        "structure": "统计 + 计算机交叉的 professional entry program；四个 specialisation stream；最后一年 capstone",
+        "core": ["统计建模与推断", "机器学习与数据挖掘", "数据库系统", "计算统计", "Major data science project / capstone"],
+        "electives": ["Machine Learning", "Advanced Data Mining", "Database Systems", "Computational Statistics", "Science Communication / Internship"],
+        "tracks": ["Foundational", "Statistical", "Computational", "Computational and Statistical"]
+      },
+      "highlights": [
+        "官网：professional entry program，combines statistics and computer science in a single coordinated program。",
+        "官网：四个 specialisation streams（foundational / statistical / computational / computational and statistical）。",
+        "官网：capstone subject 用公开或私有数据解决真实问题，并以 client-ready format 展示。"
+      ],
+      "career": ["官网指向 data analytics 职业，培养管理大型复杂数据集的分析与技术能力"],
+      "writing_hooks": [
+        "官网强调「不限本科 + 先修补齐」的灵活入口，转背景申请者应写清如何完成编程 / 微积分 / 线代先修。",
+        "四个 stream 中明确选择哪一个，并用过往统计建模或编程项目支撑，而非泛写「喜欢数据」。",
+        "呼应官网 capstone 的 client-ready presentation 要求，写你向非技术受众解释分析结果的经历。"
+      ],
+      "verification": {
+        "status": "partial",
+        "conflicts": ["第三方对学费与学院归属说法不一（有称计算机学院开设）；本库以 Handbook 的数学与统计学院为准。"],
+        "unverified": ["2027 入学学费与截止", "英语分数细则", "ACS 认证状态"]
+      },
+      "sources": [
+        {"url": "https://handbook.unimelb.edu.au/2026/courses/mc-datasc", "supports": "项目定位、学院、学分、学制、CRICOS"},
+        {"url": "https://study.unimelb.edu.au/find/courses/graduate/master-of-data-science/", "supports": "四个 specialisation、capstone、截止延期、入学季与先修说明"}
+      ]
+    }
+  ]
+}

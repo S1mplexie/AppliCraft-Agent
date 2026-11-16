@@ -85,7 +85,7 @@ class Settings(BaseSettings):
     wechat_auto_register: bool = False
     wechat_api_timeout: float = 8.0
 
-    # --- RAG / 知识库（港新项目官方资料召回）---
+    # --- RAG / 知识库（收录项目官方资料召回）---
     # 默认开启：生成 PS / 推荐信时若档案指定了知识库覆盖范围内的目标项目，
     # 会自动检索其官方课程 / 特色 / 文书要点作为写作参考。目标项目不在覆盖范围内时安全降级。
     rag_enabled: bool = True

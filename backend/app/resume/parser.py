@@ -322,7 +322,7 @@ def _merge_list(
     merged[key] = [item.model_dump() for item in items]
     changes.append(f"{label}：以简历内容覆盖，共 {len(items)} {unit}")
     if key == "education":
-        # 均分是港新申请的关键指标，解析结果单独列出，方便用户对照成绩单核对。
+        # 均分是港新英澳申请的关键指标，解析结果单独列出，方便用户对照成绩单核对。
         averages = []
         for item in items:
             value = str(getattr(item, "gpa_average", "") or "").strip()
