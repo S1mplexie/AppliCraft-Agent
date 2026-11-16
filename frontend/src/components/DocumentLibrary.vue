@@ -118,9 +118,10 @@ function fmtDate(value: string): string {
         </div>
 
         <div class="library-list">
+          <!-- 生成中右栏是本次实时轨迹，且此时点左栏不会打开文书，不显示蓝色选中态 -->
           <button
             v-for="doc in filtered" :key="doc.id" class="library-item"
-            :class="{ active: activeId === doc.id, 'just-created': genOutcome?.ok && genOutcome.docId === doc.id }"
+            :class="{ active: !generating && activeId === doc.id, 'just-created': genOutcome?.ok && genOutcome.docId === doc.id }"
             @click="emit('open', doc.id)"
           >
             <div class="library-item-top">
