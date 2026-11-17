@@ -489,7 +489,7 @@ async function importTargetPrograms(ids: string[]) {
   profile.value.target_programs.push(...fresh.map(systemProgramToTarget))
   activeTab.value = 'profile'
   profileSection.value = 'programs'
-  toast(`已导入 ${fresh.length} 个目标项目，请补充课程要点与契合点`)
+  toast(`已导入 ${fresh.length} 个目标项目，官网语言要求与课程结构已带出，请核对并补充契合点`)
   // 自动保存有 900ms 防抖，这里立即落盘，避免刚导入就切档案 / 关页面时丢失。
   await saveProfile(true)
 }

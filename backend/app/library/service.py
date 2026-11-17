@@ -103,11 +103,39 @@ def build_reference_context(
     return "\n\n".join(parts), meta_list
 
 
+def _official_field_text(obj: dict[str, Any], prefix: str) -> str:
+    """从官网原文分块 content 中提取以 prefix 开头的那一行（去掉 prefix 与首尾空白）。
+
+    只处理 source_type=official_university 的块；找不到时返回空串。
+    提取的是官网原文的一整行，不推断、不改写，原文含「待核实」也照实保留。
+    """
+    meta = obj.get("meta") or {}
+    if meta.get("source_type") != "official_university":
+        return ""
+    for line in (obj.get("content") or "").splitlines():
+        if line.startswith(prefix):
+            return line[len(prefix):].strip()
+    return ""
+
+
+def _official_block_body(obj: dict[str, Any]) -> str:
+    """返回官网原文分块正文：去掉首行的【学校｜项目｜中文名】标题，只留字段行。"""
+    meta = obj.get("meta") or {}
+    if meta.get("source_type") != "official_university":
+        return ""
+    lines = (obj.get("content") or "").splitlines()
+    # 首行为【…】标题横幅，跳过；其余为「字段：内容」行，原样保留。
+    if lines and lines[0].lstrip().startswith("【"):
+        lines = lines[1:]
+    return "\n".join(line for line in lines if line.strip())
+
+
 def list_system_programs(settings: Settings) -> list[dict[str, Any]]:
     """聚合知识库 chunks.jsonl，按 program_id 返回系统已覆盖的项目清单。
 
     每个项目包含学校、项目名（中英）、学院、地区、入学批次、官方链接与已覆盖资料板块，
-    供前端「参考文档库」页展示系统自带的官方项目信息，也便于用户核对。
+    并带出官网原文的「语言要求」行与「课程结构」正文，供用户从系统项目库导入档案时
+    一并带入目标项目字段。只取 source_type=official_university 的块，原文照录不推断。
     """
     path = settings.knowledge_dir / "chunks.jsonl"
     programs: dict[str, dict[str, Any]] = {}
@@ -137,6 +165,8 @@ def list_system_programs(settings: Settings) -> list[dict[str, Any]]:
                     "intake": meta.get("intake", ""),
                     "official_urls": list(meta.get("official_urls") or []),
                     "fields": [],
+                    "language_requirement": "",
+                    "curriculum_notes": "",
                 },
             )
             field_label = meta.get("field_label") or meta.get("field")
@@ -145,6 +175,11 @@ def list_system_programs(settings: Settings) -> list[dict[str, Any]]:
             for url in meta.get("official_urls") or []:
                 if url and url not in entry["official_urls"]:
                     entry["official_urls"].append(url)
+            # 官网原文带出：语言要求行 / 课程结构正文（仅官方来源块，不推断）。
+            if field_label == "录取要求" and not entry["language_requirement"]:
+                entry["language_requirement"] = _official_field_text(obj, "语言要求：")
+            if field_label == "课程结构" and not entry["curriculum_notes"]:
+                entry["curriculum_notes"] = _official_block_body(obj)
 
     return sorted(
         programs.values(),

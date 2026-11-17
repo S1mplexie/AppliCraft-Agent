@@ -269,8 +269,12 @@ export interface SystemProgram {
   program_id: string; school_id: string; school_name_zh: string
   program_name_en: string; program_name_zh: string; faculty: string
   region: string; intake: string; official_urls: string[]; fields: string[]
+  /** 官网原文「语言要求」行（来自录取要求块，仅官方来源）；无则为空。 */
+  language_requirement?: string
+  /** 官网原文「课程结构」正文（去标题横幅，仅官方来源）；无则为空。 */
+  curriculum_notes?: string
 }
-/** 系统项目库条目 → 档案目标项目：只搬官方事实骨架，申请人自述与未核实字段一律留空。 */
+/** 系统项目库条目 → 档案目标项目：语言与课程搬官网原文；申请人自述与未核实字段一律留空。 */
 export function systemProgramToTarget(p: SystemProgram): TargetProgram {
   // 知识库中文项目名可能带「（非官方译名）」标注，那是资料校验注记，不能写进文书事实。
   const zhName = (p.program_name_zh || '').replace(/[（(]非官方译名[）)]/g, '').trim()
@@ -287,8 +291,8 @@ export function systemProgramToTarget(p: SystemProgram): TargetProgram {
     region: p.region === 'HK' ? '中国香港' : p.region === 'SG' ? '新加坡' : p.region === 'UK' ? '英国' : p.region === 'AU' ? '澳洲' : '',
     intake: p.intake,
     deadline: '',
-    language_requirement: '',
-    curriculum_notes: '',
+    language_requirement: p.language_requirement || '',
+    curriculum_notes: p.curriculum_notes || '',
     faculty_notes: p.faculty,
     why_fit: '',
     notes,

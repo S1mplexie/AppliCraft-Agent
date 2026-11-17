@@ -232,8 +232,8 @@ const newRecommender = (): Recommender => ({
             >从系统项目库导入</button>
           </div>
           <p class="hint import-lead">
-            系统项目库已收录 {{ props.systemProgramCount || 0 }} 个官方项目（覆盖港新英澳），可批量带入学校、项目名、学院与入学季；
-            导入后再补充课程要点与「你与项目的契合点」，也可以完全手动填写。
+            系统项目库已收录 {{ props.systemProgramCount || 0 }} 个官方项目（覆盖港新英澳），可批量带入学校、项目名、学院、入学季，以及官网原文的语言要求与课程结构；
+            官网未列或「待核实」处照实保留，请按官网核实后再补充「你与项目的契合点」，也可以完全手动填写。
           </p>
           <datalist id="target-region-options">
             <option value="中国香港"></option><option value="新加坡"></option><option value="英国"></option><option value="澳洲"></option><option value="其他"></option>
