@@ -3,6 +3,7 @@ import { computed, nextTick, ref, watch } from 'vue'
 import { api } from '../api/client'
 import { formatImportedAt } from '../utils/format'
 import type { SkillDetail, SkillInfo, TabKey } from '../types'
+import { confirm } from '../utils/confirm'
 
 const props = defineProps<{
   skills: SkillInfo[]
@@ -144,7 +145,7 @@ async function openDetail(id: string) {
 }
 
 async function removeSkill(skill: SkillInfo) {
-  if (!confirm(`删除导入的技能「${skill.name}」？已生成文书中的使用记录仍会保留。`)) return
+  if (!(await confirm({ title: '删除技能', message: `删除导入的技能「${skill.name}」？已生成文书中的使用记录仍会保留。` }))) return
   try {
     await api.deleteSkill(skill.id)
     const next = selected.value.filter((id) => id !== skill.id)

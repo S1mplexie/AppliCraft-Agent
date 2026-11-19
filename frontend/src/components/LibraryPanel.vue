@@ -3,6 +3,7 @@ import { computed, nextTick, ref } from 'vue'
 import type { ReferenceDoc, SystemProgram, TabKey } from '../types'
 import { api } from '../api/client'
 import { formatImportedAt } from '../utils/format'
+import { confirm } from '../utils/confirm'
 
 const props = defineProps<{
   references: ReferenceDoc[]
@@ -102,7 +103,7 @@ async function saveName() {
 }
 
 async function removeReference(id: string, name: string) {
-  if (!confirm(`删除参考文档「${name || id}」？删除后已生成文书中的引用记录仍会保留。`)) return
+  if (!(await confirm({ title: '删除参考文档', message: `删除参考文档「${name || id}」？删除后已生成文书中的引用记录仍会保留。` }))) return
   try {
     await api.deleteReference(id)
     flash('已删除参考文档')

@@ -5,6 +5,7 @@ import { computed, ref, watch } from 'vue'
 import { api } from '../api/client'
 import BoardPanel from './BoardPanel.vue'
 import type { ApplicationProject, DocumentMeta, SystemProgram } from '../types'
+import { confirm } from '../utils/confirm'
 
 const props = defineProps<{
   profileId: string
@@ -257,7 +258,8 @@ function startRename() {
 }
 
 async function removeProject() {
-  if (!detail.value || !window.confirm(`删除项目「${detail.value.name}」？名下文书会回到未分组，不会被删除。`)) return
+  if (!detail.value) return
+  if (!(await confirm({ title: '删除项目', message: `删除项目「${detail.value.name}」？名下文书会回到未分组，不会被删除。` }))) return
   await api.deleteProject(props.profileId, detail.value.id)
   detailId.value = ''
   await loadProjects()

@@ -2,6 +2,7 @@
 import { computed, ref, watch } from 'vue'
 import { api } from '../api/client'
 import { LLM_PROVIDERS, type UserLLMConfig } from '../types'
+import { confirm } from '../utils/confirm'
 
 const props = defineProps<{ llm: UserLLMConfig | null }>()
 const emit = defineEmits<{ changed: [] }>()
@@ -89,7 +90,7 @@ async function testConnection() {
 }
 
 async function remove() {
-  if (!confirm('清除你自己配置的 API Key？之后将回退到系统共享 Key（若管理员已关闭兜底，则需要重新配置）。')) return
+  if (!(await confirm({ title: '清除 API Key', message: '清除你自己配置的 API Key？之后将回退到系统共享 Key（若管理员已关闭兜底，则需要重新配置）。' }))) return
   busy.value = 'delete'
   try {
     await api.deleteMyLlm()

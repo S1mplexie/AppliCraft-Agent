@@ -2217,6 +2217,9 @@ body.regen-resizing, body.regen-resizing * { cursor: row-resize !important; user
   margin: 0; font-size: 13px; line-height: 1.65; color: var(--ink-soft, #5b6b7f);
 }
 .confirm-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+/* 全局确认弹窗：盖住常规界面；提示型（非危险）图标改为蓝色信息色 */
+.global-confirm-overlay { z-index: 80; }
+.confirm-modal--info .confirm-icon { background: #eaf2fd; color: #2f6fbf; }
 
 /* ===== tab 切换：轻量入场动画（v-show 由 App.vue 重放 class 触发） ===== */
 @keyframes pageEnter {

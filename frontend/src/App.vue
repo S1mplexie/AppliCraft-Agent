@@ -11,6 +11,8 @@ import MatchPanel from './components/MatchPanel.vue'
 import AuthView from './components/AuthView.vue'
 import ProfileSwitcher from './components/ProfileSwitcher.vue'
 import SystemProgramPicker from './components/SystemProgramPicker.vue'
+import ConfirmDialog from './components/ConfirmDialog.vue'
+import { confirm } from './utils/confirm'
 import { api, onUnauthorized } from './api/client'
 import {
   NODE_LABELS, demoProfile, emptyProfile, systemProgramToTarget,
@@ -814,7 +816,7 @@ async function saveDocument(markdown: string) {
 }
 
 async function removeDocument(id: string) {
-  if (!confirm('删除这份文档及其所有版本？')) return
+  if (!(await confirm({ title: '删除文档', message: '删除这份文档及其所有版本？此操作不可撤销。' }))) return
   try {
     await api.deleteDocument(id)
     if (activeDoc.value?.meta.id === id) activeDoc.value = null
@@ -1200,4 +1202,7 @@ onUnmounted(() => window.removeEventListener('hashchange', onHashChange))
       </div>
     </div>
   </div>
+
+  <!-- 全局自定义确认弹窗：删除文档/项目/技能、清除 Key 等统一走这里 -->
+  <ConfirmDialog />
 </template>
