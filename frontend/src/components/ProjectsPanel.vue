@@ -412,9 +412,24 @@ function sourceLabel(p: ApplicationProject) { return p.source === 'imported' ? '
           <p>按申请项目归类文书，一眼看清每所学校的材料准备进度。</p>
         </div>
         <div class="pl-head-actions">
-          <div class="pl-view-toggle" role="tablist" aria-label="项目视图">
-            <button :class="{ on: view === 'list' }" role="tab" :aria-selected="view === 'list'" @click="view = 'list'">列表</button>
-            <button :class="{ on: view === 'board' }" role="tab" :aria-selected="view === 'board'" @click="view = 'board'">看板</button>
+          <div class="pl-view-toggle" role="tablist" aria-label="切换项目视图：列表或看板">
+            <span class="pl-view-hint">视图</span>
+            <button
+              :class="{ on: view === 'list' }" role="tab" :aria-selected="view === 'list'"
+              :title="view === 'list' ? '当前：列表视图' : '点击切换为列表视图'"
+              @click="view = 'list'"
+            >
+              <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 5h14M3 10h14M3 15h14" /></svg>
+              <span>列表</span>
+            </button>
+            <button
+              :class="{ on: view === 'board' }" role="tab" :aria-selected="view === 'board'"
+              :title="view === 'board' ? '当前：看板视图' : '点击切换为看板视图（按状态分栏）'"
+              @click="view = 'board'"
+            >
+              <svg viewBox="0 0 20 20" aria-hidden="true"><rect x="2.5" y="3.5" width="5" height="13" rx="1" /><rect x="12.5" y="3.5" width="5" height="9" rx="1" /></svg>
+              <span>看板</span>
+            </button>
           </div>
           <button class="btn primary" @click="modal = 'import'">＋ 从知识库导入</button>
           <button class="btn" @click="modal = 'create'">新建项目</button>

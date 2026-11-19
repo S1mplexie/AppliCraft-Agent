@@ -106,17 +106,36 @@ h1, h2, h3, .serif { font-family: var(--serif); }
   text-transform: uppercase; color: var(--faint);
 }
 
-/* 项目管理：列表 / 看板 视图切换（看板已下沉为内部视图） */
+/* 项目管理：列表 / 看板 视图切换（看板已下沉为内部视图）
+   做成明显的分段控件：左侧「视图」引导词 + 两个带图标的按钮，
+   未选中项有边框与 hover 反馈，选中项实色反转，让用户一眼看出可点击切换。 */
 .pl-view-toggle {
-  display: inline-flex; border: 1px solid var(--line); border-radius: 9px;
-  overflow: hidden; background: var(--surface-2);
+  display: inline-flex; align-items: center; gap: 3px;
+  padding: 3px; border: 1px solid var(--line-strong); border-radius: 10px;
+  background: var(--surface-2);
+}
+.pl-view-hint {
+  padding: 0 7px 0 5px; font-size: 11px; font-weight: 600;
+  letter-spacing: .5px; color: var(--muted); white-space: nowrap; user-select: none;
 }
 .pl-view-toggle button {
-  border: none; background: transparent; padding: 7px 15px; font-size: 12.5px;
-  font-weight: 550; color: var(--muted); cursor: pointer; transition: background .14s, color .14s;
+  display: inline-flex; align-items: center; justify-content: center; gap: 5px;
+  min-width: 62px; border: 1px solid transparent; border-radius: 7px;
+  background: transparent; padding: 6px 11px; font-size: 12.5px;
+  font-weight: 600; color: var(--muted); cursor: pointer;
+  transition: background .14s, color .14s, border-color .14s, box-shadow .14s;
 }
-.pl-view-toggle button + button { border-left: 1px solid var(--line); }
-.pl-view-toggle button.on { background: var(--accent); color: #fff; }
+.pl-view-toggle button svg {
+  width: 15px; height: 15px; flex: none;
+  fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round;
+}
+.pl-view-toggle button:hover { background: var(--surface); color: var(--ink); border-color: var(--line); }
+.pl-view-toggle button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.pl-view-toggle button.on {
+  background: var(--accent); color: #fff; border-color: var(--accent);
+  box-shadow: 0 1px 3px rgba(30, 68, 112, .28);
+}
+.pl-view-toggle button.on:hover { background: var(--accent-hover); border-color: var(--accent-hover); color: #fff; }
 
 /* 看板嵌套在项目管理内时：弱化页头，避免与列表页头重复 */
 .bd-embed-head { margin-bottom: 14px; }
