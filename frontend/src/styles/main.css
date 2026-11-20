@@ -1775,7 +1775,8 @@ body.regen-resizing, body.regen-resizing * { cursor: row-resize !important; user
 .sf-links a { color: var(--accent); text-decoration: none; }
 .sf-links a:hover { text-decoration: underline; }
 .sf-icp { margin-left: auto; color: var(--muted); }
-.sf-icp b { color: var(--accent-2); font-weight: 600; }
+.sf-icp b, .sf-icp a { color: var(--accent-2); font-weight: 600; text-decoration: none; }
+.sf-icp a:hover { text-decoration: underline; }
 .sf-police { color: var(--muted); }
 .sf-police a { color: var(--accent-2); text-decoration: none; }
 .sf-police a:hover { text-decoration: underline; }
