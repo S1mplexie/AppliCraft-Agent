@@ -2,8 +2,11 @@
 from __future__ import annotations
 
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
+from sqlalchemy.orm import Session
 
-from app.api.deps import get_llm, get_user_store
+from app.api.deps import check_quota, get_current_user, get_db, get_llm, get_user_store
+from app.config import Settings, get_settings
+from app.db.models import User
 from app.models.profile import ApplicantProfile, new_id, utcnow
 from app.resume.parser import (
     ALLOWED_EXTENSIONS,
@@ -69,12 +72,21 @@ async def parse_resume(
     file: UploadFile = File(...),
     store: FileStore = Depends(get_user_store),
     llm=Depends(get_llm),
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
 ):
     """上传简历（PDF/DOCX/TXT/MD），解析后以「只覆盖出现的信息」语义合并进档案。
 
     文件仅在内存中抽取纯文本，不上传第三方、不落盘；解析结果直接覆盖写入档案，
     并返回变更清单供前端展示。LLM 未配置时由 get_llm 依赖返回 503。
+
+    解析同样调用大模型，因此与文书生成共用每日额度：进入 LLM 前过 check_quota
+    闸门（额满返回 429），成功后记一条 resume_parse 审计日志占用一次额度；
+    失败只记 error 日志、不占免费额度。管理员与自带 Key 用户不受限制。
     """
+    from app.api.routes_generate import _llm_source, _log_generation
+
     data = store.get_profile(profile_id)
     if not data:
         raise HTTPException(status_code=404, detail="档案不存在")
@@ -95,11 +107,18 @@ async def parse_resume(
     except ResumeParseError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 
+    billing = _llm_source(llm)
+    # 真正调用大模型之前检查额度，避免额满用户白跑一次解析。
+    check_quota(db, user, llm, settings)
     try:
         patch = await parse_resume_text(resume_text, llm)
         merged, changes = merge_profile(data, patch)
     except Exception as exc:  # noqa: BLE001 - 归一化 LLM / 解析层错误为 502
+        _log_generation(
+            user.id, "resume_parse", status="error", error=str(exc), llm_source=billing
+        )
         raise HTTPException(status_code=502, detail=f"简历解析失败：{exc}") from exc
 
     saved = store.save_profile(merged)
+    _log_generation(user.id, "resume_parse", llm_source=billing)
     return {"profile": saved, "changes": changes}

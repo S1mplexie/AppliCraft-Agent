@@ -1,10 +1,15 @@
-"""简历上传解析：文本抽取、LLM 解析、覆盖合并与接口的回归测试。"""
+"""简历上传解析：文本抽取、LLM 解析、覆盖合并、接口与计费的回归测试。"""
 from __future__ import annotations
 
+import pytest
 from fastapi.testclient import TestClient
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
-from app.api import routes_profile
+from app.api import routes_generate
 from app.api.deps import get_current_user, get_db, get_llm, get_user_store
+from app.config import get_settings
+from app.db.models import Base, GenerationLog, naive_utc
 from app.main import app
 from app.models.profile import ApplicantProfile
 from app.resume.parser import (
@@ -16,10 +21,45 @@ from app.resume.parser import (
 from app.storage.filestore import FileStore
 
 
+@pytest.fixture(autouse=True)
+def audit_db(tmp_path, monkeypatch):
+    """把生成审计日志隔离到临时 sqlite，避免测试污染真实额度库。
+
+    _log_generation 内部使用 routes_generate.SessionLocal 而非请求注入的 db，
+    因此这里同时替换请求依赖与审计 Session，让断言看到同一份数据。
+    """
+    engine = create_engine(f"sqlite:///{tmp_path / 'resume-audit.db'}")
+    Base.metadata.create_all(engine)
+    session_factory = sessionmaker(bind=engine, expire_on_commit=False)
+    monkeypatch.setattr(routes_generate, "SessionLocal", session_factory)
+    yield session_factory
+    app.dependency_overrides.clear()
+    engine.dispose()
+
+
+def _seed_log(session_factory, user_id: str, *, status: str = "ok", source: str = "system", count: int = 1):
+    with session_factory() as db:
+        for _ in range(count):
+            db.add(
+                GenerationLog(
+                    user_id=user_id, doc_type="ps", status=status,
+                    llm_source=source, created_at=naive_utc(),
+                )
+            )
+        db.commit()
+
+
+def _log_rows(session_factory, user_id: str):
+    with session_factory() as db:
+        return list(db.query(GenerationLog).filter(GenerationLog.user_id == user_id).all())
+
+
+
 class FakeUser:
     id = "user_resume_test"
     daily_quota = 20
     is_active = True
+    is_admin = False
 
 
 class FakeDB:
@@ -215,3 +255,114 @@ def test_parse_resume_rejects_bad_extension(tmp_path):
         assert "格式" in response.json()["detail"]
     finally:
         app.dependency_overrides.clear()
+
+
+# ------------------------------------------------------------------ 额度计费
+def _parse_request(client, profile_id: str):
+    return client.post(
+        f"/api/profiles/{profile_id}/parse-resume",
+        files={"file": ("resume.txt", _resume_text().encode("utf-8"), "text/plain")},
+    )
+
+
+def test_parse_resume_consumes_system_quota(tmp_path, audit_db, monkeypatch):
+    """成功解析写一条 resume_parse 日志，用完免费额度后返回 429。"""
+    monkeypatch.setattr(get_settings(), "system_key_daily_limit", 2)
+    store = FileStore(tmp_path)
+    profile = store.save_profile(_base_profile())
+    user = FakeUser()
+
+    with audit_db() as db:
+        app.dependency_overrides[get_llm] = lambda: StubLLM()
+        app.dependency_overrides[get_user_store] = lambda: store
+        app.dependency_overrides[get_current_user] = lambda: user
+        app.dependency_overrides[get_db] = lambda: db
+        client = TestClient(app)
+
+        assert _parse_request(client, profile["id"]).status_code == 200
+        assert _parse_request(client, profile["id"]).status_code == 200
+        blocked = _parse_request(client, profile["id"])
+        assert blocked.status_code == 429
+        assert "免费额度" in blocked.json()["detail"]
+
+    logs = _log_rows(audit_db, user.id)
+    assert len(logs) == 2
+    assert all(
+        row.doc_type == "resume_parse" and row.status == "ok" and row.llm_source == "system"
+        for row in logs
+    )
+
+
+def test_parse_resume_failure_does_not_consume_quota(tmp_path, audit_db, monkeypatch):
+    """解析失败只记 error 日志，不占免费次数；紧接着仍可成功解析。"""
+    monkeypatch.setattr(get_settings(), "system_key_daily_limit", 2)
+    store = FileStore(tmp_path)
+    profile = store.save_profile(_base_profile())
+    user = FakeUser()
+
+    class FailingLLM(StubLLM):
+        async def complete_json(self, *, task, system, user, **kwargs):
+            raise RuntimeError("模型临时不可用")
+
+    with audit_db() as db:
+        app.dependency_overrides[get_llm] = lambda: FailingLLM()
+        app.dependency_overrides[get_user_store] = lambda: store
+        app.dependency_overrides[get_current_user] = lambda: user
+        app.dependency_overrides[get_db] = lambda: db
+        client = TestClient(app)
+        assert _parse_request(client, profile["id"]).status_code == 502
+
+        app.dependency_overrides[get_llm] = lambda: StubLLM()
+        assert _parse_request(client, profile["id"]).status_code == 200
+        assert _parse_request(client, profile["id"]).status_code == 200
+        # 第三次才因额度用尽被拦截，说明失败的第一次没有扣次数。
+        assert _parse_request(client, profile["id"]).status_code == 429
+
+    logs = _log_rows(audit_db, user.id)
+    assert sum(1 for row in logs if row.status == "error") == 1
+    assert sum(1 for row in logs if row.status == "ok") == 2
+
+
+def test_parse_resume_personal_key_bypasses_quota(tmp_path, audit_db, monkeypatch):
+    """额度已满但用户自带 Key：仍可解析，日志记为 personal 不占系统额度。"""
+    monkeypatch.setattr(get_settings(), "system_key_daily_limit", 1)
+    store = FileStore(tmp_path)
+    profile = store.save_profile(_base_profile())
+    user = FakeUser()
+    _seed_log(audit_db, user.id, count=1)
+
+    class PersonalLLM(StubLLM):
+        source = "personal"
+
+    with audit_db() as db:
+        app.dependency_overrides[get_llm] = lambda: PersonalLLM()
+        app.dependency_overrides[get_user_store] = lambda: store
+        app.dependency_overrides[get_current_user] = lambda: user
+        app.dependency_overrides[get_db] = lambda: db
+        client = TestClient(app)
+        assert _parse_request(client, profile["id"]).status_code == 200
+
+    logs = _log_rows(audit_db, user.id)
+    assert len(logs) == 2
+    assert logs[-1].doc_type == "resume_parse" and logs[-1].llm_source == "personal"
+
+
+def test_parse_resume_admin_unlimited(tmp_path, audit_db, monkeypatch):
+    """管理员额度已满仍可解析：闸门放行，日志来源仍按 Key 归属记为 system。"""
+    monkeypatch.setattr(get_settings(), "system_key_daily_limit", 1)
+    store = FileStore(tmp_path)
+    profile = store.save_profile(_base_profile())
+    admin = FakeUser()
+    admin.is_admin = True
+    _seed_log(audit_db, admin.id, count=1)
+
+    with audit_db() as db:
+        app.dependency_overrides[get_llm] = lambda: StubLLM()
+        app.dependency_overrides[get_user_store] = lambda: store
+        app.dependency_overrides[get_current_user] = lambda: admin
+        app.dependency_overrides[get_db] = lambda: db
+        client = TestClient(app)
+        assert _parse_request(client, profile["id"]).status_code == 200
+
+    logs = _log_rows(audit_db, admin.id)
+    assert logs[-1].doc_type == "resume_parse" and logs[-1].llm_source == "system"

@@ -569,6 +569,8 @@ async function onResumeFile(event: Event) {
     resumeModalOpen.value = true
     saveState.value = '简历解析已覆盖并保存'
     await loadProfiles()
+    // 与网页版一致：解析完成后同步刷新额度展示。
+    await refreshBilling()
     toast(
       result.changes.length
         ? `简历已解析，覆盖 ${result.changes.length} 处信息`
@@ -984,7 +986,7 @@ onUnmounted(() => window.removeEventListener('hashchange', onHashChange))
                 <p>所有文书的唯一事实来源，修改后自动保存</p>
               </div>
               <div class="head-actions">
-                <button class="btn" :disabled="resumeUploading" @click="triggerResumeUpload">
+                <button class="btn" :disabled="resumeUploading" title="解析简历会调用大模型（使用你配置的大模型 API Key）" @click="triggerResumeUpload">
                   {{ resumeUploading ? '解析中…' : '上传简历自动填充' }}
                 </button>
                 <button class="btn primary" @click="goTab('generate')">去生成文书</button>
