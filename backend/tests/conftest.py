@@ -13,6 +13,10 @@ os.environ["APPLICRAFT_DATABASE_URL"] = "sqlite:///" + (_DATA / "test.db").as_po
 # 既有用例按多租户语义编写（register 建号、登录态调 API），standalone 分支无 auth 路由；
 # 测试环境统一关闭 standalone，走与网页版一致的 auth 挂载分支。
 os.environ["APPLICRAFT_STANDALONE"] = "false"
+# get_llm 在依赖解析阶段就需要一个可用 Key 才能构造客户端；额度拦截测试
+# 在调用 LLM 之前就返回 429，并不真正发请求。给个测试占位 Key 避免 503
+# 抢在额度闸门之前返回（与网页版测试环境行为一致）。
+os.environ.setdefault("APPLICRAFT_LLM_API_KEY", "sk-test-placeholder-not-a-real-key")
 # 业务默认关闭开放注册；既有隔离测试需要反复注册多个账号，故测试环境显式开放。
 # 注册策略本身由 test_security.py 单独验证。
 os.environ["APPLICRAFT_ALLOW_REGISTRATION"] = "true"

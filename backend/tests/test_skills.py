@@ -69,7 +69,7 @@ def test_builtin_catalog_is_readonly_and_complete(tmp_path):
     assert all("content" not in item and "instructions" not in item for item in items)
     detail = get_skill_detail(FileStore(tmp_path), "builtin:grad-sop-writing")
     assert "结构骨架" in detail["content"]
-    assert "禁止" in detail["instructions"]
+    assert "空泛口号" in detail["instructions"]  # 文风禁令（措辞可能随技能优化调整）
     assert detail["examples"]
     assert get_skill_detail(FileStore(tmp_path), "builtin:missing") is None
 
@@ -146,7 +146,7 @@ def test_build_skill_context_assembles_builtin_user_and_missing(tmp_path):
     ctx, meta = build_skill_context(
         store, ["builtin:grad-sop-writing", skill_id, "builtin:missing"]
     )
-    assert "禁止童年热情" in ctx         # 内置技能用精炼版指令
+    assert "空泛口号" in ctx              # 内置技能用精炼版指令（文风禁令）
     assert "可核查数值" in ctx          # 用户技能用正文
     assert {m["included"] for m in meta} == {True, False}
     assert meta[0]["origin"] == "builtin"
@@ -215,10 +215,20 @@ def test_skills_api_import_detail_and_delete(tmp_path):
 
 
 class StubLLM:
-    """草稿阶段回显技能标记，验证提示词确实注入了技能段落。"""
+    """草稿阶段回显技能标记，验证提示词确实注入了技能段落。
+
+    技能块只在初稿 / 大纲阶段进入提示词，revise 阶段聚焦具体意见不再重复注入；
+    因此用实例状态记住「初稿是否带技能」，后续修订沿用同一标记，避免把设计行为
+    误判成技能未注入。
+    """
+
+    def __init__(self):
+        self.skill_seen = False
 
     async def complete(self, *, task, system, user, **kwargs):
-        if task in ("draft", "revise") and "禁止童年热情" in (user or ""):
+        if task == "draft" and "空泛口号" in (user or ""):
+            self.skill_seen = True
+        if task in ("draft", "revise") and self.skill_seen:
             return "遵循技能规则的草稿 [TO CONFIRM: target programme]."
         return "Draft [TO CONFIRM: target programme]."
 

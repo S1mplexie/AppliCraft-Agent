@@ -300,8 +300,9 @@ def get_llm(
     """
     if settings.standalone:
         from app.llm.local_config import load_local_llm_config
-        from app.llm.client import LLMNotConfiguredError
-
+        # 注意：LLMNotConfiguredError 已在模块顶层导入。此处若再局部 import，
+        # 会让该名字变成函数局部变量并遮蔽全局绑定，导致下方 except 分支
+        # 抛出 UnboundLocalError（而非干净的 503）。
         cfg = load_local_llm_config()
         if not cfg.api_key.strip():
             raise LLMNotConfiguredError(

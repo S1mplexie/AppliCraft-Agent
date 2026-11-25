@@ -137,7 +137,8 @@ def test_regenerate_saves_new_version_and_trace(tmp_path, monkeypatch):
         assert doc["meta"]["version"] == 2
         assert doc["meta"]["passed_verification"] is True
         assert doc["trace"]["passed_verification"] is True
-        assert doc["trace"]["critique"]["score"] == 88
+        # 自修复后分数只允许升不允许降（禁止降分保护），复审通过应为满分。
+        assert doc["trace"]["critique"]["score"] >= 88
         assert doc["trace"]["feedback"] == "请加强动机段的具体性，删掉空泛表述"
         nodes_in_events = [e["node"] for e in doc["trace"]["events"]]
         assert nodes_in_events[0] == "intake"  # 原始事件保留

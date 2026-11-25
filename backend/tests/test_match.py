@@ -2,12 +2,15 @@
 from __future__ import annotations
 
 import json
+from uuid import uuid4
 
 from fastapi.testclient import TestClient
 
 from app.api.deps import get_llm
 from app.db.session import init_db
 from app.main import app
+
+PASSWORD = "test-password-123"
 
 
 class StubMatchLLM:
@@ -40,10 +43,11 @@ def teardown_module():
 
 
 def _client() -> TestClient:
+    # 测试环境 conftest 关闭 standalone、走多租户鉴权分支，需注册账号持有会话。
     client = TestClient(app)
-    # 本地部署版单用户免登录，直接进入工作台。
-    resp = client.get("/api/health")
-    assert resp.status_code == 200, resp.text
+    email = f"match_{uuid4().hex[:10]}@example.com"
+    resp = client.post("/api/auth/register", json={"email": email, "password": PASSWORD})
+    assert resp.status_code == 201, resp.text
     return client
 
 
@@ -95,7 +99,8 @@ def test_match_response_structure():
     resp = client.post(f"/api/match/{pid}")
     assert resp.status_code == 200, resp.text
     data = resp.json()
-    assert len(data["results"]) == 39
+    # 知识库已扩展到港新英澳 13 校 54 项目；只校验规模下界与结构。
+    assert len(data["results"]) >= 54
     item = data["results"][0]
     assert {"tier", "tier_label", "reasons", "gaps", "in_target", "program_id"} <= set(item.keys())
     assert item["tier"] in {"gap", "reach", "match", "safety"}

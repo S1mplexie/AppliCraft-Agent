@@ -131,10 +131,14 @@ def test_self_repair_reverifies_before_finalize():
     assert visited.count("revise") == 1
     assert visited.count("verify") == 2  # 初检 + 修复后复检
     assert result["critique"]["passed"] is True
-    assert not result["critique"]["issues"]
+    # 篇幅等 style/soft 提示只上报不阻断，可能残留；只断言无阻断性问题。
+    blocking = [i for i in result["critique"]["issues"] if i.get("severity") != "soft"]
+    assert not blocking
     assert result["final"].strip()
     finalize_events = [e for e in result["events"] if e["node"] == "finalize"]
-    assert "复检通过" in finalize_events[0]["summary"]
+    # 只断言定稿摘要如实反映了「自修复过 1 轮」这一共同行为；
+    # 具体结论措辞（复检通过 / 待核项转复核）随两端软提示策略不同而异。
+    assert "自我修复 1 轮" in finalize_events[0]["summary"]
 
 
 def test_self_repair_exhausted_hands_over_to_human():
